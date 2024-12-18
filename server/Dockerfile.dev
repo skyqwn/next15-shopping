@@ -1,0 +1,23 @@
+# Node.js 공식 이미지에서 최신 LTS 버전 사용
+FROM node:20
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 로컬 패키지 파일들을 컨테이너로 복사
+COPY package.json pnpm-lock.yaml ./
+
+# pnpm을 설치 (설치가 안 되어있으면)
+RUN npm install -g pnpm
+
+# 의존성 설치
+RUN pnpm install
+
+# 소스 코드 복사
+COPY . .
+
+# 개발 모드로 실행 (핫 리로딩 활성화)
+CMD ["pnpm", "start:dev"]
+
+# 컨테이너의 5000 포트 개방
+EXPOSE 4000
