@@ -6,18 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { RegisterDto } from './dto/create-auth.dto';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signin')
-  create(@Body() body) {
+  create(@Body() body: RegisterDto) {
+    console.log(body);
     return this.authService.signin(body);
+  }
+
+  @Post('/signup')
+  signup(@Body() body: RegisterDto) {
+    return this.authService.signup(body);
   }
 
   @Get()
@@ -28,11 +35,6 @@ export class AuthController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
   }
 
   @Delete(':id')

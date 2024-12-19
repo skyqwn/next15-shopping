@@ -12,7 +12,7 @@ export const users = pgTable('users', {
   email: text('email').unique().notNull(),
   password: text('password').notNull(),
   loginType: loginTypeEnum('users_loginType').default('email').notNull(),
-  nickname: text('nickname'),
+  name: text('name'),
   imageUri: text('imageUri'),
   kakaoImageUri: text('kakaoImageUri'),
   createdAt: timestamp('createdAt').defaultNow(),
