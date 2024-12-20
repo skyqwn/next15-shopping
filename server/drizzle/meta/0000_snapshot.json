@@ -1,5 +1,5 @@
 {
-  "id": "ad376dcf-1745-4792-80e6-898bda91adad",
+  "id": "4379796d-ecab-4fd7-a6fc-8cf9092cebbb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -28,17 +28,16 @@
         },
         "users_loginType": {
           "name": "users_loginType",
-          "type": "users_loginType",
+          "type": "user_login_type_v2",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'email'"
+          "notNull": true
         },
-        "nickname": {
-          "name": "nickname",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "imageUri": {
           "name": "imageUri",
@@ -91,13 +90,13 @@
     }
   },
   "enums": {
-    "public.users_loginType": {
-      "name": "users_loginType",
+    "public.user_login_type_v2": {
+      "name": "user_login_type_v2",
       "schema": "public",
       "values": [
         "email",
         "kakao",
-        "apple"
+        "google"
       ]
     }
   },

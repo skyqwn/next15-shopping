@@ -3,27 +3,39 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  UsePipes,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/create-auth.dto';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { SigninDto } from './dto/signin-dto';
+import { SignupDto } from './dto/sign-up-dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signin')
-  create(@Body() body: RegisterDto) {
-    console.log(body);
-    return this.authService.signin(body);
+  async create(
+    @Body() body: SigninDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken } = await this.authService.signin(body);
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000, // 1시간
+      path: '/',
+    });
+
+    return { message: 'Login successful' };
   }
 
   @Post('/signup')
-  signup(@Body() body: RegisterDto) {
+  signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
   }
 
