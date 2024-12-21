@@ -15,18 +15,18 @@ export class JwtStragegy extends PassportStrategy(Strategy) {
       // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          return request?.cookies?.accessToken;
+          const token = request?.cookies?.accessToken;
+          return token;
         },
       ]),
     });
   }
 
-  async validate(payload: { email: string }) {
-    const { email } = payload;
+  async validate(payload: { userId: number }) {
+    const { userId } = payload;
     const user = await this.db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: eq(users.id, userId),
     });
-    console.log(user);
     if (!user) {
       throw new UnauthorizedException();
     }

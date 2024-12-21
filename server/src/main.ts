@@ -3,9 +3,11 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ZodExceptionFilter } from './filters/zod-exception.filter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   // app.useGlobalPipes(
   //   new ValidationPipe({
   //     transform: true,

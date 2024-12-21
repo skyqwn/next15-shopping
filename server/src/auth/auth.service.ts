@@ -25,7 +25,7 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
-  private async getTokens(payload: { email: string }) {
+  private async getTokens(payload: { userId: number }) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_SECRET'),
@@ -51,6 +51,8 @@ export class AuthService {
       throw new UnauthorizedException('유저가 존재하지 않습니다.');
     }
 
+    const userId = user.id;
+
     const checked = await bcrypt.compare(password, user.password);
 
     if (!checked) {
@@ -59,11 +61,11 @@ export class AuthService {
       );
     }
 
-    const { accessToken, refreshToken } = await this.getTokens({ email });
+    const { accessToken, refreshToken } = await this.getTokens({ userId });
 
-    await this.redisService.setRefreshToken(email, refreshToken);
+    await this.redisService.setRefreshToken(userId, refreshToken);
 
-    return { accessToken };
+    return { accessToken, userId };
   }
 
   async signup(signupDto: SignupDto) {
@@ -90,15 +92,30 @@ export class AuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  // auth.service.ts
+  async refreshTokens(userId: number) {
+    const refreshToken = await this.redisService.getRefreshToken(userId);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    if (!refreshToken) {
+      throw new UnauthorizedException('다시 로그인이 필요합니다.');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    try {
+      await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+
+      const accessToken = await this.jwtService.signAsync(
+        { userId },
+        {
+          secret: this.configService.get('JWT_SECRET'),
+          expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
+        },
+      );
+
+      return { accessToken };
+    } catch (error) {
+      throw new UnauthorizedException('다시 로그인이 필요합니다.');
+    }
   }
 }
