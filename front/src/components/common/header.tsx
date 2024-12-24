@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MobileMenu from "./mobile-menu";
+import { ShoppingBag } from "lucide-react";
 
 const Header = () => {
   const routes = [
@@ -10,7 +11,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
+    <header className="sticky top-0 z-50 shadow-md">
       <nav className="container mx-auto px-4 py-4">
         <ul className="flex w-full items-center justify-between">
           <li className="text-primary text-4xl font-bold">
@@ -22,14 +23,12 @@ const Header = () => {
             {routes.map((page) => (
               <div
                 key={page.label}
-                className="hover:text-primary/90 transition-colors ease-in-out"
+                className="transition-colors ease-in-out"
                 data-tha
               >
-                <Link href={page.path}>
+                <Link href={page.path} className="invisible lg:visible">
                   <div>
-                    <span data-tha-span-1 className="block">
-                      <span className="hidden lg:block">{page.label}</span>
-                    </span>
+                    <ShoppingBag size={32} />
                   </div>
                 </Link>
               </div>

@@ -42,10 +42,8 @@ export async function middleware(request: NextRequest) {
       );
 
       if (response.ok) {
-        // 원래 요청한 URL로 리다이렉트
         const res = NextResponse.redirect(request.url);
 
-        // 응답 헤더에서 Set-Cookie 복사
         const setCookie = response.headers.get("set-cookie");
         if (setCookie) {
           res.headers.set("Set-Cookie", setCookie);
@@ -54,7 +52,6 @@ export async function middleware(request: NextRequest) {
         return res;
       }
 
-      // 리프레시 실패시 로그인으로
       return NextResponse.redirect(new URL("/auth/login", request.url));
     } catch (error) {
       console.error("Refresh token error:", error);
