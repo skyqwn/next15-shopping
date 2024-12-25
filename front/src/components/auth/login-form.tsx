@@ -28,7 +28,6 @@ const LoginForm = () => {
   const { loginMutation } = useAuth();
 
   const onSubmit = async (values: LoginType) => {
-    console.log(values);
     loginMutation.mutate(values);
   };
 

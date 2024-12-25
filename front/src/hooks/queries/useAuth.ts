@@ -17,7 +17,7 @@ function useLogin() {
     onSuccess: ({ accessToken }) => {
       window.location.href = "/dashboard";
     },
-    onError: (error: CustomError) => {
+    onError: (error: ErrorResponse) => {
       toast.error(error.message);
     },
   });
@@ -26,6 +26,10 @@ function useLogin() {
 function useSignup() {
   return useMutation({
     mutationFn: postSignup,
+    onError: (error: any) => {
+      console.log(error);
+      toast.error(error.message);
+    },
   });
 }
 

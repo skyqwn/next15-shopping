@@ -8,19 +8,34 @@ const publicUrls: Routes = {
   "/": true,
   "/auth/login": true,
   "/auth/register": true,
+  "/auth/email-verify": true,
 };
 
 export async function middleware(request: NextRequest) {
   const userId = request.cookies.get("userId")?.value;
   const accessToken = request.cookies.get("accessToken");
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const exists = publicUrls[pathname];
 
-  console.log("[Middleware]", {
+  console.log("[Middleware Detail]", {
     pathname,
+    fullUrl: request.url,
+    token: searchParams.get("token"),
     hasAccessToken: !!accessToken,
     hasUserId: !!userId,
+    isPublicUrl: exists,
   });
+
+  if (exists) {
+    console.log(`Allowing access to public URL: ${pathname}`);
+    return NextResponse.next();
+  }
+
+  // 보호된 라우트 체크
+  if (!accessToken && !userId && !exists) {
+    console.log(`Redirecting to login: ${pathname}`);
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
 
   if (accessToken && userId && exists) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -59,9 +74,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (!accessToken && !userId && !exists) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }
+  // if (!accessToken && !userId) {
+  //   return NextResponse.redirect(new URL("/auth/login", request.url));
+  // }
 
   return NextResponse.next();
 }

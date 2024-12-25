@@ -15,13 +15,18 @@ const postLogin = async ({ email, password }: LoginType) => {
       password,
     }),
   });
+  const data = await response.json();
 
   if (!response.ok) {
     const error = await response.json();
-    throw error;
+    throw {
+      message: data.message,
+      error: data.error,
+      statusCode: response.status,
+    };
   }
 
-  return response.json();
+  return data;
 };
 
 const postSignup = async ({
@@ -44,39 +49,17 @@ const postSignup = async ({
     }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    const error = await response.json();
-    console.log("에러에러", error);
-    throw error;
+    throw {
+      message: data.message,
+      error: data.error,
+      statusCode: response.status,
+    };
   }
 
-  return response.json();
+  return data;
 };
 
 export { postLogin, postSignup };
-
-// const postLogin = async ({ email, password }: LoginType) => {
-//   const { data } = await axiosInstance.post("auth/signin", {
-//     email,
-//     password,
-//   });
-//   return data;
-// };
-
-// const postSignup = async ({
-//   email,
-//   password,
-//   name,
-//   passwordConfirm,
-// }: SignupType) => {
-//   const { data } = await axiosInstance.post("auth/signup", {
-//     email,
-//     password,
-//     name,
-//     passwordConfirm,
-//   });
-
-//   return data;
-// };
-
-// export { postLogin, postSignup };

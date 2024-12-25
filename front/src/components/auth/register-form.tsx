@@ -35,7 +35,6 @@ const RegisterForm = () => {
 
   const onSubmit = async (values: any) => {
     signupMutation.mutate(values);
-    console.log(values);
   };
 
   return (
@@ -43,20 +42,6 @@ const RegisterForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div>
-            {/* <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="John Doe" type="string" />
-                  </FormControl>
-                  <FormDescription />
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
             <FormField
               control={form.control}
               name="email"
@@ -136,7 +121,7 @@ const RegisterForm = () => {
             type="submit"
             className={cn(
               "my-2 w-full",
-              status === "executing" ? "animate-pulse" : "",
+              // status === "executing" ? "animate-pulse" : "",
             )}
           >
             {"가입하기"}
