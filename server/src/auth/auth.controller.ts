@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
@@ -34,7 +35,13 @@ export class AuthController {
     @Body() body: SigninDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, userId } = await this.authService.signin(body);
+    const result = await this.authService.signin(body);
+
+    if (typeof result === 'string') {
+      throw new UnauthorizedException(result);
+    }
+
+    const { accessToken, userId } = result;
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
@@ -49,7 +56,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1시간
+      maxAge: 60 * 60 * 100000, // 1시간
       path: '/',
     });
 

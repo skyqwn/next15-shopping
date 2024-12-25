@@ -6,6 +6,7 @@ import { DrizzleModule } from 'src/drizzle/drizzle.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from 'src/redis/redis.module';
 import { JwtStragegy } from './jwt.strategy';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtStragegy } from './jwt.strategy';
     JwtModule.register({}),
     DrizzleModule,
     RedisModule,
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStragegy],

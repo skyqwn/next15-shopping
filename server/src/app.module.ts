@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisModule } from './redis/redis.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { RedisModule } from './redis/redis.module';
     DrizzleModule,
     AuthModule,
     RedisModule,
+    MailModule,
   ],
   providers: [ConfigService],
 })

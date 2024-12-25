@@ -32,4 +32,39 @@ export class RedisService {
   async deleteRefreshToken(userId: number) {
     await this.cacheManager.del(`refresh_${userId}`);
   }
+
+  async setEmailVerificationToken(email: string, token: string) {
+    try {
+      const TTL = 60 * 6000 * 1;
+      const key = `${email}_verification`;
+      await this.cacheManager.set(key, token, TTL);
+
+      const saved = await this.cacheManager.get(key);
+      const ttl = await this.cacheManager.store.ttl(key);
+
+      console.log('Email verification token saved:', { key, saved, ttl });
+    } catch (error) {
+      console.error('Redis 저장 에러:', error);
+      throw error;
+    }
+  }
+  async getEmailVerificationToken(email: string): Promise<string | null> {
+    try {
+      const key = `${email}_verification`;
+      return this.cacheManager.get(key);
+    } catch (error) {
+      console.error('Redis 조회 에러:', error);
+      throw error;
+    }
+  }
+
+  async deleteEmailVerificationToken(email: string) {
+    try {
+      const key = `${email}_verification`;
+      await this.cacheManager.del(key);
+    } catch (error) {
+      console.error('Redis 삭제 에러:', error);
+      throw error;
+    }
+  }
 }

@@ -1,5 +1,12 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, serial, text, pgEnum, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  text,
+  pgEnum,
+  timestamp,
+  boolean,
+} from 'drizzle-orm/pg-core';
 
 export const loginTypeEnum = pgEnum('user_login_type_v2', [
   'email',
@@ -13,6 +20,7 @@ export const users = pgTable('users', {
   password: text('password').notNull(),
   loginType: loginTypeEnum('users_loginType').notNull(),
   name: text('name').notNull(),
+  isVerified: boolean('isVerified').notNull(),
   imageUri: text('imageUri'),
   kakaoImageUri: text('kakaoImageUri'),
   createdAt: timestamp('createdAt').defaultNow(),

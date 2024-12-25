@@ -8,6 +8,13 @@
       "when": 1734589028763,
       "tag": "0000_salty_hellcat",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1735112330725,
+      "tag": "0001_outstanding_warbird",
+      "breakpoints": true
     }
   ]
 }
