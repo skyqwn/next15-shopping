@@ -114,7 +114,7 @@ export class AuthService {
         throw error;
       }
 
-      console.error('SignUp Error:', error);
+      // console.error('SignUp Error:', error);
 
       throw new InternalServerErrorException(
         '회원가입 도중 에러가 발생했습니다.',

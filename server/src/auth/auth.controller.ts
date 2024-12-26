@@ -10,17 +10,20 @@ import {
   Req,
   UnauthorizedException,
   Query,
+  UseFilters,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
 import { SignupDto } from './dto/sign-up-dto';
 import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/@common/decorators/get-user.decorator';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from 'src/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { HttpExceptionFilter } from 'src/common/exception-filter/http-exception-filter';
 
 @Controller('auth')
 export class AuthController {
@@ -64,6 +67,7 @@ export class AuthController {
   }
 
   @Post('/signup')
+  @UseFilters(HttpExceptionFilter)
   signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
   }
