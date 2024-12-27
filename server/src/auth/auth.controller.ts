@@ -23,7 +23,6 @@ import { RedisService } from 'src/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
-import { HttpExceptionFilter } from 'src/common/exception-filter/http-exception-filter';
 
 @Controller('auth')
 export class AuthController {
@@ -67,7 +66,6 @@ export class AuthController {
   }
 
   @Post('/signup')
-  @UseFilters(HttpExceptionFilter)
   signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
   }
