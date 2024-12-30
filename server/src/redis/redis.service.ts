@@ -20,7 +20,7 @@ export class RedisService {
       throw error;
     }
   }
-  async getRefreshToken(userId: number): Promise<string | null> {
+  async getRefreshToken(userId: number): Promise<string | undefined> {
     try {
       const key = `refresh_${userId}`;
       return this.cacheManager.get(key);
@@ -48,7 +48,7 @@ export class RedisService {
       throw error;
     }
   }
-  async getEmailVerificationToken(email: string): Promise<string | null> {
+  async getEmailVerificationToken(email: string): Promise<string | undefined> {
     try {
       const key = `${email}_verification`;
       return this.cacheManager.get(key);

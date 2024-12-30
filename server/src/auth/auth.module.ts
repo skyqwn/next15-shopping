@@ -5,8 +5,9 @@ import { PassportModule } from '@nestjs/passport';
 import { DrizzleModule } from 'src/drizzle/drizzle.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from 'src/redis/redis.module';
-import { JwtStragegy } from './jwt.strategy';
+import { JwtStragegy } from './strategies/jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
+import { KakaoStrategy } from './strategies/kakao.strategy';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { MailModule } from 'src/mail/mail.module';
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStragegy],
+  providers: [AuthService, JwtStragegy, KakaoStrategy],
   exports: [PassportModule, JwtStragegy],
 })
 export class AuthModule {}

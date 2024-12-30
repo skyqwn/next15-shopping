@@ -17,7 +17,7 @@ export const loginTypeEnum = pgEnum('user_login_type_v2', [
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: text('email').unique().notNull(),
-  password: text('password').notNull(),
+  password: text('password'),
   loginType: loginTypeEnum('users_loginType').notNull(),
   name: text('name').notNull(),
   isVerified: boolean('isVerified').notNull(),

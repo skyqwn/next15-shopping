@@ -3,32 +3,27 @@ import {
   Get,
   Post,
   Body,
-  Param,
-  Delete,
   Res,
   UseGuards,
   Req,
   UnauthorizedException,
   Query,
-  UseFilters,
-  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
 import { SignupDto } from './dto/sign-up-dto';
 import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtService } from '@nestjs/jwt';
 import { RedisService } from 'src/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { KakaoAuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly redisService: RedisService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -101,5 +96,44 @@ export class AuthController {
   async getProfile(@GetUser() user: any) {
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+
+  @Get('/login/kakao')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoLogin(@Res({ passthrough: true }) res: Response) {}
+
+  @Get('/kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallback(
+    @Query('code') kakaoAuthResCode: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    // @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!req.user) return;
+
+    const user = req['user'];
+    const userUser = user['user'];
+    const userId = userUser['id'];
+
+    const accessToken = req.user['accessToken'];
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000, // 1시간
+      path: '/',
+    });
+
+    res.cookie('userId', userId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 100000,
+      path: '/',
+    });
+
+    return res.redirect(this.configService.get('CLIENT_URL') as string);
   }
 }

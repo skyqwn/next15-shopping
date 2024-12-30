@@ -19,18 +19,18 @@ import { MailService } from 'src/mail/mail.service';
 import UserUnauthorizedException from './exceptions/user-unauthorized.exception';
 import UserDuplicateEmailException from './exceptions/user-duplicate-email.exception';
 import UserRefreshTokenExpiredException from './exceptions/user-refreshtoken-expired.exception';
-
+import axios from 'axios';
+import { KakaoProfile } from './strategies/kakao.strategy';
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(DRIZZLE) private db: DrizzleDB,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
-    private mailService: MailService,
+    private readonly mailService: MailService,
   ) {}
-
-  private async getTokens(payload: { userId: number }) {
+  async getTokens(payload: { userId: number }) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_SECRET'),
@@ -55,6 +55,8 @@ export class AuthService {
     if (!user) throw new UserUnauthorizedException();
 
     const userId = user.id;
+
+    if (!user.password) throw new UserUnauthorizedException();
 
     const checked = await bcrypt.compare(password, user.password);
 
@@ -115,29 +117,77 @@ export class AuthService {
     return { accessToken };
   }
 
-  // async refreshTokens(userId: number) {
-  //   const refreshToken = await this.redisService.getRefreshToken(userId);
+  async signUpWithKakao(profile: any) {}
 
-  //   if (!refreshToken) {
-  //     throw new UnauthorizedException('다시 로그인이 필요합니다.');
-  //   }
+  async getKakaoAccessToken(code: string) {
+    const tokenUrl = 'https://kauth.kakao.com/oauth/token';
+    const payload = {
+      grant_type: 'authorization_code',
+      client_id: this.configService.get('KAKAO_CLIENT_ID'),
+      redirect_uri: this.configService.get('KAKAO_CALLBACK_URL'),
+      code,
+    };
+    try {
+      const response = await axios.post(tokenUrl, payload, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response.data.access_token;
+    } catch (error) {
+      throw new UserUnauthorizedException();
+    }
+  }
 
-  //   try {
-  //     await this.jwtService.verifyAsync(refreshToken, {
-  //       secret: this.configService.get('JWT_SECRET'),
-  //     });
+  async getKakaoProfile(accessToken: string) {
+    const profileUrl = 'https://kapi.kakao.com/v2/user/me';
+    const response = await axios.get(profileUrl, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const userData = response.data;
+    const kakaoEmail = userData.kakao_account.email;
+    const nickname = userData.properties.nickname;
+    const profileImage = userData.properties.profile_image;
+    return { kakaoEmail, nickname, profileImage };
+  }
 
-  //     const accessToken = await this.jwtService.signAsync(
-  //       { userId },
-  //       {
-  //         secret: this.configService.get('JWT_SECRET'),
-  //         expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
-  //       },
-  //     );
+  async validateKakaoUser(profile: KakaoProfile) {
+    const { email, nickname, profile_image } = profile;
 
-  //     return { accessToken };
-  //   } catch (error) {
-  //     throw new UnauthorizedException('다시 로그인이 필요합니다.');
-  //   }
-  // }
+    let user = await this.db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+
+    if (user) {
+      const updatedUsers = await this.db
+        .update(users)
+        .set({
+          loginType: 'kakao',
+          imageUri: profile_image,
+          isVerified: true,
+        })
+        .where(eq(users.email, email))
+        .returning();
+      user = updatedUsers[0];
+    } else {
+      const newUser = await this.db
+        .insert(users)
+        .values({
+          email,
+          loginType: 'kakao',
+          name: nickname,
+          imageUri: profile_image,
+          isVerified: true,
+        })
+        .returning();
+      user = newUser[0];
+    }
+    const userId = user.id;
+
+    const { accessToken, refreshToken } = await this.getTokens({ userId });
+
+    await this.redisService.setRefreshToken(userId, refreshToken);
+
+    return { user, accessToken };
+  }
 }
