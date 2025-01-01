@@ -15,10 +15,9 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { LoginSchema, LoginType } from "@/schemas/login-schema";
 import { SignupSchema, SignupType } from "@/schemas/sign-up-schema";
 import useAuth from "@/hooks/queries/useAuth";
+import Image from "next/image";
 
 const RegisterForm = () => {
   const form = useForm<SignupType>({
@@ -35,6 +34,10 @@ const RegisterForm = () => {
 
   const onSubmit = async (values: any) => {
     signupMutation.mutate(values);
+  };
+
+  const handleKakaoSignup = () => {
+    window.location.href = "http://localhost:4000/api/auth/kakao/signin";
   };
 
   return (
@@ -127,6 +130,21 @@ const RegisterForm = () => {
             {"가입하기"}
           </Button>
         </form>
+        <Button
+          type="button"
+          onClick={handleKakaoSignup}
+          className={cn("my-2 w-full")}
+        >
+          {"카카오가입하기"}
+        </Button>
+        <div className="flex items-center justify-center gap-[23px]">
+          <Image
+            src="/svg/ic-login-kakao.svg"
+            width={47}
+            height={46}
+            alt="kakao_login"
+          />
+        </div>
       </Form>
     </div>
   );

@@ -17,12 +17,13 @@ const postLogin = async ({ email, password }: LoginType) => {
   });
   const data = await response.json();
 
-  if (!response.ok) {
-    const error = await response.json();
+  console.log("데이타", data);
+
+  if (!data.success) {
     throw {
       message: data.message,
-      error: data.error,
-      statusCode: response.status,
+      result: data.result,
+      success: data.success,
     };
   }
 
@@ -50,6 +51,7 @@ const postSignup = async ({
   });
 
   const data = await response.json();
+  console.log(data);
 
   if (!response.ok) {
     throw {

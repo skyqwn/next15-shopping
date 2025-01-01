@@ -3,13 +3,21 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
-export interface ErrorResponse {
+export interface ServerResponse<T> {
   message: string;
-  statusCode: number;
-  error: string;
+  result: T | null;
+  success: boolean;
 }
 
-export type CustomError = AxiosError<ErrorResponse>;
+export interface SuccessResponse<T> extends ServerResponse<T> {
+  success: true;
+  result: T;
+}
+
+export interface ErrorResponse extends ServerResponse<null> {
+  success: false;
+  result: null;
+}
 
 function useLogin() {
   return useMutation({
@@ -17,7 +25,7 @@ function useLogin() {
     onSuccess: ({ accessToken }) => {
       window.location.href = "/dashboard";
     },
-    onError: (error: ErrorResponse) => {
+    onError: (error: ServerResponse<null>) => {
       toast.error(error.message);
     },
   });
@@ -26,6 +34,10 @@ function useLogin() {
 function useSignup() {
   return useMutation({
     mutationFn: postSignup,
+    onSuccess: ({ message }) => {
+      // window.location.href = "/login";
+      toast.success(message);
+    },
     onError: (error: any) => {
       console.log(error);
       toast.error(error.message);

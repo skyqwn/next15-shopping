@@ -26,11 +26,6 @@ export async function middleware(request: NextRequest) {
     isPublicUrl: exists,
   });
 
-  if (exists) {
-    console.log(`Allowing access to public URL: ${pathname}`);
-    return NextResponse.next();
-  }
-
   // 보호된 라우트 체크
   if (!accessToken && !userId && !exists) {
     console.log(`Redirecting to login: ${pathname}`);
