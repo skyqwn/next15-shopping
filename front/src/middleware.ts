@@ -5,18 +5,16 @@ interface Routes {
 }
 
 const publicUrls: Routes = {
-  "/": true,
   "/auth/login": true,
   "/auth/register": true,
   "/auth/email-verify": true,
   "/auth/email-login": true,
   "/auth/email-register": true,
-  "/community": true,
 };
 
 export async function middleware(request: NextRequest) {
   const userId = request.cookies.get("userId")?.value;
-  const accessToken = request.cookies.get("accessToken");
+  const accessToken = request.cookies.get("accessToken")?.value;
   const { pathname, searchParams } = request.nextUrl;
   const exists = publicUrls[pathname];
 
@@ -28,24 +26,9 @@ export async function middleware(request: NextRequest) {
     hasUserId: !!userId,
     isPublicUrl: exists,
   });
-
-  if (exists) {
-    return NextResponse.next();
-  }
-
-  // 보호된 라우트 체크
-  if (!accessToken && !userId && !exists) {
-    console.log(`Redirecting to login: ${pathname}`);
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }
-
-  if (accessToken && userId && exists) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // accessToken이 없고 userId가 있는 경우에만 리프레시 시도
-  if (!accessToken && userId && !exists) {
+  if (!exists && !accessToken && userId) {
     try {
+      // 리프레시 토큰 요청
       const response = await fetch(
         "http://localhost:4000/api/auth/refreshToken",
         {
@@ -59,21 +42,77 @@ export async function middleware(request: NextRequest) {
       );
 
       if (response.ok) {
+        // const res = NextResponse.redirect(request.url);
+        // return res;
+        const newAccessToken = await response.json();
+
         const res = NextResponse.redirect(request.url);
 
-        const setCookie = response.headers.get("set-cookie");
-        if (setCookie) {
-          res.headers.set("Set-Cookie", setCookie);
-        }
+        res.cookies.set("accessToken", newAccessToken.result, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 1000, // 1시간
+          path: "/",
+        });
 
         return res;
       }
 
-      return NextResponse.redirect(new URL("/auth/login", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     } catch (error) {
       console.error("Refresh token error:", error);
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
+  }
+
+  if (pathname === "/" || pathname === "/community") {
+    if (!accessToken && userId) {
+      try {
+        // 리프레시 토큰 요청
+        const response = await fetch(
+          "http://localhost:4000/api/auth/refreshToken",
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId }),
+          },
+        );
+
+        if (response.ok) {
+          // const res = NextResponse.redirect(request.url);
+          // return res;
+          const newAccessToken = await response.json();
+
+          console.log("새로운토큰:", newAccessToken);
+          const res = NextResponse.redirect(new URL("/", request.url));
+
+          res.cookies.set("accessToken", newAccessToken.result, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 1000, // 1시간
+            path: "/",
+          });
+
+          return res;
+        }
+
+        return NextResponse.redirect(new URL("/", request.url));
+      } catch (error) {
+        console.error("Refresh token error:", error);
+        return NextResponse.redirect(new URL("/auth/login", request.url));
+      }
+    }
+    return NextResponse.next();
+  }
+
+  if (!accessToken && !userId && !exists) {
+    console.log(`Redirecting to login: ${pathname}`);
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   return NextResponse.next();

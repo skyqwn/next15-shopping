@@ -23,7 +23,7 @@ function useLogin() {
   return useMutation({
     mutationFn: postLogin,
     onSuccess: ({ accessToken }) => {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     },
     onError: (error: ServerResponse<null>) => {
       toast.error(error.message);

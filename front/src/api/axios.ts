@@ -33,8 +33,9 @@ axiosInstance.interceptors.response.use(
           userId,
         });
 
-        return axiosInstance(originalRequest);
+        return axiosInstance(originalRequest); // 원래 요청 재시도
       } catch (refreshError) {
+        // 리프레시 토큰도 만료된 경우
         console.error("리프레시 토큰 만료. 로그인 필요");
         window.location.href = "/auth/login";
         return Promise.reject(refreshError);
