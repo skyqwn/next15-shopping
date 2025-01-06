@@ -22,6 +22,7 @@ export default {
         satoshi: ["Satoshi", "sans"],
       },
       colors: {
+        kakao: "#FEE500",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

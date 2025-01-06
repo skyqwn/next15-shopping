@@ -40,7 +40,7 @@ export default function Dashboard() {
   if (!user) return <div>로그인이 필요합니다</div>;
 
   return (
-    <div className="">
+    <div className="h-full">
       <h1>대시보드</h1>
       <pre>{JSON.stringify(user, null, 2)}</pre>
       <Button

@@ -1,4 +1,4 @@
-import { LoginType } from "@/schemas/login-schema";
+import { LoginType } from "@/schemas/sign-in-schema";
 import { SignupType } from "@/schemas/sign-up-schema";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";

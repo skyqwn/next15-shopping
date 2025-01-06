@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { LoginSchema } from "./login-schema";
+import { SigninSchema } from "./sign-in-schema";
 
-export const SignupSchema = LoginSchema.extend({
+export const SignupSchema = SigninSchema.extend({
   name: z.string(),
   passwordConfirm: z.string({
     required_error: "비밀번호 확인은 필수입니다",

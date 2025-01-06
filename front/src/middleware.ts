@@ -9,6 +9,8 @@ const publicUrls: Routes = {
   "/auth/login": true,
   "/auth/register": true,
   "/auth/email-verify": true,
+  "/auth/email-login": true,
+  "/auth/email-register": true,
 };
 
 export async function middleware(request: NextRequest) {
@@ -69,13 +71,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // if (!accessToken && !userId) {
-  //   return NextResponse.redirect(new URL("/auth/login", request.url));
-  // }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|svg).*)"],
 };

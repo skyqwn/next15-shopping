@@ -4,17 +4,24 @@ import { ShoppingBag } from "lucide-react";
 
 const Header = () => {
   const routes = [
-    { path: "/", label: "홈" },
-    { path: "/contact", label: "문의하기" },
-    { path: "/portfolio", label: "포트폴리오" },
-    { path: "/aboutus", label: "회사소개" },
+    { path: "/", label: "Home" },
+    { path: "/contact", label: "Chat" },
+    { path: "/portfolio", label: "Style" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 shadow-md">
+    <header className="sticky top-0 z-50 bg-white shadow-md">
       <nav className="container mx-auto px-4 py-4">
-        <ul className="flex w-full items-center justify-between">
-          <li className="text-primary text-4xl font-bold">
+        <div className="display hidden justify-end gap-5 text-sm text-gray-500 lg:flex">
+          <Link className="cursor-pointer" href={"/my"}>
+            <span>마이페이지</span>
+          </Link>
+          <Link className="cursor-pointer" href={"/auth/login"}>
+            <span>로그인</span>
+          </Link>
+        </div>
+        <ul className="flex w-full items-center justify-between py-2">
+          <li className="text-4xl font-bold text-primary">
             <Link href={"/"}>
               <h1>NEXT</h1>
             </Link>
@@ -28,7 +35,8 @@ const Header = () => {
               >
                 <Link href={page.path} className="invisible lg:visible">
                   <div>
-                    <ShoppingBag size={32} />
+                    <span className="text-lg">{page.label}</span>
+                    {/* <ShoppingBag size={32} /> */}
                   </div>
                 </Link>
               </div>
