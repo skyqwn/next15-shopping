@@ -29,17 +29,12 @@ axiosInstance.interceptors.response.use(
           throw new Error("No user ID found");
         }
 
-        const refreshResponse = await axiosInstance.post("/auth/refreshToken", {
+        await axiosInstance.post("/auth/refreshToken", {
           userId,
         });
 
-        const newAccessToken = refreshResponse.data.accessToken;
-        document.cookie = `accessToken=${newAccessToken}; path=/; max-age=3600; secure; samesite=lax; httponly`;
-
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-        return axiosInstance(originalRequest); // 원래 요청 재시도
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // 리프레시 토큰도 만료된 경우
         console.error("리프레시 토큰 만료. 로그인 필요");
         window.location.href = "/auth/login";
         return Promise.reject(refreshError);

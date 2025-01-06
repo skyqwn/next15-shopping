@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -10,17 +10,17 @@ const EmailVerify = () => {
     "loading" | "success" | "error"
   >("loading");
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const verifyEmail = async () => {
       const token = searchParams.get("token");
       const email = searchParams.get("email");
 
-      console.log(email);
       if (!token && !email) {
         setVerificationStatus("error");
-        setMessage("인증 토큰이 없습니다.");
-        return;
+        setMessage("잘못된 접근입니다.");
+        return router.push("/auth/register");
       }
 
       try {
@@ -62,7 +62,7 @@ const EmailVerify = () => {
         {verificationStatus === "loading" && (
           <div className="text-center">
             <h2 className="mb-4 text-2xl font-bold">이메일 인증 중...</h2>
-            <div className="border-primary mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-t-2"></div>
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
           </div>
         )}
 
@@ -74,7 +74,7 @@ const EmailVerify = () => {
             <p className="mb-4 text-gray-600">{message}</p>
             <button
               onClick={() => (window.location.href = "/auth/login")}
-              className="bg-primary hover:bg-primary/90 rounded px-4 py-2 text-white"
+              className="rounded bg-primary px-4 py-2 text-white hover:bg-primary/90"
             >
               로그인하러 가기
             </button>
@@ -87,7 +87,7 @@ const EmailVerify = () => {
             <p className="mb-4 text-gray-600">{message}</p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-primary hover:bg-primary/90 rounded px-4 py-2 text-white"
+              className="rounded bg-primary px-4 py-2 text-white hover:bg-primary/90"
             >
               다시 시도
             </button>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import MobileMenu from "./mobile-menu";
-import { ShoppingBag } from "lucide-react";
 
 const Header = () => {
   const routes = [

@@ -11,6 +11,7 @@ const publicUrls: Routes = {
   "/auth/email-verify": true,
   "/auth/email-login": true,
   "/auth/email-register": true,
+  "/community": true,
 };
 
 export async function middleware(request: NextRequest) {
@@ -27,6 +28,10 @@ export async function middleware(request: NextRequest) {
     hasUserId: !!userId,
     isPublicUrl: exists,
   });
+
+  if (exists) {
+    return NextResponse.next();
+  }
 
   // 보호된 라우트 체크
   if (!accessToken && !userId && !exists) {
@@ -75,6 +80,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|svg).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
