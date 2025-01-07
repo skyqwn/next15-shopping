@@ -56,7 +56,7 @@ const TabBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/my" className="flex flex-col items-center">
+          <Link href="/my/profile" className="flex flex-col items-center">
             <Image
               src={
                 pathname === "/my"

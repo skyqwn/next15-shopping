@@ -12,10 +12,6 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // if (originalRequest.url === "/auth/signin") {
-    //   return Promise.reject(error);
-    // }
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -29,9 +25,11 @@ axiosInstance.interceptors.response.use(
           throw new Error("No user ID found");
         }
 
-        await axiosInstance.post("/auth/refreshToken", {
+        const res = await axiosInstance.post("/auth/refreshToken", {
           userId,
         });
+
+        console.log(res);
 
         return axiosInstance(originalRequest); // 원래 요청 재시도
       } catch (refreshError) {

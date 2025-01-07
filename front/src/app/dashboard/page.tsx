@@ -23,6 +23,7 @@ export default function Dashboard() {
     const checkAuth = async () => {
       try {
         const response = await axiosInstance.get("/auth/me");
+        console.log(response);
         setUser(response.data);
         console.log("현재 로그인된 사용자:", response.data);
       } catch (error) {

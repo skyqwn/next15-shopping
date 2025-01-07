@@ -18,6 +18,12 @@ export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const exists = publicUrls[pathname];
 
+  if (userId && accessToken) {
+    if (exists) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   console.log("[Middleware Detail]", {
     pathname,
     fullUrl: request.url,
@@ -26,6 +32,7 @@ export async function middleware(request: NextRequest) {
     hasUserId: !!userId,
     isPublicUrl: exists,
   });
+
   if (!exists && !accessToken && userId) {
     try {
       // 리프레시 토큰 요청
@@ -45,6 +52,7 @@ export async function middleware(request: NextRequest) {
         // const res = NextResponse.redirect(request.url);
         // return res;
         const newAccessToken = await response.json();
+        console.log(newAccessToken);
 
         const res = NextResponse.redirect(request.url);
 
