@@ -19,7 +19,6 @@ import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { KakaoAuthGuard } from './kakao-auth.guard';
-import { UserProps } from './type/user';
 
 @Controller('auth')
 export class AuthController {
@@ -45,8 +44,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1시간
-      // maxAge: 60 * 500,
+      maxAge: 60 * 60 * 24 * 1 * 1000, // 1시간
       path: '/',
     });
 
@@ -98,16 +96,6 @@ export class AuthController {
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
     }
-  }
-
-  @Get('/me')
-  @UseGuards(AuthGuard('jwt'))
-  async getProfile(@GetUser() user: UserProps) {
-    const { password, ...userWithoutPassword } = user;
-    return {
-      data: userWithoutPassword,
-      message: 'Profile fetched',
-    };
   }
 
   @Get('/kakao/signin')
