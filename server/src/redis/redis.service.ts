@@ -8,7 +8,7 @@ export class RedisService {
 
   async setRefreshToken(userId: number, token: string) {
     try {
-      const TTL = 60 * 6000 * 24 * 7; // 7일
+      const TTL = 60 * 60 * 24 * 14 * 1000;
       const key = `refresh_${userId}`;
 
       await this.cacheManager.set(key, token, TTL);
@@ -35,7 +35,7 @@ export class RedisService {
 
   async setEmailVerificationToken(email: string, token: string) {
     try {
-      const TTL = 60 * 6000 * 1;
+      const TTL = 60 * 60 * 24 * 1 * 1000;
       const key = `${email}_verification`;
       await this.cacheManager.set(key, token, TTL);
 

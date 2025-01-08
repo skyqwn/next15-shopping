@@ -8,17 +8,18 @@ import {
   Req,
   UnauthorizedException,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin-dto';
 import { SignupDto } from './dto/sign-up-dto';
 import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { RedisService } from 'src/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
-import { KakaoAuthGuard } from './auth.guard';
+import { KakaoAuthGuard } from './kakao-auth.guard';
+import { UserProps } from './type/user';
 
 @Controller('auth')
 export class AuthController {
@@ -53,7 +54,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 100000, // 1시간
+      maxAge: 60 * 60 * 24 * 14 * 1000,
       path: '/',
     });
 
@@ -63,6 +64,14 @@ export class AuthController {
   @Post('/signup')
   signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
+  }
+
+  @Delete('/signout')
+  signout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('accessToken');
+    res.clearCookie('userId');
+
+    return;
   }
 
   @Post('/refreshToken')
@@ -85,7 +94,7 @@ export class AuthController {
         path: '/',
       });
 
-      return { message: 'Token refreshed' };
+      return accessToken;
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -93,12 +102,15 @@ export class AuthController {
 
   @Get('/me')
   @UseGuards(AuthGuard('jwt'))
-  async getProfile(@GetUser() user: any) {
+  async getProfile(@GetUser() user: UserProps) {
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return {
+      data: userWithoutPassword,
+      message: 'Profile fetched',
+    };
   }
 
-  @Get('/login/kakao')
+  @Get('/kakao/signin')
   @UseGuards(KakaoAuthGuard)
   async kakaoLogin(@Res({ passthrough: true }) res: Response) {}
 

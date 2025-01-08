@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { ZodExceptionFilter } from './filters/zod-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor';
 import { GlobalExceptionFilter } from './common/exception-filter/global-exception.filter';
+import { ZodExceptionFilter } from './drizzle/filters/zod-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

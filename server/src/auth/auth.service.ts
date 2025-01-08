@@ -30,6 +30,7 @@ export class AuthService {
     private readonly redisService: RedisService,
     private readonly mailService: MailService,
   ) {}
+
   async getTokens(payload: { userId: number }) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
