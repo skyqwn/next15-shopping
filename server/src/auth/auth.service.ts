@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, Res } from '@nestjs/common';
 import { SignupDto } from './dto/sign-up-dto';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle';
@@ -48,6 +43,7 @@ export class AuthService {
 
   async signin(signinDto: SigninDto) {
     const { email, password } = signinDto;
+    const REFRESH_TOKEN_TTL = this.configService.get('REFRESH_TOKEN_TTL');
 
     const user = await this.db.query.users.findFirst({
       where: eq(users.email, email),
@@ -65,7 +61,11 @@ export class AuthService {
 
     const { accessToken, refreshToken } = await this.getTokens({ userId });
 
-    await this.redisService.setRefreshToken(userId, refreshToken);
+    await this.redisService.set(
+      `refreshToken:${userId}` + '',
+      refreshToken,
+      REFRESH_TOKEN_TTL,
+    );
 
     return { accessToken, userId };
   }
@@ -90,6 +90,7 @@ export class AuthService {
         email,
         password: hashedPassword,
         loginType: 'email',
+        role: 'USER',
         name,
         isVerified: false,
       })
@@ -99,7 +100,7 @@ export class AuthService {
   }
 
   async refreshTokens(userId: number) {
-    const refreshToken = await this.redisService.getRefreshToken(userId);
+    const refreshToken = await this.redisService.get(`refreshToken:${userId}`);
 
     if (!refreshToken) throw new UserRefreshTokenExpiredException();
 
@@ -176,6 +177,7 @@ export class AuthService {
         .values({
           email,
           loginType: 'kakao',
+          role: 'USER',
           name: nickname,
           imageUri: profile_image,
           isVerified: true,
@@ -187,7 +189,13 @@ export class AuthService {
 
     const { accessToken, refreshToken } = await this.getTokens({ userId });
 
-    await this.redisService.setRefreshToken(userId, refreshToken);
+    const REFRESH_TOKEN_TTL = this.configService.get('REFRESH_TOKEN_TTL');
+
+    await this.redisService.set(
+      `refreshToken:${userId}` + '',
+      refreshToken,
+      REFRESH_TOKEN_TTL,
+    );
 
     return { user, accessToken };
   }

@@ -1,23 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { DRIZZLE } from 'src/drizzle/drizzle.module';
+import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { users } from 'src/drizzle/schema/users.schema';
+import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateMyProfile(
+    { description, name, profileImageUris }: UpdateUserDto,
+    userId: number,
+  ) {
+    try {
+      const newProfile = await this.db
+        .update(users)
+        .set({
+          name,
+          description,
+          imageUri: profileImageUris?.[0],
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      return;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   remove(id: number) {

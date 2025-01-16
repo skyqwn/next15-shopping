@@ -22,6 +22,27 @@
       "when": 1735540328165,
       "tag": "0002_petite_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1736403735736,
+      "tag": "0003_curious_spiral",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1736900213368,
+      "tag": "0004_youthful_meteorite",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1736991120048,
+      "tag": "0005_confused_peter_parker",
+      "breakpoints": true
     }
   ]
 }

@@ -19,6 +19,6 @@ import { KakaoStrategy } from './strategies/kakao.strategy';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStragegy, KakaoStrategy],
-  exports: [PassportModule, JwtStragegy],
+  exports: [PassportModule, JwtStragegy, AuthService],
 })
 export class AuthModule {}

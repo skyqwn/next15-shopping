@@ -19,6 +19,7 @@ import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { KakaoAuthGuard } from './kakao-auth.guard';
+import { IsPublic } from 'src/common/decorators/is-public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +28,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @IsPublic()
   @Post('/signin')
   async create(
     @Body() body: SigninDto,
@@ -44,7 +46,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 1 * 1000, // 1시간
+      maxAge: 60 * 60 * 24 * 1 * 1000,
       path: '/',
     });
 
@@ -59,6 +61,7 @@ export class AuthController {
     return { message: 'Login successful' };
   }
 
+  @IsPublic()
   @Post('/signup')
   signup(@Body() body: SignupDto) {
     return this.authService.signup(body);
@@ -98,10 +101,12 @@ export class AuthController {
     }
   }
 
+  @IsPublic()
   @Get('/kakao/signin')
   @UseGuards(KakaoAuthGuard)
   async kakaoLogin(@Res({ passthrough: true }) res: Response) {}
 
+  @IsPublic()
   @Get('/kakao/callback')
   @UseGuards(KakaoAuthGuard)
   async kakaoCallback(

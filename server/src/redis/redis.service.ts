@@ -1,59 +1,71 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import { Injectable } from '@nestjs/common';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class RedisService {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  constructor(@InjectRedis() private redisClient: Redis) {}
+
+  get(key: string) {
+    return this.redisClient.get(key);
+  }
+
+  set(key: string, value: string, expire?: number) {
+    return this.redisClient.set(key, value, 'EX', expire ?? 3600);
+  }
+
+  del(key: string) {
+    return this.redisClient.del(key);
+  }
 
   async setRefreshToken(userId: number, token: string) {
     try {
-      const TTL = 60 * 60 * 24 * 14 * 1000;
-      const key = `refresh_${userId}`;
+      const ttl = 60 * 60 * 24 * 14 * 1000;
+      const key = `refreshToken:${userId}`;
 
-      await this.cacheManager.set(key, token, TTL);
-
-      const saved = await this.cacheManager.get(key);
-      const ttl = await this.cacheManager.store.ttl(key);
+      await this.redisClient.set(key, token, 'EX', ttl);
+      const saved = await this.redisClient.get(key);
+      // const ttl = await this.redisClient.store.ttl(key);
     } catch (error) {
-      console.error('Redis 저장 에러:', error);
+      console.error('redisClient 저장 에러:', error);
       throw error;
     }
   }
-  async getRefreshToken(userId: number): Promise<string | undefined> {
+  async getRefreshToken(userId: number) {
     try {
-      const key = `refresh_${userId}`;
-      return this.cacheManager.get(key);
+      const key = `refreshToken:${userId}`;
+
+      return this.redisClient.get(key);
     } catch (error) {
       console.log(error);
     }
   }
 
   async deleteRefreshToken(userId: number) {
-    await this.cacheManager.del(`refresh_${userId}`);
+    await this.redisClient.del(`refreshToken:"${userId}`);
   }
 
   async setEmailVerificationToken(email: string, token: string) {
     try {
       const TTL = 60 * 60 * 24 * 1 * 1000;
       const key = `${email}_verification`;
-      await this.cacheManager.set(key, token, TTL);
+      await this.redisClient.set(key, token, 'EX', TTL);
 
-      const saved = await this.cacheManager.get(key);
-      const ttl = await this.cacheManager.store.ttl(key);
+      const saved = await this.redisClient.get(key);
+      // const ttl = await this.redisClient.store.ttl(key);
 
-      console.log('Email verification token saved:', { key, saved, ttl });
+      console.log('Email verification token saved:', { key, saved, TTL });
     } catch (error) {
-      console.error('Redis 저장 에러:', error);
+      console.error('redisClient 저장 에러:', error);
       throw error;
     }
   }
-  async getEmailVerificationToken(email: string): Promise<string | undefined> {
+  async getEmailVerificationToken(email: string) {
     try {
       const key = `${email}_verification`;
-      return this.cacheManager.get(key);
+      return this.redisClient.get(key);
     } catch (error) {
-      console.error('Redis 조회 에러:', error);
+      console.error('redisClient 조회 에러:', error);
       throw error;
     }
   }
@@ -61,9 +73,9 @@ export class RedisService {
   async deleteEmailVerificationToken(email: string) {
     try {
       const key = `${email}_verification`;
-      await this.cacheManager.del(key);
+      await this.redisClient.del(key);
     } catch (error) {
-      console.error('Redis 삭제 에러:', error);
+      console.error('redisClient 삭제 에러:', error);
       throw error;
     }
   }

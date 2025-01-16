@@ -18,8 +18,18 @@ export class MailService {
   ) {}
 
   async sendVerificationEmail(email: string) {
+    const EMAIL_VERIFICATION_TOKEN_TTL = this.configService.get<number>(
+      'EMAIL_VERIFICATION_TOKEN_TTL',
+    );
+
     try {
       const verificationToken = crypto.randomBytes(32).toString('hex');
+
+      await this.redisService.set(
+        `emailToken:${email}`,
+        verificationToken,
+        EMAIL_VERIFICATION_TOKEN_TTL,
+      );
 
       await this.redisService.setEmailVerificationToken(
         email,
@@ -58,7 +68,7 @@ export class MailService {
   }
 
   async verifyEmail(email: string) {
-    const checked = await this.redisService.getEmailVerificationToken(email);
+    const checked = await this.redisService.get(`emailToken:${email}`);
 
     if (!checked) {
       throw new UnauthorizedException(
