@@ -22,7 +22,7 @@ export default function Dashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axiosInstance.get("/auth/me");
+        const response = await axiosInstance.get("/user/me");
         console.log(response);
         setUser(response.data);
         console.log("현재 로그인된 사용자:", response.data);

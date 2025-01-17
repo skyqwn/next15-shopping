@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
 
 import {
   Form,
@@ -16,12 +15,12 @@ import {
 } from "../ui/form";
 import { Button } from "../ui/button";
 
-import { SigninSchema, SigninType } from "@/schemas/sign-in-schema";
 import { usePasswordEyes } from "@/hooks/common/usePasswordEyes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAuth from "@/hooks/queries/useAuth";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
+import { SigninSchema, SigninType } from "@/schemas";
 
 const LoginForm = () => {
   const form = useForm<SigninType>({

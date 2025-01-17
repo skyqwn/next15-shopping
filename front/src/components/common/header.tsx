@@ -5,7 +5,7 @@ import Image from "next/image";
 const Header = () => {
   const routes = [
     { path: "/", label: "Home" },
-    { path: "/chat", label: "Chat" },
+    { path: "/chat", label: "Shop" },
     { path: "/community", label: "Style" },
   ];
 

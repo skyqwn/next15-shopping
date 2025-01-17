@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SigninSchema } from "./sign-in-schema";
+import { SigninSchema } from "./sign-in.schema";
 
 export const SignupSchema = SigninSchema.extend({
   name: z.string(),

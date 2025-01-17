@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
+import { createInit, GET, POST } from "./api/httpMethod";
 interface Routes {
   [key: string]: boolean;
 }
@@ -33,6 +34,28 @@ export async function middleware(request: NextRequest) {
     isPublicUrl: exists,
   });
 
+  if (pathname.startsWith("/admin")) {
+    if (!accessToken || !userId) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+
+    try {
+      const response = await POST(
+        "http://localhost:4000/api/user/checkIsAdmin",
+        createInit({ userId }),
+      );
+
+      if (!response.success) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
+      return NextResponse.next();
+    } catch (error) {
+      console.error("Role verification error:", error);
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+  }
+
   if (!exists && !accessToken && userId) {
     try {
       // 리프레시 토큰 요청
@@ -47,7 +70,9 @@ export async function middleware(request: NextRequest) {
           body: JSON.stringify({ userId }),
         },
       );
-
+      if (!response.ok) {
+        NextResponse.redirect(new URL("/auth/login"));
+      }
       if (response.ok) {
         // const res = NextResponse.redirect(request.url);
         // return res;
@@ -75,7 +100,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === "/" || pathname === "/community") {
-    if (!accessToken && userId) {
+    if ((!accessToken && userId) || (accessToken && !userId)) {
       try {
         // 리프레시 토큰 요청
         const response = await fetch(
@@ -89,10 +114,11 @@ export async function middleware(request: NextRequest) {
             body: JSON.stringify({ userId }),
           },
         );
+        if (!response.ok) {
+          NextResponse.redirect(new URL("/auth/login"));
+        }
 
         if (response.ok) {
-          // const res = NextResponse.redirect(request.url);
-          // return res;
           const newAccessToken = await response.json();
 
           console.log("새로운토큰:", newAccessToken);

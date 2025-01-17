@@ -26,18 +26,18 @@ const TabBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/chat" className="flex flex-col items-center">
+          <Link href="/shop" className="flex flex-col items-center">
             <Image
               src={
-                pathname === "/chat"
+                pathname === "/shop"
                   ? "/svg/chat-fill.svg"
                   : "/svg/chat-outline.svg"
               }
               width={26}
               height={26}
-              alt="chat"
+              alt="shop"
             />
-            <span className="text-xs">Chat</span>
+            <span className="text-xs">Shop</span>
           </Link>
         </li>
         <li>

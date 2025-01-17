@@ -14,12 +14,12 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { SignupSchema, SignupType } from "@/schemas/sign-up-schema";
 import { usePasswordEyes } from "@/hooks/common/usePasswordEyes";
 import useAuth from "@/hooks/queries/useAuth";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
+import { SignupSchema, SignupType } from "@/schemas";
 
 const EmailRegisterForm = () => {
   const form = useForm<SignupType>({
