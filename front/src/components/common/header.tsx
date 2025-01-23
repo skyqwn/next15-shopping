@@ -21,11 +21,9 @@ const Header = () => {
           </Link>
         </div>
         <ul className="flex h-6 w-full items-center justify-between py-2 md:h-10">
-          <li className="text-2xl font-bold text-primary md:text-4xl">
-            <Link href={"/"}>
-              <h1>NEXT</h1>
-            </Link>
-          </li>
+          <Link href={"/"} className="relative size-10 md:size-14">
+            <Image src={"/cicardi-logo.png"} alt="cicardi" fill />
+          </Link>
           <div className="flex gap-4">
             <li className="flex gap-5">
               {routes.map((page) => (

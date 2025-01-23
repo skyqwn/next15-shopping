@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { createInit, GET, POST } from "./api/httpMethod";
+import { END_POINTS } from "./constants";
 interface Routes {
   [key: string]: boolean;
 }
@@ -34,27 +35,27 @@ export async function middleware(request: NextRequest) {
     isPublicUrl: exists,
   });
 
-  if (pathname.startsWith("/admin")) {
-    if (!accessToken || !userId) {
-      return NextResponse.redirect(new URL("/auth/login", request.url));
-    }
+  // if (pathname.startsWith("/admin")) {
+  //   if (!accessToken || !userId) {
+  //     return NextResponse.redirect(new URL("/auth/login", request.url));
+  //   }
 
-    try {
-      const response = await POST(
-        "http://localhost:4000/api/user/checkIsAdmin",
-        createInit({ userId }),
-      );
+  //   try {
+  //     const response = await POST(
+  //       END_POINTS.CHECK_ISADMIN,
+  //       createInit({ userId }),
+  //     );
 
-      if (!response.success) {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
+  //     if (!response.success) {
+  //       return NextResponse.redirect(new URL("/", request.url));
+  //     }
 
-      return NextResponse.next();
-    } catch (error) {
-      console.error("Role verification error:", error);
-      return NextResponse.redirect(new URL("/auth/login", request.url));
-    }
-  }
+  //     return NextResponse.next();
+  //   } catch (error) {
+  //     console.error("Role verification error:", error);
+  //     return NextResponse.redirect(new URL("/auth/login", request.url));
+  //   }
+  // }
 
   if (!exists && !accessToken && userId) {
     try {
@@ -74,8 +75,6 @@ export async function middleware(request: NextRequest) {
         NextResponse.redirect(new URL("/auth/login"));
       }
       if (response.ok) {
-        // const res = NextResponse.redirect(request.url);
-        // return res;
         const newAccessToken = await response.json();
         console.log(newAccessToken);
 

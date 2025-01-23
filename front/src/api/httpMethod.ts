@@ -16,10 +16,14 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ) {
-  const response = await fetch(`${uri}`, init);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
+    init,
+  );
 
   try {
     const { result } = await response.json();
+    console.log("리졀트", result);
     return result as T;
   } catch (error) {
     console.error(error);

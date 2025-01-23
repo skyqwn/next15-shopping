@@ -25,21 +25,19 @@ import { ProfileSchema, ProfileType } from "@/schemas";
 
 const ProfileForm = () => {
   const { data: userData } = useMyProfileQuery();
-  const { data } = userData;
   const { handleImageChange, images } = useImagePicker({
     initialImages: [],
     isProfile: true,
   });
+
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: data.name,
+      name: userData?.data.name || "",
       profileImageUris: [],
-      description: data.description || "",
+      description: userData?.data.description || "",
     },
   });
-
-  console.log(data);
 
   useEffect(() => {
     //TODO type error 해결할것;;
@@ -55,6 +53,7 @@ const ProfileForm = () => {
     console.log(data);
     axiosInstance.patch("/user/me/profile", data);
   };
+
   return (
     <div>
       <section className="max-w-[520px] flex-1">
@@ -62,9 +61,9 @@ const ProfileForm = () => {
           <h2 className="text-2xl font-bold">프로필 관리</h2>
         </div>
         <article className="mb-8 flex gap-4">
-          {data.imageUri ? (
+          {userData?.data.imageUri ? (
             <div className="relative size-24 rounded-full">
-              <Image src={data.imageUri} alt="pic" fill />
+              <Image src={userData?.data.imageUri} alt="pic" fill />
             </div>
           ) : (
             <NoUserImage />

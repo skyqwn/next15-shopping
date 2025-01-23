@@ -15,4 +15,5 @@ export interface UserInfoProps {
   loginType: string;
   name: string;
   updatedAt: string;
+  role: string;
 }
