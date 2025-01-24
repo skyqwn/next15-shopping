@@ -5,6 +5,15 @@ import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionCell from "./action-cell";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PlusCircle } from "lucide-react";
+import ProductVariant from "./product-variant";
+
 export type ProductColumn = {
   title: string;
   price: number;
@@ -25,6 +34,52 @@ export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "variants",
     header: "Variants",
+    cell: ({ row }) => {
+      const variants = row.getValue("variants") as any;
+      console.log("variants", variants);
+      return (
+        <div>
+          {variants.map((variant: any) => {
+            <div key={variant.id}>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ProductVariant
+                      productId={variant.productId}
+                      variant={variant}
+                      editMode={true}
+                    >
+                      <div
+                        className="size-5 rounded-full"
+                        key={variant.id}
+                        style={{ background: variant.color }}
+                      />
+                    </ProductVariant>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add to library</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>;
+          })}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <ProductVariant editMode={false} productId={row.original.id}>
+                    <PlusCircle className="size-5" />
+                  </ProductVariant>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new product Variant</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "price",

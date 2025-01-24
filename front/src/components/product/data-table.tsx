@@ -5,6 +5,10 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  SortingState,
+  getPaginationRowModel,
+  ColumnFiltersState,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -15,6 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useState } from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -25,14 +33,30 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    state: {
+      sorting,
+      columnFilters,
+    },
   });
 
   return (
     <div className="rounded-md border">
+      <Input
+        placeholder="찾는 제품명을 입력해보세요..."
+        value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+        onChange={(e) =>
+          table.getColumn("title")?.setFilterValue(e.target.value)
+        }
+      />
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -75,6 +99,24 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <div className="mt-2 flex items-center justify-end gap-2">
+        <Button
+          variant={"outline"}
+          disabled={!table.getCanPreviousPage()}
+          onClick={() => table.previousPage()}
+        >
+          <ChevronLeftIcon className="size-4" />
+          <span>이전 페이지</span>
+        </Button>
+        <Button
+          variant={"outline"}
+          disabled={!table.getCanNextPage()}
+          onClick={() => table.nextPage()}
+        >
+          <ChevronRightIcon className="size-4" />
+          <span>다음 페이지</span>
+        </Button>
+      </div>
     </div>
   );
 }

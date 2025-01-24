@@ -49,6 +49,7 @@ const ProfileForm = () => {
     // window.confirm("정말 삭제하시겠습니까?");
   };
 
+  //TODO: axios 제거
   const onSubmit = async (data: ProfileType) => {
     console.log(data);
     axiosInstance.patch("/user/me/profile", data);
