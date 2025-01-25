@@ -43,7 +43,6 @@ function useImagePicker({
     const formData = new FormData();
     const fileArray = isProfile ? [files[0]] : Array.from(files).slice(0, 5);
 
-    //blob url 생성 후 previewImages에 추가
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setPreviewImages((prev) => [...prev, ...newUrls]);
 
@@ -71,7 +70,7 @@ function useImagePicker({
 
   const handleFileRemove = (url: string) => {
     if (isProfile) {
-      setValue(fieldName, null); // 프로필은 단일 값이므로 null로 초기화
+      setValue(fieldName, null);
     } else {
       const currentImages = getValues(fieldName) || [];
       console.log("currentImages", currentImages);
