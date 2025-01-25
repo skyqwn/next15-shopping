@@ -32,7 +32,7 @@ const ProfileForm = () => {
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
       name: userData?.data.name || "",
-      profileImageUris: [],
+      profileImageUris: userData?.data.imageUri || "",
       description: userData?.data.description || "",
     },
   });
@@ -40,7 +40,7 @@ const ProfileForm = () => {
   //TODO: axios 제거
   const onSubmit = async (data: ProfileType) => {
     console.log(data);
-    // axiosInstance.patch("/user/me/profile", data);
+    axiosInstance.patch("/user/me/profile", data);
   };
 
   return (

@@ -2,19 +2,11 @@
 
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -28,18 +20,23 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 
 const VariantImages = () => {
-  const { control } = useFormContext<VariantType>();
+  const { control, setValue, getValues } = useFormContext<VariantType>();
 
-  const { fields, remove, append, move } = useFieldArray({
+  const { fields, move } = useFieldArray({
     control,
     name: "variantImages",
   });
 
   const { handleImageChange, handleFileRemove } = useImagePicker({
-    fields,
-    append,
-    remove,
+    fieldName: "variantImages",
+    setValue,
+    getValues,
   });
+
+  const image = getValues("variantImages");
+
+  console.log("이미지", image);
+  console.log("필드", fields);
 
   return (
     <div>
@@ -61,26 +58,6 @@ const VariantImages = () => {
               <label htmlFor="file-input" className="cursor-pointer">
                 <Camera className="w-full rounded-md border p-2" size={100} />
               </label>
-
-              {/* 스크롤 가능한 사진 리스트 */}
-              {/* <div className="scrollbar-hide flex min-w-0 gap-4 overflow-x-auto">
-                {previewImages.map((url, index) => (
-                  <div key={index} className="relative flex-shrink-0">
-                    <img
-                      src={url}
-                      alt={`Preview ${index}`}
-                      className="h-24 w-24 rounded-md object-cover"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-0 top-0 rounded-full bg-black p-1 text-white"
-                      onClick={() => handleFileRemove(index)}
-                    >
-                      <XIcon size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div> */}
             </div>
 
             {/* <FormError message={errors.picture?.message} /> */}
@@ -121,7 +98,10 @@ const VariantImages = () => {
                   <TableCell className="text-right">
                     <Button
                       variant={"ghost"}
-                      onClick={(e) => handleFileRemove(index)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleFileRemove(field.url);
+                      }}
                       className="scale-75"
                     >
                       <Trash className="h-4" />
