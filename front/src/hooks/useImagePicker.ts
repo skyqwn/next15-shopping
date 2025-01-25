@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useMutateImages from "./queries/useMutateImages";
+import { Control, FieldValues, useFieldArray } from "react-hook-form";
+import { url } from "inspector";
 
 interface ImageUri {
   id?: number;
@@ -9,15 +11,18 @@ interface ImageUri {
 }
 
 interface UseImagePickerProps {
-  initialImages: ImageUri[];
+  fields: any[];
+  append: (value: any) => void;
+  remove: (index: number) => void;
   isProfile?: boolean;
 }
 
 function useImagePicker({
-  initialImages = [],
   isProfile = false,
+  fields,
+  append,
+  remove,
 }: UseImagePickerProps) {
-  const [images, setImages] = useState(initialImages);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
 
   const uploadImages = useMutateImages();
@@ -32,8 +37,6 @@ function useImagePicker({
     const formData = new FormData();
     const fileArray = isProfile ? [files[0]] : Array.from(files).slice(0, 5);
 
-    console.log("파일 어레이: ", fileArray);
-
     //blob url 생성 후 previewImages에 추가
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setPreviewImages((prev) => [...prev, ...newUrls]);
@@ -44,8 +47,30 @@ function useImagePicker({
 
     uploadImages.mutate(formData, {
       onSuccess: (data) => {
-        console.log("upload된 데이타", data);
-        setImages((prev) => [...prev, ...data]);
+        // setImages((prev) => {
+        //   const newImages = data.filter(
+        //     (image: ImageUri) =>
+        //       !prev.some((existingImage) => existingImage.url === image.url),
+        //   );
+        //   return isProfile ? newImages : [...prev, ...newImages];
+        // });
+        // 필드에 업로드된 이미지를 추가
+        if (isProfile) {
+          remove(0); // 프로필 이미지이므로 항상 첫 번째 필드만 남김
+          data.slice(0, 1).forEach((uploadedImage: any) => {
+            append({
+              url: uploadedImage.url,
+            });
+          });
+        } else {
+          data.forEach((uploadedImage: any) => {
+            append({
+              url: uploadedImage.url,
+              size: uploadedImage.size,
+              fileName: uploadedImage.fileName,
+            });
+          });
+        }
       },
       onError: (error) => {
         console.error("업로드 실패: ", error);
@@ -53,11 +78,11 @@ function useImagePicker({
     });
   };
 
-  const handleFileRemove = (url: string, index: number) => {
-    URL.revokeObjectURL(url);
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+  const handleFileRemove = (index: number) => {
+    remove(index);
   };
-  return { handleImageChange, images, previewImages, handleFileRemove };
+
+  return { handleImageChange, previewImages, handleFileRemove };
 }
 
 export default useImagePicker;

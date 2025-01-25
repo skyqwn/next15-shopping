@@ -44,7 +44,6 @@ const ProductVariant = ({
       tags: [],
       variantImages: [],
       color: "#000000",
-      // editMode,
       id: undefined,
       productId,
       productType: "흰셔츠",
@@ -113,6 +112,8 @@ const ProductVariant = ({
                   </FormItem>
                 )}
               />
+
+              {/* VariantImage설정 */}
               <VariantImages />
             </div>
             <Button type="submit">변경하기 </Button>

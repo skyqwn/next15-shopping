@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -22,13 +21,12 @@ import axiosInstance from "@/api/axios";
 import useImagePicker from "@/hooks/useImagePicker";
 import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUser";
 import { ProfileSchema, ProfileType } from "@/schemas";
+import ProfileImage from "./profile-image";
 
 const ProfileForm = () => {
   const { data: userData } = useMyProfileQuery();
-  const { handleImageChange, images } = useImagePicker({
-    initialImages: [],
-    isProfile: true,
-  });
+
+  console.log("userData", userData);
 
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
@@ -39,20 +37,10 @@ const ProfileForm = () => {
     },
   });
 
-  useEffect(() => {
-    //TODO type error 해결할것;;
-    //@ts-ignore
-    form.setValue("profileImageUris", images);
-  }, [images]);
-
-  const handleImageDelete = () => {
-    // window.confirm("정말 삭제하시겠습니까?");
-  };
-
   //TODO: axios 제거
   const onSubmit = async (data: ProfileType) => {
     console.log(data);
-    axiosInstance.patch("/user/me/profile", data);
+    // axiosInstance.patch("/user/me/profile", data);
   };
 
   return (
@@ -61,49 +49,14 @@ const ProfileForm = () => {
         <div className="mb-10 hidden md:block">
           <h2 className="text-2xl font-bold">프로필 관리</h2>
         </div>
-        <article className="mb-8 flex gap-4">
-          {userData?.data.imageUri ? (
-            <div className="relative size-24 rounded-full">
-              <Image src={userData?.data.imageUri} alt="pic" fill />
-            </div>
-          ) : (
-            <NoUserImage />
-          )}
 
-          <div className="flex flex-col justify-center gap-2">
-            <div className="flex gap-2">
-              <h2 className="text-xl font-bold">이름</h2>
-              <span className="text-xs text-gray-500">
-                {userData?.data.name}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="file-input"
-                name="file-input"
-                accept="image/*"
-                type="file"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-              <label htmlFor="file-input">
-                <span className="cursor-pointer rounded-md border border-slate-300 p-[10px] text-xs">
-                  이미지 변경
-                </span>
-              </label>
-              <span
-                onClick={handleImageDelete}
-                className="cursor-pointer rounded-md border border-slate-300 p-[10px] text-xs text-red-500"
-              >
-                삭제
-              </span>
-            </div>
-          </div>
-        </article>
         <h2 className="mb-2 text-xl font-bold">프로필 정보</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div>
+              {/* 프로파일 이미지 설정 */}
+              <ProfileImage />
+
               <FormField
                 control={form.control}
                 name="name"
