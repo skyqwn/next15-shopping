@@ -64,6 +64,7 @@ export class AuthController {
   @IsPublic()
   @Post('/signup')
   signup(@Body() body: SignupDto) {
+    console.log('body', body);
     return this.authService.signup(body);
   }
 
@@ -75,6 +76,7 @@ export class AuthController {
     return;
   }
 
+  @IsPublic()
   @Post('/refreshToken')
   async refresh(
     @Body() { userId }: RefreshTokenDto,

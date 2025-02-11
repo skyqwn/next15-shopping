@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class JwtStragegy extends PassportStrategy(Strategy) {
+export class JwtStragegy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     @Inject(DRIZZLE) private db: DrizzleDB,
     private jwtService: JwtService,
@@ -30,6 +30,8 @@ export class JwtStragegy extends PassportStrategy(Strategy) {
     const user = await this.db.query.users.findFirst({
       where: eq(users.id, userId),
     });
+
+    console.log('strategy.ts', user);
 
     if (!user) {
       throw new UnauthorizedException('User not found');

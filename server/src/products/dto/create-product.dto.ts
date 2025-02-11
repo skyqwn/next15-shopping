@@ -2,11 +2,14 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 const createProductSchema = z.object({
-  productName: z.string(),
-  brandName: z.string(),
+  title: z.string(),
   description: z.string(),
-  price: z.number(),
-  imageUris: z.array(z.string()).optional(),
+  price: z.coerce
+    .number({ invalid_type_error: '가격은 숫자타입으로 입력해야 합니다.' })
+    .positive({ message: '가격은 0보다 커야합니다.' }),
 });
+const patchProductSchema = createProductSchema.partial();
 
 export class CreateProductDto extends createZodDto(createProductSchema) {}
+
+export class PatchProductDto extends createZodDto(patchProductSchema) {}

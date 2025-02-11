@@ -52,7 +52,11 @@ export class ImagesController {
     const uris = files.map((file) => {
       const fileName = getUniqueFileName(file, uuid);
 
-      return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/original/${fileName}`;
+      return {
+        url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/original/${fileName}`,
+        fileName,
+        size: file.size,
+      };
     });
 
     return uris;

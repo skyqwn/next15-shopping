@@ -19,6 +19,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
 
+    console.log('isPublic:', isPublic);
+
+    console.log('유저정보', user);
     const req = context.switchToHttp().getRequest();
 
     if (isPublic) {
@@ -26,10 +29,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
+    console.log(
+      'Token in request cookies jwt-auth.guard.ts:',
+      req?.cookies?.accessToken,
+    );
+
+    console.log('User in handleRequest jwt-auth.guard.ts:', user);
+    console.log('Error in handleRequest:', err);
+
     if (err || !user) {
-      throw err || new UnauthorizedException('유효하지 않은 토큰입니다.');
+      throw err || new UnauthorizedException('가드에서 에러입니다.');
     }
 
     return user;
+  }
+
+  async validate(payload: { userId: number }) {
+    console.log('jwt-auth-guard.ts :', payload); // 여기가 호출되지 않는 경우 문제 발생
+    // 사용자 인증 로직
   }
 }

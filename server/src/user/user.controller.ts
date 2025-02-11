@@ -14,13 +14,13 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserSelectType } from 'src/drizzle/schema/users.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AdminGuard } from './guard/admin.guard';
+import { IsPublic } from 'src/common/decorators/is-public.decorator';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
-@UseGuards(AuthGuard('jwt'))
-@Controller('user')
+@Controller('/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(AdminGuard)
   @Get('/me')
   async getMyProfile(@GetUser() user: UserSelectType) {
     const { password, ...userWithoutPassword } = user;
@@ -30,6 +30,10 @@ export class UserController {
     };
   }
 
+  @Post('/checkIsAdmin')
+  async checkedIsAdmin(@Body() { userId }: any) {
+    return await this.userService.checkIsAdmin(+userId);
+  }
   @Patch('/me/profile')
   async updateMyProfile(
     @Body() updateUserDto: UpdateUserDto,
