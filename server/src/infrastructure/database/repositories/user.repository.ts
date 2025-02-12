@@ -1,0 +1,137 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import { DRIZZLE } from 'src/drizzle/drizzle.module';
+import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { BaseRepository } from './base.repository';
+import { UserModel } from 'src/domain/model/user.model';
+import { UserInsertType, users } from 'src/drizzle/schema/schema';
+import { AppConflictException } from 'src/domain/exceptions/app-conflict.exception';
+import { Effect, pipe } from 'effect';
+import { ErrorCodes } from 'src/common/error';
+import { AppNotFoundException } from 'src/domain/exceptions';
+import { eq } from 'drizzle-orm';
+import { UserBaseRepository } from './user-base-repository';
+
+@Injectable()
+export class UserRepository
+  implements UserBaseRepository<UserInsertType, UserModel>
+{
+  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  create(data: UserInsertType): Effect.Effect<UserModel, AppConflictException> {
+    const userPromise = Effect.tryPromise(() =>
+      this.db.insert(users).values(data).returning(),
+    );
+
+    return pipe(
+      userPromise,
+      Effect.map(([user]) => UserModel.from(user)),
+      Effect.catchAll(() =>
+        Effect.fail(new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS)),
+      ),
+    );
+  }
+  update(id: number, data: UserInsertType): Effect.Effect<UserModel, Error> {
+    const userPromise = Effect.tryPromise(() =>
+      this.db.update(users).set(data).where(eq(users.id, id)).returning(),
+    );
+
+    return pipe(
+      userPromise,
+      Effect.map(([user]) => UserModel.from(user)),
+      Effect.catchAll(() =>
+        Effect.fail(new AppNotFoundException(ErrorCodes.USER_NOT_FOUND)),
+      ),
+    );
+  }
+
+  delete(id: number): Effect.Effect<void, Error> {
+    const deletePromise = Effect.tryPromise(() =>
+      this.db.delete(users).where(eq(users.id, id)),
+    );
+
+    return pipe(
+      deletePromise,
+      Effect.map(() => void 0),
+    );
+  }
+
+  findOneBy(id: number): Effect.Effect<UserModel | null, Error> {
+    const userPromise = Effect.tryPromise(() =>
+      this.db.query.users.findFirst({
+        where: eq(users.id, id),
+      }),
+    );
+
+    return pipe(
+      userPromise,
+      Effect.map((user) => (user ? UserModel.from(user) : null)),
+    );
+  }
+
+  getById(id: number): Effect.Effect<UserModel, AppNotFoundException> {
+    const userPromise = Effect.tryPromise(() =>
+      this.db.query.users.findFirst({
+        where: eq(users.id, id),
+      }),
+    );
+
+    return pipe(
+      userPromise,
+      Effect.map(UserModel.from),
+      Effect.catchAll(() =>
+        Effect.fail(new AppNotFoundException(ErrorCodes.USER_NOT_FOUND)),
+      ),
+    );
+  }
+
+  getByEmail(
+    email: string,
+  ): Effect.Effect<UserModel | null, AppNotFoundException> {
+    const userPromise = Effect.tryPromise(() =>
+      this.db.query.users.findFirst({
+        where: eq(users.email, email),
+      }),
+    );
+
+    return pipe(
+      userPromise,
+      Effect.map(UserModel.from),
+      Effect.catchAll(() =>
+        Effect.fail(new AppNotFoundException(ErrorCodes.USER_NOT_FOUND)),
+      ),
+    );
+  }
+
+  checkEmailExists(email: string): Effect.Effect<void, AppConflictException> {
+    const emailCheckPromise = Effect.tryPromise(() =>
+      this.db.query.users.findFirst({
+        where: eq(users.email, email),
+      }),
+    );
+
+    return pipe(
+      emailCheckPromise,
+      Effect.map((user) => {
+        if (user) {
+          throw new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS);
+        }
+        return void 0;
+      }),
+      Effect.catchAll(() =>
+        Effect.fail(new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS)),
+      ),
+    );
+  }
+
+  findAll(): Effect.Effect<UserModel[], Error> {
+    const usersPromise = Effect.tryPromise(() =>
+      this.db.query.users.findMany(),
+    );
+
+    return pipe(
+      usersPromise,
+      Effect.map((users) => users.map(UserModel.from)),
+    );
+  }
+}

@@ -16,6 +16,10 @@ import { ProductsModule } from './products/products.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 import { RolesGuard } from './user/guard/roles.guard';
+import { PresentationModule } from './presentation/presentation.module';
+import { ApplicationModule } from './application/application.module';
+import { DomainModule } from './domain/domain.module';
+import { InfrastructureModule } from './infrastructure/infrastructure.module';
 
 @Module({
   imports: [
@@ -27,6 +31,10 @@ import { RolesGuard } from './user/guard/roles.guard';
     UserModule,
     ImagesModule,
     ProductsModule,
+    PresentationModule,
+    ApplicationModule,
+    InfrastructureModule,
+    DomainModule,
   ],
   providers: [
     ConfigService,
