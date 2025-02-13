@@ -1,8 +1,9 @@
-import { UserService } from 'src/domain/service/user.service';
-import { UserSignUpCriteria } from '../dtos/criteria/user/user-sign-up-criteria';
-import { SignUpCommand } from 'src/domain/dtos';
 import { Injectable } from '@nestjs/common';
 import { Effect } from 'effect';
+
+import { UserService } from 'src/domain/service/user.service';
+import { SignInCommand, SignUpCommand } from 'src/domain/dtos';
+import { UserSignInCriteria, UserSignUpCriteria } from '../dtos/criteria';
 
 @Injectable()
 export class UserFacade {
@@ -10,9 +11,22 @@ export class UserFacade {
 
   signUp(userSignUpCriteria: UserSignUpCriteria) {
     const userSignUpEffect = this.userService.signUp(
-      new SignUpCommand(userSignUpCriteria),
+      new SignUpCommand({
+        email: userSignUpCriteria.email,
+        password: userSignUpCriteria.password,
+        name: userSignUpCriteria.name,
+      }),
     );
 
     return Effect.runPromise(userSignUpEffect);
+  }
+
+  signIn(userSignInCriteria: UserSignInCriteria) {
+    return this.userService.signIn(
+      new SignInCommand({
+        email: userSignInCriteria.email,
+        password: userSignInCriteria.password,
+      }),
+    );
   }
 }

@@ -15,7 +15,6 @@ import { UserSelectType } from 'src/drizzle/schema/users.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AdminGuard } from './guard/admin.guard';
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('/user')
 export class UserController {
