@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { pipe, Effect } from 'effect';
+import * as bcrypt from 'bcrypt';
 
 import { UserRepository } from 'src/infrastructure/database/repositories/user.repository';
-import { SignInCommand, SignUpCommand, UserInfo } from '../dtos';
+import {
+  RefreshTokenCommand,
+  SignInCommand,
+  SignUpCommand,
+  UserInfo,
+} from '../dtos';
 import { AppAuthException, AppNotFoundException } from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenCacheStore } from 'src/infrastructure/cache';
 
 @Injectable()
@@ -76,6 +81,40 @@ export class UserService {
           ),
         );
       }),
+    );
+  }
+
+  refreshToken(refreshTokenComman: RefreshTokenCommand) {
+    return pipe(
+      this.refreshTokenCacheStore.findBy(refreshTokenComman.userId),
+      Effect.flatMap((storedToken) =>
+        storedToken
+          ? Effect.succeed(storedToken)
+          : Effect.fail(new AppAuthException(ErrorCodes.USER_TOKEN_EXPIRED)),
+      ),
+      Effect.flatMap((storedToken) =>
+        Effect.try({
+          try: () =>
+            this.jwtService.verify(storedToken, {
+              secret: this.configService.get('JWT_SECRET'),
+            }),
+          catch: () => new AppAuthException(ErrorCodes.USER_TOKEN_EXPIRED),
+        }),
+      ),
+      Effect.map((decoded) => ({
+        userId: decoded.userId,
+      })),
+      Effect.flatMap((payload) =>
+        Effect.succeed(
+          this.jwtService.sign(payload, {
+            secret: this.configService.get('JWT_SECRET'),
+            expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
+          }),
+        ),
+      ),
+      Effect.map((newAccessToken) => ({
+        accessToken: newAccessToken,
+      })),
     );
   }
 }

@@ -16,6 +16,7 @@ import { ApplicationModule } from './application/application.module';
 import { DomainModule } from './domain/domain.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtAuthGuard } from './infrastructure/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -35,6 +36,13 @@ import { JwtModule } from '@nestjs/jwt';
       }),
       inject: [ConfigService],
     }),
+  ],
+  providers: [
+    ConfigService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {

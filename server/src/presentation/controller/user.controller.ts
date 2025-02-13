@@ -1,15 +1,20 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Effect, pipe } from 'effect';
-import { Response } from 'express';
+import { response, Response } from 'express';
 
-import { SigninRequestDto, SignupRequestDto } from '../dtos/user/request';
+import {
+  RefreshTokenRequestDto,
+  SigninRequestDto,
+  SignupRequestDto,
+} from '../dtos/user/request';
 import { UserFacade } from 'src/application/facades';
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
 
-@Controller('/test')
 @IsPublic()
+@Controller('/test')
 export class UserController {
   constructor(private readonly userFacade: UserFacade) {}
+
   @Post('/signin')
   signin(
     @Body() signInRequestDto: SigninRequestDto,
@@ -41,5 +46,28 @@ export class UserController {
   @Post('/one')
   test(@Body() sign: any) {
     return console.log('원!');
+  }
+
+  @Post('/refresh-token')
+  refreshToken(
+    @Body() refreshTokenRequestDto: RefreshTokenRequestDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return pipe(
+      this.userFacade.refreshToken(refreshTokenRequestDto),
+      Effect.map((result) => {
+        response.cookie('accessToken', result.accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/',
+        });
+
+        return {
+          accessToken: result.accessToken,
+        };
+      }),
+      Effect.runPromise,
+    );
   }
 }

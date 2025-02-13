@@ -4,6 +4,7 @@ import { Effect } from 'effect';
 import { UserService } from 'src/domain/service/user.service';
 import { SignInCommand, SignUpCommand } from 'src/domain/dtos';
 import { UserSignInCriteria, UserSignUpCriteria } from '../dtos/criteria';
+import { RefreshTokenCriteria } from '../dtos/criteria/user/refresh-token-criteria';
 
 @Injectable()
 export class UserFacade {
@@ -28,5 +29,9 @@ export class UserFacade {
         password: userSignInCriteria.password,
       }),
     );
+  }
+
+  refreshToken(refreshTokenCriteria: RefreshTokenCriteria) {
+    return this.userService.refreshToken(refreshTokenCriteria);
   }
 }
