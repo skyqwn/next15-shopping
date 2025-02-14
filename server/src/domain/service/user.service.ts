@@ -10,10 +10,15 @@ import {
   SignUpCommand,
   UserInfo,
 } from '../dtos';
-import { AppAuthException, AppNotFoundException } from '../exceptions';
+import {
+  AppAuthException,
+  AppConflictException,
+  AppNotFoundException,
+} from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenCacheStore } from 'src/infrastructure/cache';
+import { KakaoProfile } from 'src/infrastructure/auth/strategies';
 
 @Injectable()
 export class UserService {
@@ -81,6 +86,90 @@ export class UserService {
           ),
         );
       }),
+    );
+  }
+
+  validateKakaoUser(profile: KakaoProfile) {
+    return pipe(
+      this.userRepository.getByEmail(profile.email),
+      Effect.flatMap((existingUser) => {
+        if (existingUser) {
+          return pipe(
+            this.userRepository.update(existingUser.id, {
+              loginType: 'kakao',
+              imageUri: profile.profile_image,
+              isVerified: true,
+            }),
+            Effect.map((user) => {
+              const payload = { userId: user.id };
+              const accessToken = this.jwtService.sign(payload, {
+                secret: this.configService.get('JWT_SECRET'),
+                expiresIn: this.configService.get(
+                  'JWT_ACCESS_TOKEN_EXPIRATION',
+                ),
+              });
+
+              const refreshToken = this.jwtService.sign(payload, {
+                secret: this.configService.get('JWT_SECRET'),
+                expiresIn: this.configService.get(
+                  'JWT_REFRESH_TOKEN_EXPIRATION',
+                ),
+              });
+
+              return pipe(
+                this.refreshTokenCacheStore.cache(
+                  user.id.toString(),
+                  refreshToken,
+                ),
+                Effect.map(() => ({
+                  accessToken,
+                  user: UserInfo.from(user),
+                })),
+              );
+            }),
+            Effect.flatten,
+          );
+        }
+
+        // 새 사용자 생성
+        return pipe(
+          this.userRepository.create({
+            email: profile.email,
+            name: profile.nickname,
+            imageUri: profile.profile_image,
+            loginType: 'kakao',
+            isVerified: true,
+            role: 'USER',
+          }),
+          Effect.map((user) => {
+            const payload = { userId: user.id };
+            const accessToken = this.jwtService.sign(payload, {
+              secret: this.configService.get('JWT_SECRET'),
+              expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
+            });
+
+            const refreshToken = this.jwtService.sign(payload, {
+              secret: this.configService.get('JWT_SECRET'),
+              expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
+            });
+
+            return pipe(
+              this.refreshTokenCacheStore.cache(
+                user.id.toString(),
+                refreshToken,
+              ),
+              Effect.map(() => ({
+                accessToken,
+                user: UserInfo.from(user),
+              })),
+            );
+          }),
+          Effect.flatten,
+        );
+      }),
+      Effect.catchAll((error) =>
+        Effect.fail(new AppAuthException(ErrorCodes.USER_AUTH_FAILED)),
+      ),
     );
   }
 

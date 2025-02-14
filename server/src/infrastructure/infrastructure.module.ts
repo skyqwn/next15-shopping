@@ -1,16 +1,18 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { DatabaseModule } from './database';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { CacheModule } from './cache';
-import { JwtStragegy } from './auth/strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { JwtStragegy, KakaoStrategy } from './auth/strategies';
+import { DomainModule } from 'src/domain/domain.module';
 
 @Module({
-  providers: [JwtStragegy],
+  providers: [JwtStragegy, KakaoStrategy],
   imports: [
     DatabaseModule,
     DrizzleModule,
+    forwardRef(() => DomainModule),
     CacheModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
@@ -20,6 +22,7 @@ import { PassportModule } from '@nestjs/passport';
     CacheModule,
     JwtStragegy,
     PassportModule,
+    KakaoStrategy,
   ],
 })
 export class InfrastructureModule {}

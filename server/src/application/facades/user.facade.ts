@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
 import { UserService } from 'src/domain/service/user.service';
 import { SignInCommand, SignUpCommand } from 'src/domain/dtos';

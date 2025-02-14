@@ -11,6 +11,7 @@ import { ErrorCodes } from 'src/common/error';
 import { AppNotFoundException } from 'src/domain/exceptions';
 import { eq } from 'drizzle-orm';
 import { UserBaseRepository } from './user-base-repository';
+import { UserUpdateType } from 'src/infrastructure/drizzle/schema/users.schema';
 
 @Injectable()
 export class UserRepository
@@ -31,7 +32,7 @@ export class UserRepository
       ),
     );
   }
-  update(id: number, data: UserInsertType): Effect.Effect<UserModel, Error> {
+  update(id: number, data: UserUpdateType): Effect.Effect<UserModel, Error> {
     const userPromise = Effect.tryPromise(() =>
       this.db.update(users).set(data).where(eq(users.id, id)).returning(),
     );
@@ -103,7 +104,9 @@ export class UserRepository
     );
   }
 
-  checkEmailExists(email: string): Effect.Effect<void, AppConflictException> {
+  checkEmailExists(
+    email: string,
+  ): Effect.Effect<boolean, AppConflictException> {
     const emailCheckPromise = Effect.tryPromise(() =>
       this.db.query.users.findFirst({
         where: eq(users.email, email),
@@ -112,12 +115,7 @@ export class UserRepository
 
     return pipe(
       emailCheckPromise,
-      Effect.map((user) => {
-        if (user) {
-          throw new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS);
-        }
-        return void 0;
-      }),
+      Effect.map((user) => Boolean(user)),
       Effect.catchAll(() =>
         Effect.fail(new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS)),
       ),
