@@ -64,6 +64,11 @@ export const ErrorCodes = {
     code: 5001,
     message: '주문을 찾을 수 없습니다.',
   },
+  FORBIDDEN_ADMIN_ONLY: {
+    tag: 'FORBIDDEN_ADMIN_ONLY',
+    code: 401,
+    message: '접근 권한이 없습니다. 관리자 권한이 필요합니다.',
+  },
   PAYMENT_FAILED: {
     tag: 'PAYMENT_FAILED',
     code: 5001,

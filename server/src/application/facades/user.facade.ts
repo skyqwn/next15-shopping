@@ -3,8 +3,12 @@ import { Effect, pipe } from 'effect';
 
 import { UserService } from 'src/domain/service/user.service';
 import { SignInCommand, SignUpCommand } from 'src/domain/dtos';
-import { UserSignInCriteria, UserSignUpCriteria } from '../dtos/criteria';
-import { RefreshTokenCriteria } from '../dtos/criteria/user/refresh-token-criteria';
+import {
+  RefreshTokenCriteria,
+  UpdateProfileCriteria,
+  UserSignInCriteria,
+  UserSignUpCriteria,
+} from '../dtos/criteria';
 
 @Injectable()
 export class UserFacade {
@@ -33,5 +37,9 @@ export class UserFacade {
 
   refreshToken(refreshTokenCriteria: RefreshTokenCriteria) {
     return this.userService.refreshToken(refreshTokenCriteria);
+  }
+
+  updateProfile(updateProfileCriteria: UpdateProfileCriteria, userId: number) {
+    return this.userService.updateProfile(updateProfileCriteria, userId);
   }
 }

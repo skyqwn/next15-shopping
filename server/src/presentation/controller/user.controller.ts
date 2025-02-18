@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Req,
   Res,
@@ -14,12 +15,15 @@ import {
   RefreshTokenRequestDto,
   SigninRequestDto,
   SignupRequestDto,
+  UpdateProfileRequestDto,
 } from '../dtos/user/request';
 import { UserFacade } from 'src/application/facades';
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { UserModel } from 'src/domain/model/user.model';
 
-@Controller('/test')
+@Controller('/auth')
 export class UserController {
   constructor(private readonly userFacade: UserFacade) {}
 
@@ -37,6 +41,14 @@ export class UserController {
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
           maxAge: 1000 * 60 * 60 * 24, // 24시간
+        });
+
+        response.cookie('userId', result.user.id, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 1000 * 60 * 60 * 24, // 24시간
+          path: '/',
         });
 
         return {
@@ -104,5 +116,69 @@ export class UserController {
       }),
       Effect.runPromise,
     );
+  }
+
+  @Patch('/me/profile')
+  async updateProfile(
+    @Body() updateProfileRequestDto: UpdateProfileRequestDto,
+    @GetUser() { id }: { id: number },
+  ) {
+    return 'updateMyProfile';
+  }
+
+  @Post('/check-admin')
+  @UseGuards(AuthGuard('jwt'))
+  async checkAdmin(@GetUser() user: UserModel) {
+    console.log('체크 어드민 컨트롤러:', user);
+
+    return {
+      isAdmin: user.role === 'ADMIN',
+    };
+  }
+
+  @Get('/status')
+  @UseGuards(AuthGuard('jwt'))
+  async getAuthStatus(@GetUser() user: UserModel) {
+    if (!user) {
+      return {
+        isLoggedIn: false,
+        user: null,
+      };
+    }
+
+    return {
+      isLoggedIn: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        imageUri: user.imageUri,
+        role: user.role,
+      },
+    };
+  }
+
+  @Post('/signout')
+  async signOut(@Res({ passthrough: true }) response: Response) {
+    console.log('로그아웃 요청 시작');
+
+    response.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/', // path 추가
+    });
+
+    response.clearCookie('userId', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/', // path 추가
+    });
+
+    console.log('쿠키 삭제 완료');
+
+    return {
+      success: true,
+    };
   }
 }

@@ -4,11 +4,11 @@ import { DatabaseModule } from './database';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { CacheModule } from './cache';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStragegy, KakaoStrategy } from './auth/strategies';
+import { JwtStrategy, KakaoStrategy } from './auth/strategies';
 import { DomainModule } from 'src/domain/domain.module';
 
 @Module({
-  providers: [JwtStragegy, KakaoStrategy],
+  providers: [JwtStrategy, KakaoStrategy],
   imports: [
     DatabaseModule,
     DrizzleModule,
@@ -20,7 +20,7 @@ import { DomainModule } from 'src/domain/domain.module';
     DatabaseModule,
     DrizzleModule,
     CacheModule,
-    JwtStragegy,
+    JwtStrategy,
     PassportModule,
     KakaoStrategy,
   ],

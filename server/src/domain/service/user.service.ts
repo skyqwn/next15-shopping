@@ -8,6 +8,7 @@ import {
   RefreshTokenCommand,
   SignInCommand,
   SignUpCommand,
+  UpdateProfileCommand,
   UserInfo,
 } from '../dtos';
 import {
@@ -73,6 +74,13 @@ export class UserService {
         const refreshToken = this.jwtService.sign(payload, {
           secret: this.configService.get('JWT_SECRET'),
           expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
+        });
+
+        const decoded = this.jwtService.decode(accessToken);
+        console.log('Access Token 정보:', {
+          exp: new Date(decoded.exp * 1000), // Unix timestamp를 Date로 변환
+          iat: new Date(decoded.iat * 1000),
+          expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
         });
 
         return pipe(
@@ -205,5 +213,9 @@ export class UserService {
         accessToken: newAccessToken,
       })),
     );
+  }
+
+  updateProfile(updateProfileCommand: UpdateProfileCommand, userId: number) {
+    return pipe(this.userRepository.update(userId, updateProfileCommand));
   }
 }

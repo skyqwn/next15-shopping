@@ -24,7 +24,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const request = context.switchToHttp().getRequest();
     console.log('요청 경로:', request.path);
     console.log('쿠키의 토큰:', request.cookies?.accessToken);
-    console.log('헤더의 토큰:', request.headers.authorization);
 
     if (isPublic) {
       return true;
