@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Patch,
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Effect, pipe } from 'effect';
@@ -22,10 +25,15 @@ import { IsPublic } from 'src/common/decorators/is-public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserModel } from 'src/domain/model/user.model';
+import { KakaoAuthGuard } from 'src/infrastructure/auth/guards/kakao-auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('/auth')
 export class UserController {
-  constructor(private readonly userFacade: UserFacade) {}
+  constructor(
+    private readonly userFacade: UserFacade,
+    private readonly configService: ConfigService,
+  ) {}
 
   @IsPublic()
   @Post('/signin')
@@ -67,32 +75,48 @@ export class UserController {
 
   @IsPublic()
   @Get('/kakao/signin')
-  @UseGuards(AuthGuard('kakao'))
+  @UseGuards(KakaoAuthGuard)
   async kakaoLogin() {}
 
   @IsPublic()
-  @Get('/auth/kakao/callback')
-  @UseGuards(AuthGuard('kakao'))
-  async kakaoCallback(
-    @Req() req,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const user = req['user'];
-    const userUser = user['user'];
-    const userId = userUser['id'];
+  @Get('/kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallback(@Req() req, @Res() response: Response) {
+    if (!req.user) {
+      console.error('카카오 유저 정보가 없습니다.');
+      throw new UnauthorizedException('카카오 인증 실패');
+    }
 
-    const accessToken = req.user['accessToken'];
+    try {
+      const { user, accessToken } = req.user;
 
-    response.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    });
+      if (!user || !user.id) {
+        console.error('유효하지 않은 유저 데이터:', user);
+        throw new BadRequestException('유효하지 않은 유저 데이터');
+      }
 
-    return {
-      user: user.user,
-    };
+      response.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+      });
+
+      response.cookie('userId', user.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24,
+        path: '/',
+      });
+
+      response.redirect(this.configService.get('CLIENT_URL') as string);
+    } catch (error) {
+      console.error('카카오 콜백 처리 중 에러:', error);
+      throw new InternalServerErrorException(
+        '카카오 로그인 처리 중 오류가 발생했습니다.',
+      );
+    }
   }
 
   @Post('/refresh-token')
@@ -159,23 +183,19 @@ export class UserController {
 
   @Post('/signout')
   async signOut(@Res({ passthrough: true }) response: Response) {
-    console.log('로그아웃 요청 시작');
-
     response.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/', // path 추가
+      path: '/',
     });
 
     response.clearCookie('userId', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/', // path 추가
+      path: '/',
     });
-
-    console.log('쿠키 삭제 완료');
 
     return {
       success: true,

@@ -20,6 +20,7 @@ import { ErrorCodes } from 'src/common/error';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenCacheStore } from 'src/infrastructure/cache';
 import { KakaoProfile } from 'src/infrastructure/auth/strategies';
+import { UserModel } from '../model/user.model';
 
 @Injectable()
 export class UserService {
@@ -104,80 +105,54 @@ export class UserService {
         if (existingUser) {
           return pipe(
             this.userRepository.update(existingUser.id, {
-              loginType: 'kakao',
-              imageUri: profile.profile_image,
-              isVerified: true,
+              loginType: profile.loginType,
+              imageUri: profile.imageUri,
+              isVerified: profile.isVerified,
             }),
-            Effect.map((user) => {
-              const payload = { userId: user.id };
-              const accessToken = this.jwtService.sign(payload, {
-                secret: this.configService.get('JWT_SECRET'),
-                expiresIn: this.configService.get(
-                  'JWT_ACCESS_TOKEN_EXPIRATION',
-                ),
-              });
-
-              const refreshToken = this.jwtService.sign(payload, {
-                secret: this.configService.get('JWT_SECRET'),
-                expiresIn: this.configService.get(
-                  'JWT_REFRESH_TOKEN_EXPIRATION',
-                ),
-              });
-
-              return pipe(
-                this.refreshTokenCacheStore.cache(
-                  user.id.toString(),
-                  refreshToken,
-                ),
-                Effect.map(() => ({
-                  accessToken,
-                  user: UserInfo.from(user),
-                })),
-              );
-            }),
-            Effect.flatten,
+            Effect.flatMap((user) => this.createTokens(user)),
           );
         }
 
-        // 새 사용자 생성
         return pipe(
-          this.userRepository.create({
+          Effect.succeed({
             email: profile.email,
-            name: profile.nickname,
-            imageUri: profile.profile_image,
-            loginType: 'kakao',
-            isVerified: true,
-            role: 'USER',
+            name: profile.name,
+            imageUri: profile.imageUri || null,
+            loginType: profile.loginType,
+            isVerified: profile.isVerified,
+            role: profile.role,
+            password: null,
+            description: null,
           }),
-          Effect.map((user) => {
-            const payload = { userId: user.id };
-            const accessToken = this.jwtService.sign(payload, {
-              secret: this.configService.get('JWT_SECRET'),
-              expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
-            });
-
-            const refreshToken = this.jwtService.sign(payload, {
-              secret: this.configService.get('JWT_SECRET'),
-              expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
-            });
-
-            return pipe(
-              this.refreshTokenCacheStore.cache(
-                user.id.toString(),
-                refreshToken,
-              ),
-              Effect.map(() => ({
-                accessToken,
-                user: UserInfo.from(user),
-              })),
-            );
-          }),
-          Effect.flatten,
+          Effect.flatMap((data) => this.userRepository.create(data)),
+          Effect.flatMap((user) => this.createTokens(user)),
         );
       }),
-      Effect.catchAll((error) =>
-        Effect.fail(new AppAuthException(ErrorCodes.USER_AUTH_FAILED)),
-      ),
+      Effect.catchAll((error) => {
+        console.error('카카오 인증 처리 중 에러:', error);
+        return Effect.fail(new AppAuthException(ErrorCodes.USER_AUTH_FAILED));
+      }),
+    );
+  }
+
+  private createTokens(user: UserModel) {
+    const payload = { userId: user.id };
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
+    });
+
+    return pipe(
+      this.refreshTokenCacheStore.cache(user.id.toString(), refreshToken),
+      Effect.map(() => ({
+        accessToken,
+        user: UserInfo.from(user),
+      })),
     );
   }
 

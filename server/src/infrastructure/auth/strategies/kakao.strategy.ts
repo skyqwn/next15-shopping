@@ -7,8 +7,12 @@ import { Effect, pipe } from 'effect';
 
 export interface KakaoProfile {
   email: string;
-  nickname: string;
-  profile_image: string;
+  name: string;
+  imageUri?: string;
+  kakaoId: string;
+  loginType: 'kakao';
+  isVerified: boolean;
+  role: 'USER' | 'ADMIN';
 }
 
 @Injectable()
@@ -19,6 +23,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   ) {
     super({
       clientID: configService.get('KAKAO_CLIENT_ID'),
+      clientSecret: configService.get('KAKAO_CLIENT_SECRET'),
       callbackURL: configService.get('KAKAO_CALLBACK_URL'),
     });
   }
@@ -34,15 +39,22 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
 
       const userProfile = {
         email: kakao_account.email,
-        nickname: profile.displayName,
-        profile_image: kakao_account.profile?.profile_image_url,
+        name: profile.displayName,
+        imageUri: kakao_account.profile?.profile_image_url,
+        kakaoId: profile.id,
+        loginType: 'kakao' as const,
+        isVerified: true,
+        role: 'USER' as const,
       };
 
-      return await pipe(
+      const result = await pipe(
         this.userService.validateKakaoUser(userProfile),
         Effect.runPromise,
       );
+
+      done(null, result);
     } catch (error) {
+      console.error('카카오 인증 실패:', error);
       done(error, false);
     }
   }

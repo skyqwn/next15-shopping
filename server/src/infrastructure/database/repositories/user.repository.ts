@@ -20,16 +20,22 @@ export class UserRepository
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
   create(data: UserInsertType): Effect.Effect<UserModel, AppConflictException> {
-    const userPromise = Effect.tryPromise(() =>
-      this.db.insert(users).values(data).returning(),
-    );
-
     return pipe(
-      userPromise,
-      Effect.map(([user]) => UserModel.from(user)),
-      Effect.catchAll(() =>
-        Effect.fail(new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS)),
+      // 로깅 추가
+      Effect.sync(() => console.log('Create 입력 데이터:', data)),
+      Effect.flatMap(() =>
+        Effect.tryPromise(() => this.db.insert(users).values(data).returning()),
       ),
+      Effect.tap((result) =>
+        Effect.sync(() => console.log('DB 생성 결과:', result)),
+      ),
+      Effect.map(([user]) => UserModel.from(user)),
+      Effect.catchAll((error) => {
+        console.error('유저 생성 에러:', error);
+        return Effect.fail(
+          new AppConflictException(ErrorCodes.USER_ALREADY_EXISTS),
+        );
+      }),
     );
   }
   update(id: number, data: UserUpdateType): Effect.Effect<UserModel, Error> {
@@ -86,23 +92,38 @@ export class UserRepository
     );
   }
 
-  getByEmail(
-    email: string,
-  ): Effect.Effect<UserModel | null, AppNotFoundException> {
-    const userPromise = Effect.tryPromise(() =>
-      this.db.query.users.findFirst({
-        where: eq(users.email, email),
+  getByEmail(email: string): Effect.Effect<UserModel | null, never> {
+    return pipe(
+      Effect.tryPromise(async () => {
+        const result = await this.db.query.users.findFirst({
+          where: eq(users.email, email),
+        });
+        console.log('getByEmail DB 결과:', result);
+        return result;
+      }),
+      Effect.map((user) => (user ? UserModel.from(user) : null)),
+      Effect.catchAll((error) => {
+        return Effect.succeed(null);
       }),
     );
-
-    return pipe(
-      userPromise,
-      Effect.map(UserModel.from),
-      Effect.catchAll(() =>
-        Effect.fail(new AppNotFoundException(ErrorCodes.USER_NOT_FOUND)),
-      ),
-    );
   }
+  // getByEmail(
+  //   email: string,
+  // ): Effect.Effect<UserModel | null, AppNotFoundException> {
+  //   const userPromise = Effect.tryPromise(() =>
+  //     this.db.query.users.findFirst({
+  //       where: eq(users.email, email),
+  //     }),
+  //   );
+
+  //   return pipe(
+  //     userPromise,
+  //     Effect.map(UserModel.from),
+  //     Effect.catchAll(() =>
+  //       Effect.fail(new AppNotFoundException(ErrorCodes.USER_NOT_FOUND)),
+  //     ),
+  //   );
+  // }
 
   checkEmailExists(
     email: string,
