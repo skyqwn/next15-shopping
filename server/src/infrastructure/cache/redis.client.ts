@@ -55,8 +55,9 @@ export class RedisClient implements OnModuleDestroy {
     return Effect.tryPromise(() => this.redis.set(`${prefix}:${key}`, value));
   }
 
-  delete(prefix: string, key: string) {
-    return Effect.tryPromise(() => this.redis.del(`${prefix}:${key}`));
+  delete(prefix: string, key: string): Effect.Effect<void, Error> {
+    const fullKey = `${prefix}:${key}`;
+    return Effect.tryPromise(() => this.redis.del(fullKey).then(() => void 0));
   }
 
   setWithExpiry(prefix: string, key: string, value: string, expiry: number) {

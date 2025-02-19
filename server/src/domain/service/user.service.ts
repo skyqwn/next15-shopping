@@ -52,7 +52,6 @@ export class UserService {
     return pipe(
       this.userRepository.getByEmail(signInCommand.email),
       Effect.flatMap((user) => {
-        // 소셜 로그인은 패스워드가 없을 수있기때문 체크
         if (!user || !user.password) {
           return Effect.fail(new AppAuthException(ErrorCodes.USER_NOT_FOUND));
         }
@@ -66,30 +65,20 @@ export class UserService {
           return Effect.fail(new AppAuthException(ErrorCodes.USER_AUTH_FAILED));
         }
 
-        const payload = { userId: user.id };
-        const accessToken = this.jwtService.sign(payload, {
-          secret: this.configService.get('JWT_SECRET'),
-          expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
-        });
-
-        const refreshToken = this.jwtService.sign(payload, {
-          secret: this.configService.get('JWT_SECRET'),
-          expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
-        });
-
-        const decoded = this.jwtService.decode(accessToken);
-        console.log('Access Token 정보:', {
-          exp: new Date(decoded.exp * 1000), // Unix timestamp를 Date로 변환
-          iat: new Date(decoded.iat * 1000),
-          expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
-        });
-
         return pipe(
-          this.refreshTokenCacheStore.cache(user.id.toString(), refreshToken),
-          Effect.map(() => ({
-            accessToken,
-            user: UserInfo.from(user),
-          })),
+          this.createTokens(user),
+          Effect.tap(({ accessToken }) =>
+            Effect.sync(() => {
+              const decoded = this.jwtService.decode(accessToken);
+              console.log('Access Token 정보:', {
+                exp: new Date(decoded.exp * 1000),
+                iat: new Date(decoded.iat * 1000),
+                expiresIn: this.configService.get(
+                  'JWT_ACCESS_TOKEN_EXPIRATION',
+                ),
+              });
+            }),
+          ),
           Effect.catchAll((error) =>
             Effect.fail(new AppAuthException(ErrorCodes.USER_TOKEN_EXPIRED)),
           ),
@@ -159,6 +148,9 @@ export class UserService {
   refreshToken(refreshTokenComman: RefreshTokenCommand) {
     return pipe(
       this.refreshTokenCacheStore.findBy(refreshTokenComman.userId),
+      Effect.tap((token) =>
+        Effect.sync(() => console.log('Found refresh token:', token)),
+      ),
       Effect.flatMap((storedToken) =>
         storedToken
           ? Effect.succeed(storedToken)
@@ -184,13 +176,26 @@ export class UserService {
           }),
         ),
       ),
-      Effect.map((newAccessToken) => ({
-        accessToken: newAccessToken,
+      Effect.tap((token) =>
+        Effect.sync(() => console.log('New access token:', token)),
+      ),
+      Effect.map((accessToken) => ({
+        accessToken,
       })),
     );
   }
 
   updateProfile(updateProfileCommand: UpdateProfileCommand, userId: number) {
     return pipe(this.userRepository.update(userId, updateProfileCommand));
+  }
+
+  removeRefreshToken(userId: number) {
+    return pipe(
+      this.refreshTokenCacheStore.remove(userId.toString()),
+      Effect.catchAll((error) => {
+        console.error('리프레시 토큰 삭제 중 에러:', error);
+        return Effect.fail(new AppAuthException(ErrorCodes.USER_TOKEN_EXPIRED));
+      }),
+    );
   }
 }

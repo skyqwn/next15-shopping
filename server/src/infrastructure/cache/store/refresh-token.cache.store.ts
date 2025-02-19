@@ -42,13 +42,10 @@ export class RefreshTokenCacheStore {
           ),
         ),
       ),
-      // Effect.tapError((error) =>
-      //   Effect.sync(() =>
-      //     // this.logger.error(
-      //     //   `리프레시 토큰 조회 실패: ${JSON.stringify(error)}`,
-      //     // ),
-      //   ),
-      // ),
     );
+  }
+
+  remove(key: string): Effect.Effect<void, Error> {
+    return this.redisClient.delete('refreshToken', key);
   }
 }

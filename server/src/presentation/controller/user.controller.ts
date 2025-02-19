@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Effect, pipe } from 'effect';
-import { response, Response } from 'express';
+import { Response } from 'express';
 
 import {
   RefreshTokenRequestDto,
@@ -27,9 +27,34 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserModel } from 'src/domain/model/user.model';
 import { KakaoAuthGuard } from 'src/infrastructure/auth/guards/kakao-auth.guard';
 import { ConfigService } from '@nestjs/config';
+import {
+  COOKIE_BASE_OPTIONS,
+  COOKIE_DURATIONS,
+} from 'src/common/constants/cookie.config';
+
+interface SetCookiesOptions {
+  accessToken?: string;
+  userId?: number;
+}
 
 @Controller('/auth')
 export class UserController {
+  private setCookies(response: Response, options: SetCookiesOptions) {
+    if (options.accessToken) {
+      response.cookie('accessToken', options.accessToken, {
+        ...COOKIE_BASE_OPTIONS,
+        maxAge: COOKIE_DURATIONS.ACCESS_TOKEN,
+      });
+    }
+
+    if (options.userId) {
+      response.cookie('userId', options.userId, {
+        ...COOKIE_BASE_OPTIONS,
+        maxAge: COOKIE_DURATIONS.USER_ID,
+      });
+    }
+  }
+
   constructor(
     private readonly userFacade: UserFacade,
     private readonly configService: ConfigService,
@@ -44,24 +69,11 @@ export class UserController {
     return pipe(
       this.userFacade.signIn(signInRequestDto),
       Effect.map((result) => {
-        response.cookie('accessToken', result.accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: 1000 * 60 * 60 * 24, // 24시간
+        this.setCookies(response, {
+          accessToken: result.accessToken,
+          userId: result.user.id,
         });
-
-        response.cookie('userId', result.user.id, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: 1000 * 60 * 60 * 24, // 24시간
-          path: '/',
-        });
-
-        return {
-          user: result.user,
-        };
+        return { user: result.user };
       }),
       Effect.runPromise,
     );
@@ -95,21 +107,10 @@ export class UserController {
         throw new BadRequestException('유효하지 않은 유저 데이터');
       }
 
-      response.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
+      this.setCookies(response, {
+        accessToken: accessToken,
+        userId: user.id,
       });
-
-      response.cookie('userId', user.id, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24,
-        path: '/',
-      });
-
       response.redirect(this.configService.get('CLIENT_URL') as string);
     } catch (error) {
       console.error('카카오 콜백 처리 중 에러:', error);
@@ -119,21 +120,27 @@ export class UserController {
     }
   }
 
-  @Post('/refresh-token')
+  @IsPublic()
+  @Post('/refreshToken')
   refreshToken(
     @Body() refreshTokenRequestDto: RefreshTokenRequestDto,
     @Res({ passthrough: true }) response: Response,
+    @Req() request,
   ) {
+    const cookies = request.headers.cookie?.split(';').reduce(
+      (acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    const userId = cookies?.userId;
+
     return pipe(
       this.userFacade.refreshToken(refreshTokenRequestDto),
       Effect.map((result) => {
-        response.cookie('accessToken', result.accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          path: '/',
-        });
-
         return {
           accessToken: result.accessToken,
         };
@@ -182,7 +189,13 @@ export class UserController {
   }
 
   @Post('/signout')
-  async signOut(@Res({ passthrough: true }) response: Response) {
+  @UseGuards(AuthGuard('jwt'))
+  async signOut(
+    @Res({ passthrough: true }) response: Response,
+    @GetUser() user: UserModel,
+  ) {
+    pipe(this.userFacade.removeRefreshToken(user.id), Effect.runPromise);
+
     response.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

@@ -42,4 +42,7 @@ export class UserFacade {
   updateProfile(updateProfileCriteria: UpdateProfileCriteria, userId: number) {
     return this.userService.updateProfile(updateProfileCriteria, userId);
   }
+  removeRefreshToken(userId: number) {
+    return this.userService.removeRefreshToken(userId);
+  }
 }
