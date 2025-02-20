@@ -1,6 +1,6 @@
 import { ServerFetchBoundary } from "@/components/prefetch-boundary";
 import ProductForm from "@/components/product/add-product-form";
-import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUser";
+import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUserInfo";
 import React, { Suspense } from "react";
 
 const AddProduct = () => {

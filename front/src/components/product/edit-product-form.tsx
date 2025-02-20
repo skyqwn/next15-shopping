@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PartialProductType, ProductSchema, ProductType } from "@/schemas";
 import { useCreateProductMutation } from "@/hooks/queries/products/useCreateProductMutation";
 import ProductCardForm from "./product-card-form.tsx";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUser";
+import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo.js";
 import { usePatchProductMutation } from "@/hooks/queries/products/usePatchProductMutation";
 
 const EditProductForm = () => {

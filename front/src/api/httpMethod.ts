@@ -1,13 +1,17 @@
-export function createInit<Body extends object>(
+export function createInit<Body extends object | FormData>(
   body?: Body,
   cache: RequestCache = "no-store",
 ): RequestInit {
+  const headers: Record<string, string> = {};
+
+  if (!(body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
   return {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     credentials: "include",
-    body: JSON.stringify(body),
+    body: body instanceof FormData ? body : JSON.stringify(body),
     cache,
   };
 }
@@ -27,7 +31,7 @@ async function fetchWrapperWithTokenHandler<T>(
     return result as T;
   } catch (error) {
     console.error(error);
-    return undefined as any;
+    return undefined;
   }
 }
 

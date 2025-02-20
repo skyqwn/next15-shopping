@@ -1,33 +1,28 @@
 import { SigninType } from "@/schemas/sign-in.schema";
 import { SignupType } from "@/schemas/sign-up.schema";
+import { createInit, POST } from "./httpMethod";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  result: {
+    accessToken: string;
+  };
+}
+
+interface SignupResponse {
+  success: boolean;
+  message: string;
+}
 
 const postLogin = async ({ email, password }: SigninType) => {
-  const response = await fetch(`${API_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
+  return await POST<LoginResponse>(
+    "/auth/signin",
+    createInit({
       email,
       password,
     }),
-  });
-  const data = await response.json();
-
-  console.log("데이타", data);
-
-  if (!data.success) {
-    throw {
-      message: data.message,
-      result: data.result,
-      success: data.success,
-    };
-  }
-
-  return data;
+  );
 };
 
 const postSignup = async ({
@@ -36,32 +31,18 @@ const postSignup = async ({
   name,
   passwordConfirm,
 }: SignupType) => {
-  const response = await fetch(`${API_URL}/auth/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
+  return await POST<SignupResponse>(
+    "/auth/signup",
+    createInit({
       email,
       password,
       name,
       passwordConfirm,
     }),
-  });
-
-  const data = await response.json();
-  console.log(data);
-
-  if (!response.ok) {
-    throw {
-      message: data.message,
-      error: data.error,
-      statusCode: response.status,
-    };
-  }
-
-  return data;
+  );
+};
+const postLogout = async () => {
+  return await POST<{ success: boolean }>(`/auth/signout`, createInit());
 };
 
-export { postLogin, postSignup };
+export { postLogin, postSignup, postLogout };

@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { useCreateProductMutation } from "@/hooks/queries/products/useCreateProductMutation";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUser";
-import { PartialProductType, ProductSchema, ProductType } from "@/schemas";
+import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo.js";
+import { ProductSchema, ProductType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ProductCardForm from "./product-card-form.tsx";
 
@@ -22,10 +22,11 @@ const ProductForm = () => {
   });
 
   const { data: userData } = useMyProfileQuery();
+  console.log("userData", userData);
 
-  if (userData) {
-    if (userData?.data.role !== "ADMIN") router.push("/");
-  }
+  // if (userData) {
+  //   if (userData?.data.role !== "ADMIN") router.push("/");
+  // }
 
   const { mutate: CreateProductMutation, isPending } =
     useCreateProductMutation();

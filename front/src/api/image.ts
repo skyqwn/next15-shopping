@@ -1,12 +1,23 @@
-import axiosInstance from "./axios";
+import { createInit, POST } from "./httpMethod";
+import { END_POINTS } from "@/constants";
 
-const uploadImage = async (body: FormData) => {
-  const { data } = await axiosInstance.post("/images", body, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return data.result;
-};
+export interface UploadImageResponse {
+  url: string;
+  fileName: string;
+  size: number;
+}
 
-export default uploadImage;
+export async function uploadImagesRequest(
+  formData: FormData,
+): Promise<UploadImageResponse[]> {
+  const result = await POST<{ result: UploadImageResponse[] }>(
+    END_POINTS.IMAGES_UPLOAD,
+    createInit(formData),
+  );
+
+  if (!result) {
+    throw new Error("이미지 업로드에 실패했습니다.");
+  }
+
+  return result.result;
+}

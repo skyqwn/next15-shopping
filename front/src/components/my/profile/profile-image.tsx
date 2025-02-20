@@ -5,21 +5,47 @@ import { useFormContext } from "react-hook-form";
 
 import NoUserImage from "@/components/common/no-user";
 import { FormField, FormItem, FormLabel } from "@/components/ui/form";
-import useImagePicker from "@/hooks/useImagePicker";
 import { ProfileType } from "@/schemas";
+import { useEffect, useState } from "react";
+import useImagePicker from "@/hooks/useImagePicker";
 
-const ProfileImage = () => {
-  const { control, getValues, setValue } = useFormContext<ProfileType>();
+interface ProfileImageProps {
+  handleFileRemove: (url: string) => void;
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  initialImage?: string;
+}
 
-  const profileImage = getValues("profileImageUris");
+const ProfileImage = ({
+  handleFileRemove,
+  handleImageChange,
+  initialImage,
+}: ProfileImageProps) => {
+  const { control } = useFormContext<ProfileType>();
+  const [mounted, setMounted] = useState(false);
+  const [image, setImage] = useState(initialImage);
+  useEffect(() => {
+    setMounted(true);
+    setImage(initialImage);
+  }, [initialImage]);
 
-  const { handleFileRemove, handleImageChange } = useImagePicker({
-    isProfile: true,
-    fieldName: "profileImageUris",
-    setValue,
-    getValues,
-  });
+  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImage(previewUrl);
+    }
+    handleImageChange(e); // 상위 컴포넌트의 이벤트 핸들러 호출
+  };
 
+  // handleFileRemove가 호출될 때 이미지 초기화
+  const onFileRemove = (imageUrl: string) => {
+    setImage(undefined);
+    handleFileRemove(imageUrl);
+  };
+
+  if (!mounted) {
+    return <div className="relative mb-4 size-24 rounded-full bg-gray-200" />;
+  }
   return (
     <div>
       <FormField
@@ -29,13 +55,13 @@ const ProfileImage = () => {
           <FormItem>
             <FormLabel>사진 업로드</FormLabel>
             <article className="mb-8 flex gap-4">
-              {profileImage ? (
+              {image ? (
                 <div className="relative mb-4 size-24 rounded-md">
                   <Image
-                    src={profileImage}
+                    src={image}
                     alt="profileImage"
                     fill
-                    className="rounded-md"
+                    className="rounded-full object-cover"
                   />
                 </div>
               ) : (
@@ -51,7 +77,7 @@ const ProfileImage = () => {
                     type="file"
                     className="hidden"
                     multiple={false}
-                    onChange={handleImageChange}
+                    onChange={onImageChange}
                   />
                   <label htmlFor="file-input">
                     <span className="cursor-pointer rounded-md border border-slate-300 p-[10px] text-xs">
@@ -61,7 +87,8 @@ const ProfileImage = () => {
                   <span
                     onClick={(e) => {
                       e.preventDefault();
-                      handleFileRemove(profileImage!);
+                      onFileRemove(image!);
+                      setImage(undefined);
                     }}
                     className="cursor-pointer rounded-md border border-slate-300 p-[10px] text-xs text-red-500"
                   >

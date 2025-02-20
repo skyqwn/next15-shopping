@@ -1,6 +1,6 @@
-import { postLogin, postSignup } from "@/api/auth";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { postLogin, postLogout, postSignup } from "@/api/auth";
+import { queryKeys } from "@/constants";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export interface ServerResponse<T> {
@@ -22,7 +22,7 @@ export interface ErrorResponse extends ServerResponse<null> {
 function useLogin() {
   return useMutation({
     mutationFn: postLogin,
-    onSuccess: ({ accessToken }) => {
+    onSuccess: () => {
       window.location.href = "/";
     },
     onError: (error: ServerResponse<null>) => {
@@ -34,9 +34,8 @@ function useLogin() {
 function useSignup() {
   return useMutation({
     mutationFn: postSignup,
-    onSuccess: ({ message }) => {
-      // window.location.href = "/login";
-      toast.success(message);
+    onSuccess: ({}) => {
+      toast.success("회원가입이 완료되었습니다");
     },
     onError: (error: any) => {
       console.log(error);
@@ -44,12 +43,35 @@ function useSignup() {
     },
   });
 }
+function useLogout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: postLogout,
+    onSuccess: () => {
+      // queryClient.invalidateQueries({
+      //   queryKey: [queryKeys.USER_INFO],
+      // });
+      queryClient.setQueryData([queryKeys.USER_INFO], {
+        isLoggedIn: false,
+        data: null,
+        message: "Logged out",
+      });
+      toast.success("로그아웃되었습니다");
+    },
+    onError: (error: any) => {
+      console.error(error);
+      toast.error("로그아웃 실패");
+    },
+  });
+}
 
 function useAuth() {
   const loginMutation = useLogin();
   const signupMutation = useSignup();
+  const logoutMutation = useLogout();
 
-  return { loginMutation, signupMutation };
+  return { loginMutation, signupMutation, logoutMutation };
 }
 
 export default useAuth;

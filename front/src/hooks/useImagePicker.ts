@@ -1,21 +1,7 @@
-import { useEffect, useState } from "react";
-import useMutateImages from "./queries/useMutateImages";
-import {
-  Control,
-  FieldValues,
-  useFieldArray,
-  useFormContext,
-  UseFormGetValues,
-  UseFormSetValue,
-} from "react-hook-form";
-import { url } from "inspector";
+import { useState } from "react";
+import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 
-interface ImageUri {
-  id?: number;
-  url: string;
-  fileName: string;
-  size: number;
-}
+import useMutateImages from "./queries/useMutateImages";
 
 interface UseImagePickerProps {
   fieldName: string;
@@ -30,7 +16,7 @@ function useImagePicker({
   getValues,
   setValue,
 }: UseImagePickerProps) {
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const uploadImages = useMutateImages();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +29,8 @@ function useImagePicker({
     const formData = new FormData();
     const fileArray = isProfile ? [files[0]] : Array.from(files).slice(0, 5);
 
-    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...newUrls]);
+    const previewUrl = URL.createObjectURL(fileArray[0]);
+    setPreviewUrl(previewUrl);
 
     fileArray.forEach((file) => {
       formData.append("images", file);
@@ -52,12 +38,15 @@ function useImagePicker({
 
     uploadImages.mutate(formData, {
       onSuccess: (data) => {
+        if (!Array.isArray(data)) {
+          console.error("잘못된 응답 형식:", data);
+          return;
+        }
+
         if (isProfile) {
-          // 프로필 이미지: 문자열로 저장
-          const profileImage = data[0]?.url || null;
+          const profileImage = data.length > 0 ? data[0].url : null;
           setValue(fieldName, profileImage);
         } else {
-          // 배열로 설정
           const existingImages = getValues(fieldName) || [];
           setValue(fieldName, [...existingImages, ...data]);
         }
@@ -81,7 +70,7 @@ function useImagePicker({
     }
   };
 
-  return { handleImageChange, previewImages, handleFileRemove };
+  return { handleImageChange, previewUrl, handleFileRemove };
 }
 
 export default useImagePicker;

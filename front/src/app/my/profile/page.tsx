@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import ProfileForm from "@/components/my/profile/profile-form";
 import { ServerFetchBoundary } from "@/components/prefetch-boundary";
-import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUser";
+import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUserInfo";
 
 const Profile = () => {
   const serverFetchOptions = [getMyProfileQueryOptions()];

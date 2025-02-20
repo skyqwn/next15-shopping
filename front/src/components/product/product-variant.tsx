@@ -26,7 +26,7 @@ import InputTags from "./input-tags";
 import VariantImages from "./variant-images";
 
 interface ProductVariantProps {
-  editMode: boolean;
+  editMode?: boolean;
   productId: number;
   variant?: any;
   children: React.ReactNode;

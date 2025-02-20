@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 
 import {
@@ -17,17 +16,15 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NoUserImage from "@/components/common/no-user";
 import { Button } from "@/components/ui/button";
-import axiosInstance from "@/api/axios";
 import useImagePicker from "@/hooks/useImagePicker";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUser";
+import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
 import { ProfileSchema, ProfileType } from "@/schemas";
 import ProfileImage from "./profile-image";
+import { useUpdateProfileMutation } from "@/hooks/queries/userInfo/useUpdateUserMutation";
 
 const ProfileForm = () => {
   const { data: userData } = useMyProfileQuery();
-
-  console.log("userData", userData);
-
+  const updateProfileMutation = useUpdateProfileMutation();
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -37,10 +34,15 @@ const ProfileForm = () => {
     },
   });
 
-  //TODO: axios 제거
+  const { handleFileRemove, handleImageChange } = useImagePicker({
+    isProfile: true,
+    fieldName: "profileImageUris",
+    setValue: form.setValue,
+    getValues: form.getValues,
+  });
+
   const onSubmit = async (data: ProfileType) => {
-    console.log(data);
-    axiosInstance.patch("/user/me/profile", data);
+    updateProfileMutation.mutate(data);
   };
 
   return (
@@ -54,8 +56,11 @@ const ProfileForm = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div>
-              {/* 프로파일 이미지 설정 */}
-              <ProfileImage />
+              <ProfileImage
+                handleFileRemove={handleFileRemove}
+                handleImageChange={handleImageChange}
+                initialImage={userData?.data.imageUri}
+              />
 
               <FormField
                 control={form.control}

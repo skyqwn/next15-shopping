@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ServerFetchBoundary } from "@/components/prefetch-boundary";
-import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUser";
+import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUserInfo";
 
 const ProductDetailPage = () => {
   const serverFetchOptions = [getMyProfileQueryOptions()];

@@ -33,11 +33,6 @@ const VariantImages = () => {
     getValues,
   });
 
-  const image = getValues("variantImages");
-
-  console.log("이미지", image);
-  console.log("필드", fields);
-
   return (
     <div>
       <FormField

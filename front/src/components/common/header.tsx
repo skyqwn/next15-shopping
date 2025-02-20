@@ -1,6 +1,7 @@
 import Link from "next/link";
-import MobileMenu from "./mobile-menu";
 import Image from "next/image";
+
+import AuthButtonsWrapper from "./header/auth-button-wrapper";
 
 const Header = () => {
   const routes = [
@@ -13,12 +14,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 border border-b bg-white">
       <nav className="container mx-auto px-4 py-4">
         <div className="display hidden justify-end gap-5 text-sm text-secondary md:flex">
-          <Link className="cursor-pointer" href={"/my"}>
-            <span>마이페이지</span>
-          </Link>
-          <Link className="cursor-pointer" href={"/auth/login"}>
-            <span>로그인</span>
-          </Link>
+          <AuthButtonsWrapper />
         </div>
         <ul className="flex h-6 w-full items-center justify-between py-2 md:h-10">
           <Link href={"/"} className="relative size-10 md:size-14">
@@ -53,7 +49,6 @@ const Header = () => {
               alt="heart"
             />
           </div>
-          {/* <MobileMenu /> */}
         </ul>
       </nav>
     </header>

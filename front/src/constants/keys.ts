@@ -4,6 +4,7 @@ const queryKeys = {
   OWNER_USER: "owner",
   PRODUCTS: "products",
   PRODUCT_DETAIL: "productDetail",
+  AUTH_STATUS: "authStatus",
 } as const;
 
 export { queryKeys };

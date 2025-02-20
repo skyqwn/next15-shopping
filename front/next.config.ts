@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -8,13 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "next15-project.s3.ap-northeast-2.amazonaws.com",
       },
       {
-        protocol: "https",
+        protocol: "http",
         hostname: "k.kakaocdn.net",
+        pathname: "/dn/**",
       },
     ],
-  },
-  devServer: {
-    host: "0.0.0.0", // 외부에서 접속할 수 있도록 설정
   },
 };
 
