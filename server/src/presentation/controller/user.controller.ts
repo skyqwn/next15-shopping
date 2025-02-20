@@ -178,6 +178,11 @@ export class UserController {
   ) {
     return pipe(
       this.userFacade.updateProfile(updateProfileRequestDto, user.id),
+      Effect.map((updatedUser) => ({
+        success: true,
+        data: updatedUser,
+        message: '프로필이 성공적으로 업데이트되었습니다.',
+      })),
       Effect.runPromise,
     );
   }

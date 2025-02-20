@@ -5,7 +5,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ImagesModule } from './images/images.module';
+
 import { LogMiddleware } from './middleware/log.middleware';
 import { APP_GUARD } from '@nestjs/core';
 import { PresentationModule } from './presentation/presentation.module';
@@ -20,7 +20,6 @@ import { DrizzleModule } from './infrastructure/drizzle/drizzle.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DrizzleModule,
-    ImagesModule,
     PresentationModule,
     ApplicationModule,
     InfrastructureModule,
