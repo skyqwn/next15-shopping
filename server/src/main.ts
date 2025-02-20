@@ -5,7 +5,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import * as cookieParser from 'cookie-parser';
 import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor';
 import { GlobalExceptionFilter } from './common/exception-filter/global-exception.filter';
-import { ZodExceptionFilter } from './drizzle/filters/zod-exception.filter';
+import { ZodExceptionFilter } from './infrastructure/drizzle/filters/zod-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

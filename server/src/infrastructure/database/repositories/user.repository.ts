@@ -1,17 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { DRIZZLE } from 'src/drizzle/drizzle.module';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
-import { BaseRepository } from './base.repository';
 import { UserModel } from 'src/domain/model/user.model';
-import { UserInsertType, users } from 'src/drizzle/schema/schema';
 import { AppConflictException } from 'src/domain/exceptions/app-conflict.exception';
 import { Effect, pipe } from 'effect';
 import { ErrorCodes } from 'src/common/error';
 import { AppNotFoundException } from 'src/domain/exceptions';
 import { eq } from 'drizzle-orm';
 import { UserBaseRepository } from './user-base-repository';
-import { UserUpdateType } from 'src/infrastructure/drizzle/schema/users.schema';
+import {
+  UserInsertType,
+  users,
+  UserUpdateType,
+} from 'src/infrastructure/drizzle/schema/users.schema';
+import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
+import { DrizzleDB } from 'src/infrastructure/drizzle/types/drizzle';
 
 @Injectable()
 export class UserRepository

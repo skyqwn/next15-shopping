@@ -23,7 +23,11 @@ export const ErrorCodes = {
     code: 1004,
     message: '토큰이 만료되었습니다.',
   },
-
+  USER_UPDATE_FAILED: {
+    tag: 'USER_UPDATE_FAILED',
+    code: 1004,
+    message: '프로필 수정에 실패했습니다.',
+  },
   WALLET_NOT_FOUND: {
     tag: 'WALLET_NOT_FOUND',
     code: 2001,

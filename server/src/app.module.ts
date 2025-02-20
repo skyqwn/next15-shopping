@@ -5,24 +5,21 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DrizzleModule } from './drizzle/drizzle.module';
-import { UserModule } from './user/user.module';
 import { ImagesModule } from './images/images.module';
 import { LogMiddleware } from './middleware/log.middleware';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './user/guard/roles.guard';
 import { PresentationModule } from './presentation/presentation.module';
 import { ApplicationModule } from './application/application.module';
 import { DomainModule } from './domain/domain.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './infrastructure/auth/guards/jwt-auth.guard';
+import { DrizzleModule } from './infrastructure/drizzle/drizzle.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DrizzleModule,
-    UserModule,
     ImagesModule,
     PresentationModule,
     ApplicationModule,

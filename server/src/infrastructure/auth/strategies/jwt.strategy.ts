@@ -2,11 +2,11 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { eq } from 'drizzle-orm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { DRIZZLE } from 'src/drizzle/drizzle.module';
-import { users } from 'src/drizzle/schema/users.schema';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
+import { DrizzleDB } from 'src/infrastructure/drizzle/types/drizzle';
+import { users } from 'src/infrastructure/drizzle/schema/schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -18,15 +18,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          console.log('토큰 추출 시도:', request?.cookies);
+          // console.log('토큰 추출 시도:', request?.cookies);
           const token = request?.cookies?.accessToken;
           if (!token) {
-            console.log('토큰이 없음');
+            // console.log('토큰이 없음');
             return null;
           }
           try {
             const decoded = this.jwtService.verify(token);
-            console.log('토큰 검증 결과:', decoded);
+            // console.log('토큰 검증 결과:', decoded);
 
             if (decoded.exp && decoded.exp * 1000 < Date.now()) {
               console.log('토큰 만료됨');

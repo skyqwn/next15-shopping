@@ -31,6 +31,7 @@ import {
   COOKIE_BASE_OPTIONS,
   COOKIE_DURATIONS,
 } from 'src/common/constants/cookie.config';
+import { UserSelectType } from 'src/infrastructure/drizzle/schema/users.schema';
 
 interface SetCookiesOptions {
   accessToken?: string;
@@ -149,19 +150,38 @@ export class UserController {
     );
   }
 
+  @Get('/me')
+  @UseGuards(AuthGuard('jwt'))
+  getMyProfile(@GetUser() user: UserSelectType) {
+    return pipe(
+      this.userFacade.getMyProfile(user.id),
+      Effect.map((user) => {
+        const { password, ...userWithoutPassword } = user;
+        return {
+          isLoggedIn: true,
+          data: {
+            ...userWithoutPassword,
+            role: user.role,
+          },
+          message: 'Profile fetched',
+        };
+      }),
+      Effect.runPromise,
+    );
+  }
+
   @Patch('/me/profile')
-  async updateProfile(
+  @UseGuards(AuthGuard('jwt'))
+  updateMyProfile(
     @Body() updateProfileRequestDto: UpdateProfileRequestDto,
-    @GetUser() { id }: { id: number },
+    @GetUser() user: UserModel,
   ) {
-    return 'updateMyProfile';
+    return this.userFacade.updateProfile(updateProfileRequestDto, user.id);
   }
 
   @Post('/check-admin')
   @UseGuards(AuthGuard('jwt'))
   async checkAdmin(@GetUser() user: UserModel) {
-    console.log('체크 어드민 컨트롤러:', user);
-
     return {
       isAdmin: user.role === 'ADMIN',
     };
@@ -169,7 +189,7 @@ export class UserController {
 
   @Get('/status')
   @UseGuards(AuthGuard('jwt'))
-  async getAuthStatus(@GetUser() user: UserModel) {
+  getAuthStatus(@GetUser() user: UserModel) {
     if (!user) {
       return {
         isLoggedIn: false,
@@ -190,28 +210,18 @@ export class UserController {
 
   @Post('/signout')
   @UseGuards(AuthGuard('jwt'))
-  async signOut(
+  signOut(
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: UserModel,
   ) {
-    pipe(this.userFacade.removeRefreshToken(user.id), Effect.runPromise);
-
-    response.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    response.clearCookie('userId', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    return {
-      success: true,
-    };
+    return pipe(
+      this.userFacade.signOut(user.id.toString()),
+      Effect.tap(() => {
+        response.clearCookie('accessToken', COOKIE_BASE_OPTIONS);
+        response.clearCookie('userId', COOKIE_BASE_OPTIONS);
+      }),
+      Effect.map(() => ({ success: true })),
+      Effect.runPromise,
+    );
   }
 }

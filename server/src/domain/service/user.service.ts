@@ -18,7 +18,10 @@ import {
 } from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ConfigService } from '@nestjs/config';
-import { RefreshTokenCacheStore } from 'src/infrastructure/cache';
+import {
+  RefreshTokenCacheStore,
+  UserCacheStore,
+} from 'src/infrastructure/cache';
 import { KakaoProfile } from 'src/infrastructure/auth/strategies';
 import { UserModel } from '../model/user.model';
 
@@ -28,6 +31,8 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
     private readonly refreshTokenCacheStore: RefreshTokenCacheStore,
+    private readonly userCacheStore: UserCacheStore,
+
     private readonly jwtService: JwtService,
   ) {}
 
@@ -185,17 +190,64 @@ export class UserService {
     );
   }
 
-  updateProfile(updateProfileCommand: UpdateProfileCommand, userId: number) {
-    return pipe(this.userRepository.update(userId, updateProfileCommand));
+  getMyProfile(userId: number) {
+    return pipe(
+      this.userCacheStore.findBy(userId.toString()),
+      Effect.flatMap((cachedUser) =>
+        cachedUser
+          ? Effect.succeed(cachedUser)
+          : pipe(
+              this.userRepository.findOneBy(userId),
+              Effect.flatMap((user) =>
+                user
+                  ? pipe(
+                      this.userCacheStore.cache(userId.toString(), user),
+                      Effect.map(() => user),
+                    )
+                  : Effect.fail(
+                      new AppNotFoundException(ErrorCodes.USER_NOT_FOUND),
+                    ),
+              ),
+            ),
+      ),
+    );
   }
 
-  removeRefreshToken(userId: number) {
+  updateProfile(command: UpdateProfileCommand, userId: number) {
+    return pipe(
+      this.userRepository.update(userId, {
+        name: command.name,
+        description: command.description,
+        imageUri: command.profileImageUris,
+        updatedAt: new Date(),
+      }),
+      Effect.tap((user) =>
+        Effect.sync(() => console.log('Updated user profile:', user)),
+      ),
+      Effect.catchAll((error) => {
+        console.error('프로필 수정 중 에러:', error);
+        return Effect.fail(new AppAuthException(ErrorCodes.USER_UPDATE_FAILED));
+      }),
+    );
+  }
+
+  removeRefreshToken(userId: string) {
     return pipe(
       this.refreshTokenCacheStore.remove(userId.toString()),
       Effect.catchAll((error) => {
         console.error('리프레시 토큰 삭제 중 에러:', error);
         return Effect.fail(new AppAuthException(ErrorCodes.USER_TOKEN_EXPIRED));
       }),
+    );
+  }
+
+  signOut(userId: string) {
+    return pipe(
+      Effect.all([
+        this.refreshTokenCacheStore.remove(userId.toString()),
+        this.userCacheStore.remove(userId),
+      ]),
+      Effect.map(() => true),
     );
   }
 }

@@ -82,7 +82,7 @@ export class RedisClient implements OnModuleDestroy {
   // 점수 범위 삭제
   zremrangebyscore(
     prefix: string,
-    key: string,
+    key: number,
     min: number | string,
     max: number | string,
   ) {

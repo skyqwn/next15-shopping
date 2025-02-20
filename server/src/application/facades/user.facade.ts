@@ -9,6 +9,7 @@ import {
   UserSignInCriteria,
   UserSignUpCriteria,
 } from '../dtos/criteria';
+import { UserInsertType } from 'src/infrastructure/drizzle/schema/users.schema';
 
 @Injectable()
 export class UserFacade {
@@ -39,10 +40,18 @@ export class UserFacade {
     return this.userService.refreshToken(refreshTokenCriteria);
   }
 
+  getMyProfile(userId: number) {
+    return this.userService.getMyProfile(userId);
+  }
+
+  signOut(userId: string) {
+    return this.userService.signOut(userId);
+  }
+
   updateProfile(updateProfileCriteria: UpdateProfileCriteria, userId: number) {
     return this.userService.updateProfile(updateProfileCriteria, userId);
   }
-  removeRefreshToken(userId: number) {
+  removeRefreshToken(userId: string) {
     return this.userService.removeRefreshToken(userId);
   }
 }
