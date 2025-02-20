@@ -221,13 +221,12 @@ export class UserService {
         imageUri: command.profileImageUris,
         updatedAt: new Date(),
       }),
-      Effect.tap((user) =>
-        Effect.sync(() => console.log('Updated user profile:', user)),
+      Effect.flatMap((updatedUser) =>
+        pipe(
+          this.userCacheStore.cache(userId.toString(), updatedUser),
+          Effect.map(() => updatedUser),
+        ),
       ),
-      Effect.catchAll((error) => {
-        console.error('프로필 수정 중 에러:', error);
-        return Effect.fail(new AppAuthException(ErrorCodes.USER_UPDATE_FAILED));
-      }),
     );
   }
 

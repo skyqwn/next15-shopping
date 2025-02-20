@@ -176,7 +176,10 @@ export class UserController {
     @Body() updateProfileRequestDto: UpdateProfileRequestDto,
     @GetUser() user: UserModel,
   ) {
-    return this.userFacade.updateProfile(updateProfileRequestDto, user.id);
+    return pipe(
+      this.userFacade.updateProfile(updateProfileRequestDto, user.id),
+      Effect.runPromise,
+    );
   }
 
   @Post('/check-admin')
