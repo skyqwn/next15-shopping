@@ -93,4 +93,9 @@ export const ErrorCodes = {
     code: 6002,
     message: '장바구니 상품을 찾을 수 없습니다.',
   },
+  PRODUCTS_NOT_FOUND: {
+    tag: 'PRODUCTS_NOT_FOUND',
+    code: 6003,
+    message: '상품을 찾을 수 없습니다.',
+  },
 } as const;

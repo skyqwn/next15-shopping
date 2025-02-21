@@ -1,11 +1,25 @@
 import { Module } from '@nestjs/common';
 
 import { RedisClient } from './redis.client';
-import { RefreshTokenCacheStore, UserCacheStore } from './store';
+import {
+  ProductCacheStore,
+  RefreshTokenCacheStore,
+  UserCacheStore,
+} from './store';
 
 @Module({
   imports: [],
-  providers: [RedisClient, RefreshTokenCacheStore, UserCacheStore],
-  exports: [RedisClient, RefreshTokenCacheStore, UserCacheStore],
+  providers: [
+    RedisClient,
+    RefreshTokenCacheStore,
+    UserCacheStore,
+    ProductCacheStore,
+  ],
+  exports: [
+    RedisClient,
+    RefreshTokenCacheStore,
+    UserCacheStore,
+    ProductCacheStore,
+  ],
 })
 export class CacheModule {}

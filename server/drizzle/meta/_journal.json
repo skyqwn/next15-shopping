@@ -8,6 +8,20 @@
       "when": 1737525256807,
       "tag": "0000_wandering_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740118308343,
+      "tag": "0001_mushy_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740118481422,
+      "tag": "0002_robust_luke_cage",
+      "breakpoints": true
     }
   ]
 }
