@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -21,18 +22,32 @@ import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
 import { ProfileSchema, ProfileType } from "@/schemas";
 import ProfileImage from "./profile-image";
 import { useUpdateProfileMutation } from "@/hooks/queries/userInfo/useUpdateUserMutation";
+import useAuth from "@/hooks/queries/useAuth";
+import { useEffect } from "react";
 
 const ProfileForm = () => {
+  const router = useRouter();
   const { data: userData } = useMyProfileQuery();
   const updateProfileMutation = useUpdateProfileMutation();
+  const { logoutMutation } = useAuth();
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: userData?.data.name || "",
-      profileImageUris: userData?.data.imageUri || "",
-      description: userData?.data.description || "",
+      name: "",
+      profileImageUris: "",
+      description: "",
     },
   });
+
+  useEffect(() => {
+    if (userData?.data) {
+      form.reset({
+        name: userData.data.name || "",
+        profileImageUris: userData.data.imageUri || "",
+        description: userData.data.description || "",
+      });
+    }
+  }, [userData, form]);
 
   const { handleFileRemove, handleImageChange } = useImagePicker({
     isProfile: true,
@@ -40,6 +55,18 @@ const ProfileForm = () => {
     setValue: form.setValue,
     getValues: form.getValues,
   });
+
+  const handleLogout = () => {
+    const isConfirmed = window.confirm("로그아웃 하시겠습니까?");
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => router.push("/"),
+    });
+  };
 
   const onSubmit = async (data: ProfileType) => {
     updateProfileMutation.mutate(data);
@@ -59,7 +86,7 @@ const ProfileForm = () => {
               <ProfileImage
                 handleFileRemove={handleFileRemove}
                 handleImageChange={handleImageChange}
-                initialImage={userData?.data.imageUri}
+                initialImage={userData?.data?.imageUri}
               />
 
               <FormField
@@ -112,7 +139,7 @@ const ProfileForm = () => {
             <li>
               <Link href={"/my/favorite"}>좋아요 한 글</Link>
             </li>
-            <li>로그아웃</li>
+            <li onClick={handleLogout}>로그아웃</li>
           </ul>
         </nav>
       </section>

@@ -5,7 +5,7 @@ import { Providers } from "@/providers";
 import Header from "@/components/common/header";
 import TabBar from "@/components/common/tab-bar";
 import { ServerFetchBoundary } from "@/components/prefetch-boundary";
-import { getAuthStatusQueryOptions } from "@/hooks/queries/authStatus/useAuthStatusQuery";
+import Footer from "@/components/common/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +32,11 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <Providers>
           <div className="flex min-h-screen flex-1 flex-col">
-            <ServerFetchBoundary fetchOptions={getAuthStatusQueryOptions()}>
-              <Header />
-            </ServerFetchBoundary>
-            <div className="container mx-auto h-[calc(100vh-88px)] lg:h-[calc(100vh-108px)]">
-              {children}
-            </div>
+            <Header />
+            <main className="flex-1">
+              <div className="container mx-auto pb-16 lg:pb-0">{children}</div>
+            </main>
+            <Footer />
             <TabBar />
           </div>
         </Providers>

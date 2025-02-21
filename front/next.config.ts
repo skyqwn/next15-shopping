@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         hostname: "k.kakaocdn.net",
         pathname: "/dn/**",
       },
+      {
+        protocol: "https",
+        hostname: "loremflickr.com*",
+      },
     ],
   },
 };

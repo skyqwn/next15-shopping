@@ -6,8 +6,8 @@ import AuthButtonsWrapper from "./header/auth-button-wrapper";
 const Header = () => {
   const routes = [
     { path: "/", label: "Home" },
-    { path: "/chat", label: "Shop" },
-    { path: "/community", label: "Style" },
+    { path: "/shop", label: "Shop" },
+    { path: "/style", label: "Style" },
   ];
 
   return (

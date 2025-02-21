@@ -1,6 +1,7 @@
 import { postLogin, postLogout, postSignup } from "@/api/auth";
 import { queryKeys } from "@/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
 export interface ServerResponse<T> {

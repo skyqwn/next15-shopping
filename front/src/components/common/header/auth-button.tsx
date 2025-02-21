@@ -32,6 +32,11 @@ const AuthButton = () => {
       <Link href="/my" className="cursor-pointer">
         <span>마이페이지</span>
       </Link>
+      {userInfo.data.role === "ADMIN" && (
+        <Link href="/admin" className="cursor-pointer">
+          <span>어드민 페이지</span>
+        </Link>
+      )}
       <button type="button" onClick={handleLogout} className="cursor-pointer">
         로그아웃
       </button>
