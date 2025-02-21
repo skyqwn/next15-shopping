@@ -1,40 +1,27 @@
-import { Input } from "@/components/ui/input";
-import { generateFakeProducts } from "./action";
-import { formatNumber } from "@/lib/utils";
+import { Suspense } from "react";
 import Image from "next/image";
 
-const Shop = () => {
+import ProductGridSkeleton from "@/components/shop/product-grid-skeleton";
+import { ServerFetchBoundary } from "@/components/prefetch-boundary";
+import SortOptionsFilter from "@/components/shop/sort-options-filter";
+import SearchBar from "@/components/common/search-bar";
+import ProductGrid from "@/components/shop/product-grid";
+
+import { generateFakeProducts } from "./action";
+import { formatNumber } from "@/lib/utils";
+import { getProductsQueryOptions } from "@/hooks/queries/products/useProductsQuery";
+
+const Shop = ({
+  searchParams,
+}: {
+  searchParams: { q?: string; sort?: string };
+}) => {
   const products = generateFakeProducts(20);
   return (
     <div className="min-h-screen bg-white">
-      {/* 검색바 */}
-      <div className="sticky top-0 z-10 border-b bg-white">
-        <div className="mx-auto max-w-screen-xl px-4 py-3">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="브랜드명, 모델명, 모델번호 등"
-              className="h-12 w-full rounded-lg bg-gray-100 pl-10 pr-4"
-            />
-            <svg
-              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-
+      <SearchBar />
       {/* 필터 */}
-      <div className="border-b">
+      {/* <div className="border-b">
         <div className="mx-auto max-w-screen-xl px-4">
           <div className="flex gap-4 overflow-x-auto py-3">
             {["전체", "신발", "의류", "패션잡화", "테크", "라이프"].map(
@@ -49,23 +36,21 @@ const Shop = () => {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
 
-      {/* 정렬 옵션 */}
-      <div className="border-b">
-        <div className="mx-auto max-w-screen-xl px-4 py-3">
-          <div className="flex justify-between">
-            <div className="flex gap-4 text-sm">
-              <button className="font-bold">인기순</button>
-              <button className="text-gray-500">최신순</button>
-              <button className="text-gray-500">높은 가격순</button>
-              <button className="text-gray-500">낮은 가격순</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 상품 그리드 */}
+      <SortOptionsFilter />
+      {/* <Suspense fallback={<ProductGridSkeleton />}>
+        <ServerFetchBoundary
+          fetchOptions={[
+            getProductsQueryOptions({
+              search: searchParams.q,
+              sort: searchParams.sort as any,
+            }),
+          ]}
+        >
+          <ProductGrid />
+        </ServerFetchBoundary>
+      </Suspense> */}
       <div className="mx-auto max-w-screen-xl px-4 py-4">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {products.map((product) => (

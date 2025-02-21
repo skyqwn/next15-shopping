@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { useCreateProductMutation } from "@/hooks/queries/products/useCreateProductMutation";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo.js";
+import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
 import { ProductSchema, ProductType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ProductCardForm from "./product-card-form.tsx";
