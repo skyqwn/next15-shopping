@@ -26,3 +26,7 @@ export const productVariantsRelations = relations(
     variantTags: many(variantTags),
   }),
 );
+
+export type ProductVariantSelectType = typeof productVariants.$inferSelect;
+export type ProductVariantInsertType = typeof productVariants.$inferInsert;
+export type ProductVariantUpdateType = Partial<ProductVariantInsertType>;

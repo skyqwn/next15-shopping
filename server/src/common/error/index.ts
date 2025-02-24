@@ -98,4 +98,9 @@ export const ErrorCodes = {
     code: 6003,
     message: '상품을 찾을 수 없습니다.',
   },
+  VARIANT_NOT_FOUND: {
+    tag: 'VARIANT_NOT_FOUND',
+    code: 6004,
+    message: '상품 내용을 찾을 수 없습니다.',
+  },
 } as const;

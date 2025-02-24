@@ -20,3 +20,6 @@ export const variantImagesRelations = relations(variantImages, ({ one }) => ({
     relationName: 'variantImages',
   }),
 }));
+
+export type VariantImageSelectType = typeof variantImages.$inferSelect;
+export type VariantImageInsertType = typeof variantImages.$inferInsert;

@@ -14,6 +14,8 @@ import { Effect, pipe } from 'effect';
 import { ProductFacade } from 'src/application/facades';
 
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
+import { CreateProductDto } from '../dtos/product/request/create-product-request.dto';
+import { CreateVariantRequestDto } from '../dtos/variant/request';
 
 @Controller('products')
 export class ProductController {
@@ -21,7 +23,8 @@ export class ProductController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  createProduct(@Body() createProductDto: any) {
+  createProduct(@Body() createProductDto: CreateProductDto) {
+    console.log(createProductDto);
     return pipe(
       this.productFacade.createProduct(createProductDto),
       Effect.map((product) => ({
@@ -33,11 +36,29 @@ export class ProductController {
     );
   }
 
-  @IsPublic()
   @Get()
-  getProducts(@Query('q') search?: string, @Query('sort') sort?: string) {
+  @IsPublic()
+  findAll() {
+    return pipe(
+      this.productFacade.findAll(),
+      Effect.map((products) => ({
+        success: true,
+        result: products,
+        message: products.length === 0 ? '찾는 상품이 없습니다' : null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @IsPublic()
+  @Get('/filter')
+  getProducts(@Query('q') search?: string, @Query('sort') sort?: any) {
     return pipe(
       this.productFacade.getProducts({ search, sort }),
+      Effect.tap((products) =>
+        console.log('Controller - Result:', products.length),
+      ),
+
       Effect.map((products) => ({
         success: true,
         result: products,
@@ -83,6 +104,20 @@ export class ProductController {
       Effect.map(() => ({
         success: true,
         result: null,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Post('variant')
+  @UseGuards(AuthGuard('jwt'))
+  createVariant(@Body() createVariantDto: CreateVariantRequestDto) {
+    return pipe(
+      this.productFacade.createVariant(createVariantDto),
+      Effect.map((variant) => ({
+        success: true,
+        result: variant,
         message: null,
       })),
       Effect.runPromise,

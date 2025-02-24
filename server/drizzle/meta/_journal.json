@@ -22,6 +22,13 @@
       "when": 1740118481422,
       "tag": "0002_robust_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740363618658,
+      "tag": "0003_icy_vapor",
+      "breakpoints": true
     }
   ]
 }

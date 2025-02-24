@@ -8,3 +8,6 @@ export const variantTags = pgTable('variantTags', {
     .notNull()
     .references(() => productVariants.id, { onDelete: 'cascade' }),
 });
+
+export type VariantTagSelectType = typeof variantTags.$inferSelect;
+export type VariantTagInsertType = typeof variantTags.$inferInsert;

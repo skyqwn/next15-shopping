@@ -1,33 +1,64 @@
-import { ProductSelectType } from 'src/infrastructure/drizzle/schema/product.schema';
+import { ProductSelectType } from 'src/infrastructure/drizzle/schema/products.schema';
 
 export class ProductModel {
   constructor(
-    public readonly id: number,
-    public readonly name: string,
-    public readonly brand: string,
-    public readonly price: number,
-    public readonly immediatePrice: number,
-    public readonly description: string | null,
-    public readonly category: string,
-    public readonly imageUrl: string,
-    public readonly createdAt: Date | null,
-    public readonly updatedAt: Date | null,
-    public readonly deletedAt: Date | null,
+    public id: number,
+    public title: string,
+    public description: string,
+    public price: number,
+    public createdAt: Date | null,
+    public updatedAt: Date | null,
+    public isDeleted: boolean,
+    public productVariants: {
+      id: number;
+      color: string;
+      productType: string;
+      createdAt: Date | null;
+      updatedAt: Date | null;
+      variantImages: {
+        id: number;
+        url: string;
+        size: number;
+        fileName: string;
+        order: number;
+      }[];
+    }[] = [],
   ) {}
 
-  static from(product: ProductSelectType): ProductModel {
+  static from(
+    data: ProductSelectType & {
+      productVariants?: {
+        id: number;
+        color: string;
+        productType: string;
+        createdAt: Date | null;
+        updatedAt: Date | null;
+        variantImages?: {
+          id: number;
+          url: string;
+          size: number;
+          fileName: string;
+          order: number;
+        }[];
+      }[];
+    },
+  ): ProductModel {
     return new ProductModel(
-      product.id,
-      product.name,
-      product.brand,
-      product.price,
-      product.immediatePrice,
-      product.description,
-      product.category,
-      product.imageUrl,
-      product.createdAt,
-      product.updatedAt,
-      product.deletedAt,
+      data.id,
+      data.title,
+      data.description,
+      data.price,
+      data.createdAt,
+      data.updatedAt,
+      data.isDeleted,
+      data.productVariants?.map((variant) => ({
+        id: variant.id,
+        color: variant.color,
+        productType: variant.productType,
+        createdAt: variant.createdAt,
+        updatedAt: variant.updatedAt,
+        variantImages: variant.variantImages || [],
+      })) || [],
     );
   }
 }

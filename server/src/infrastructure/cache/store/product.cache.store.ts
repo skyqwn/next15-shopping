@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RedisClient } from '../redis.client';
 import { Effect, pipe } from 'effect';
 import { ConfigService } from '@nestjs/config';
-import { ProductSelectType } from 'src/infrastructure/drizzle/schema/product.schema';
 import { ProductModel } from 'src/domain/model/product.model';
 
 @Injectable()

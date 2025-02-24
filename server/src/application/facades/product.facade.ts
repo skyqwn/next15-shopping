@@ -5,6 +5,8 @@ import { ProductModel } from 'src/domain/model/product.model';
 import { CreateProductCriteria } from '../dtos/criteria/product/create-product-criteria';
 import { UpdateProductCriteria } from '../dtos/criteria/product/update-product-criteria';
 import { ProductService } from 'src/domain/service/product.service';
+import { CreateVariantCriteria } from '../dtos/criteria/variant';
+import { ProductVariantModel } from 'src/domain/model/product-variant.model';
 
 export type SortOption = 'popular' | 'latest' | 'price_high' | 'price_low';
 
@@ -25,10 +27,15 @@ export class ProductFacade {
     return this.productService.updateProduct(id, updateProductCriteria);
   }
 
+  findAll(): Effect.Effect<ProductModel[], Error> {
+    return this.productService.findAll();
+  }
+
   getProducts(params: {
     search?: string;
     sort?: string;
   }): Effect.Effect<ProductModel[], Error> {
+    console.log(`Facade - Search Params: ${params}`);
     return this.productService.getProducts(params);
   }
 
@@ -38,5 +45,11 @@ export class ProductFacade {
 
   deleteProduct(id: number): Effect.Effect<void, Error> {
     return this.productService.deleteProduct(id);
+  }
+
+  createVariant(
+    createVariantCriteria: CreateVariantCriteria,
+  ): Effect.Effect<ProductVariantModel, Error> {
+    return this.productService.createVariant(createVariantCriteria);
   }
 }

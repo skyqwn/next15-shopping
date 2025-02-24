@@ -6,24 +6,23 @@ import { AppNotFoundException } from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ProductCacheStore } from 'src/infrastructure/cache/store/product.cache.store';
 import { CreateProductCommand, UpdateProductCommand } from '../dtos';
+import { CreateVariantCommand } from '../dtos/commands/variant';
+import { ProductVariantRepository } from 'src/infrastructure/database/repositories/variant.repository';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
+    private readonly productVariantRepository: ProductVariantRepository,
     private readonly productCacheStore: ProductCacheStore,
   ) {}
 
   createProduct(createProductCommand: CreateProductCommand) {
     return pipe(
       this.productRepository.create({
-        name: createProductCommand.name,
-        brand: createProductCommand.brand,
+        title: createProductCommand.title,
         price: createProductCommand.price,
-        immediatePrice: createProductCommand.immediatePrice,
         description: createProductCommand.description,
-        category: createProductCommand.category,
-        imageUrl: createProductCommand.imageUrl,
       }),
       Effect.tap((product) =>
         this.productCacheStore.cache(product.id.toString(), product),
@@ -34,13 +33,9 @@ export class ProductService {
   updateProduct(id: number, updateProductCommand: UpdateProductCommand) {
     return pipe(
       this.productRepository.update(id, {
-        name: updateProductCommand.name,
-        brand: updateProductCommand.brand,
+        title: updateProductCommand.title,
         price: updateProductCommand.price,
-        immediatePrice: updateProductCommand.immediatePrice,
         description: updateProductCommand.description,
-        category: updateProductCommand.category,
-        imageUrl: updateProductCommand.imageUrl,
         updatedAt: new Date(),
       }),
       Effect.tap((product) =>
@@ -50,6 +45,10 @@ export class ProductService {
         Effect.fail(new AppNotFoundException(ErrorCodes.PRODUCT_NOT_FOUND)),
       ),
     );
+  }
+
+  findAll() {
+    return this.productRepository.findAll();
   }
 
   getProducts(params: { search?: string; sort?: string }) {
@@ -86,6 +85,32 @@ export class ProductService {
       Effect.catchAll(() =>
         Effect.fail(new AppNotFoundException(ErrorCodes.PRODUCT_NOT_FOUND)),
       ),
+    );
+  }
+
+  createVariant(createVariantCommand: CreateVariantCommand) {
+    return pipe(
+      this.getProductById(createVariantCommand.productId),
+      Effect.flatMap(() =>
+        this.productVariantRepository.createWithRelations({
+          variant: {
+            productId: createVariantCommand.productId,
+            productType: createVariantCommand.productType,
+            color: createVariantCommand.color,
+          },
+          images: createVariantCommand.variantImages,
+          tags: createVariantCommand.tags,
+        }),
+      ),
+      Effect.tap(() =>
+        this.productCacheStore.remove(
+          createVariantCommand.productId.toString(),
+        ),
+      ),
+      Effect.catchAll((error) => {
+        console.error('Variant creation error:', error);
+        return Effect.fail(new Error('Failed to create variant'));
+      }),
     );
   }
 }

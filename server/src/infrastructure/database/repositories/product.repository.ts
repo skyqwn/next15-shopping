@@ -6,24 +6,19 @@ import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/infrastructure/drizzle/types/drizzle';
 import { AppNotFoundException } from 'src/domain/exceptions';
 import { ErrorCodes } from 'src/common/error';
-import {
-  NodePgQueryResultHKT,
-  NodePgDatabase,
-} from 'drizzle-orm/node-postgres';
 
 import { BaseRepository } from './base.repository';
-import {
-  product,
-  ProductInsertType,
-  ProductUpdateType,
-} from 'src/infrastructure/drizzle/schema/product.schema';
+
 import { ProductModel } from 'src/domain/model/product.model';
-import { PgSelect, PgSelectQueryBuilder, PgTable } from 'drizzle-orm/pg-core';
-import { ProductSelectType } from 'src/infrastructure/drizzle/schema/products.schema';
+import { PgTable } from 'drizzle-orm/pg-core';
+import {
+  ProductInsertType,
+  products,
+  ProductSelectType,
+  ProductUpdateType,
+} from 'src/infrastructure/drizzle/schema/products.schema';
 type SortOption = 'popular' | 'latest' | 'price_high' | 'price_low';
-type QueryType<T extends PgTable> = ReturnType<
-  ReturnType<NodePgDatabase['select']>['from']
->;
+
 @Injectable()
 export class ProductRepository
   implements BaseRepository<ProductInsertType, ProductModel>
@@ -32,7 +27,9 @@ export class ProductRepository
 
   create(data: ProductInsertType): Effect.Effect<ProductModel, Error> {
     return pipe(
-      Effect.tryPromise(() => this.db.insert(product).values(data).returning()),
+      Effect.tryPromise(() =>
+        this.db.insert(products).values(data).returning(),
+      ),
       Effect.map(([product]) => ProductModel.from(product)),
     );
   }
@@ -43,7 +40,11 @@ export class ProductRepository
   ): Effect.Effect<ProductModel, Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db.update(product).set(data).where(eq(product.id, id)).returning(),
+        this.db
+          .update(products)
+          .set(data)
+          .where(eq(products.id, id))
+          .returning(),
       ),
       Effect.map(([product]) => ProductModel.from(product)),
       Effect.catchAll(() =>
@@ -55,7 +56,7 @@ export class ProductRepository
   delete(id: number): Effect.Effect<void, Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db.delete(product).where(eq(product.id, id)),
+        this.db.delete(products).where(eq(products.id, id)),
       ),
       Effect.map(() => void 0),
     );
@@ -64,18 +65,12 @@ export class ProductRepository
   findOneBy(id: number): Effect.Effect<ProductModel | null, Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db.query.product.findFirst({
-          where: eq(product.id, id),
-        }),
+        this.db.select().from(products).where(eq(products.id, id)).limit(1),
       ),
-      Effect.map((product) => (product ? ProductModel.from(product) : null)),
-    );
-  }
-
-  findAll(): Effect.Effect<ProductModel[], Error> {
-    return pipe(
-      Effect.tryPromise(() => this.db.select().from(product)),
-      Effect.map((products) => products.map(ProductModel.from)),
+      Effect.map((results) => {
+        const product = results[0];
+        return product ? ProductModel.from(product) : null;
+      }),
     );
   }
 
@@ -90,31 +85,20 @@ export class ProductRepository
     );
   }
 
-  findAllWithFilters(params: {
-    search?: string;
-    sort?: string;
-  }): Effect.Effect<ProductModel[], Error> {
+  findAll(): Effect.Effect<ProductModel[], Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db.query.product.findMany({
-          where: params.search
-            ? or(
-                ilike(product.name, `%${params.search}%`),
-                ilike(product.brand, `%${params.search}%`),
-              )
-            : undefined,
-          orderBy:
-            params.sort === 'latest'
-              ? desc(product.createdAt)
-              : params.sort === 'price_high'
-                ? desc(product.price)
-                : params.sort === 'price_low'
-                  ? asc(product.price)
-                  : desc(product.createdAt),
+        this.db.query.products.findMany({
+          with: {
+            productVariants: {
+              with: {
+                variantImages: true,
+              },
+            },
+          },
         }),
       ),
-      Effect.map((products: ProductModel[]) => {
-        console.log('query result:', products);
+      Effect.map((products) => {
         return products.map(ProductModel.from);
       }),
       Effect.catchAll((error) => {
@@ -124,49 +108,53 @@ export class ProductRepository
     );
   }
 
-  // findAllWithFilters(params: {
-  //   search?: string;
-  //   sort?: string;
-  // }): Effect.Effect<ProductModel[], Error> {
-  //   let query = this.db.select().from(product) as any;
-  //   console.log('repository search:', params.search);
-  //   console.log('repository sort:', params.sort);
-  //   console.log('repository query:', query);
-
-  //   if (params.search) {
-  //     query = query.where(
-  //       or(
-  //         ilike(product.name, `%${params.search}%`),
-  //         ilike(product.brand, `%${params.search}%`),
-  //       ),
-  //     );
-  //   }
-
-  //   if (params.sort) {
-  //     query = this.applySorting(query, params.sort as SortOption);
-  //   }
-
-  //   return pipe(
-  //     Effect.tryPromise(() => query.execute()),
-  //     Effect.map((products: ProductModel[]) => products.map(ProductModel.from)),
-  //     Effect.catchAll((error) => {
-  //       console.error('Query error:', error);
-  //       return Effect.succeed([]);
-  //     }),
-  //   );
-  // }
+  findAllWithFilters(params: {
+    search?: string;
+    sort?: string;
+  }): Effect.Effect<ProductModel[], Error> {
+    return pipe(
+      Effect.tryPromise(() =>
+        this.db.query.products.findMany({
+          with: {
+            productVariants: { with: { variantImages: true } },
+          },
+          where: params.search
+            ? or(
+                ilike(products.title, `%${params.search}%`),
+                // ilike(products.brand, `%${params.search}%`),
+              )
+            : undefined,
+          orderBy:
+            params.sort === 'latest'
+              ? desc(products.createdAt)
+              : params.sort === 'price_high'
+                ? desc(products.price)
+                : params.sort === 'price_low'
+                  ? asc(products.price)
+                  : desc(products.createdAt),
+        }),
+      ),
+      Effect.map((products: ProductModel[]) => {
+        return products.map(ProductModel.from);
+      }),
+      Effect.catchAll((error) => {
+        console.error('Query error:', error);
+        return Effect.succeed([]);
+      }),
+    );
+  }
 
   private applySorting(query: any, sortOption: SortOption): any {
     switch (sortOption) {
       case 'latest':
-        return query.orderBy(desc(product.createdAt));
+        return query.orderBy(desc(products.createdAt));
       case 'price_high':
-        return query.orderBy(desc(product.price));
+        return query.orderBy(desc(products.price));
       case 'price_low':
-        return query.orderBy(asc(product.price));
+        return query.orderBy(asc(products.price));
       case 'popular':
       default:
-        return query.orderBy(desc(product.createdAt));
+        return query.orderBy(desc(products.createdAt));
     }
   }
 }

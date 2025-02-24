@@ -27,3 +27,4 @@ export const productsRelations = relations(products, ({ many }) => ({
 
 export type ProductSelectType = typeof products.$inferSelect;
 export type ProductInsertType = typeof products.$inferInsert;
+export type ProductUpdateType = Partial<ProductInsertType>;
