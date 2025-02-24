@@ -1,15 +1,18 @@
 "use client";
 
-import { useProductsQuery } from "@/hooks/queries/products/useProductsQuery";
 import placeholder from "../../../public/placeholder.jpg";
 import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { useProductsQuery } from "@/hooks/queries/products/useProductsQuery";
 
 const ProductList = () => {
   const data = useProductsQuery();
 
-  const dataTable = data?.data?.map((product: any) => {
+  console.log(data);
+
+  const dataTable = data?.data?.result.map((product: any) => {
+    console.log("product", product);
     if (product.productVariants.length === 0) {
       return {
         id: product.id,

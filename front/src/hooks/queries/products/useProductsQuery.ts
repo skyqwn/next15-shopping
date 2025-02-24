@@ -3,10 +3,9 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { GET } from "@/api/httpMethod";
-import { END_POINTS } from "@/constants";
+import { END_POINTS, queryKeys } from "@/constants";
 import { SortOption } from "@/hooks/useShopSearchParams";
 
-// Product 타입 정의
 interface Product {
   id: string;
   name: string;
@@ -29,19 +28,8 @@ interface ProductsParams {
   sort?: SortOption;
 }
 
-export const productsQueryKey = (params: ProductsParams) =>
-  ["products", params] as const;
-
-const getProducts = async (
-  params: ProductsParams,
-): Promise<ProductsResponse> => {
-  const searchParams = new URLSearchParams();
-  if (params.search) searchParams.set("q", params.search);
-  if (params.sort) searchParams.set("sort", params.sort);
-
-  const response = await GET<ProductsResponse>(
-    `${END_POINTS.PRODUCTS}?${searchParams.toString()}`,
-  );
+const getProducts = async (): Promise<ProductsResponse> => {
+  const response = await GET<ProductsResponse>(`${END_POINTS.PRODUCTS}`);
 
   if (!response) {
     throw new Error("Failed to fetch products");
@@ -50,18 +38,16 @@ const getProducts = async (
   return response;
 };
 
-export const getProductsQueryOptions = (
-  params: ProductsParams,
-): UseSuspenseQueryOptions<ProductsResponse, Error> => ({
-  queryKey: productsQueryKey(params),
-  queryFn: () => getProducts(params),
+export const getProductsQueryOptions = (): UseSuspenseQueryOptions<
+  ProductsResponse,
+  Error
+> => ({
+  queryKey: [queryKeys.PRODUCTS],
+  queryFn: () => getProducts(),
 });
 
-export const useProducts = (params: ProductsParams) => {
-  return useSuspenseQuery<ProductsResponse, Error>(
-    getProductsQueryOptions(params),
-  );
+export const useProductsQuery = () => {
+  return useSuspenseQuery<ProductsResponse, Error>(getProductsQueryOptions());
 };
 
-// Product 타입도 export
 export type { Product, ProductsResponse, ProductsParams };

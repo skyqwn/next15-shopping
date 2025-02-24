@@ -4,6 +4,7 @@ const queryKeys = {
   OWNER_USER: "owner",
   PRODUCTS: "products",
   PRODUCT_DETAIL: "productDetail",
+  VARIANT: "variant",
   AUTH_STATUS: "authStatus",
 } as const;
 

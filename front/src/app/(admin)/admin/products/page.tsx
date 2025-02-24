@@ -11,11 +11,11 @@ const Product = () => {
   ];
   return (
     <>
-      {/* <Suspense fallback={"프로덕트로딩 "}>
-        <ServerFetchBoundary fetchOptions={serverFetchOptions}> */}
-      <ProductList />
-      {/* </ServerFetchBoundary>
-      </Suspense> */}
+      <Suspense fallback={"프로덕트로딩 "}>
+        <ServerFetchBoundary fetchOptions={serverFetchOptions}>
+          <ProductList />
+        </ServerFetchBoundary>
+      </Suspense>
     </>
   );
 };

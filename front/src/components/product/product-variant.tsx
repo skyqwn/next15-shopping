@@ -24,6 +24,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import InputTags from "./input-tags";
 import VariantImages from "./variant-images";
+import { useCreateVariantMutation } from "@/hooks/queries/product-variant/useCreateVariantMutation";
 
 interface ProductVariantProps {
   editMode?: boolean;
@@ -51,8 +52,10 @@ const ProductVariant = ({
     mode: "onChange",
   });
 
+  const { mutate: createVariantMutate } = useCreateVariantMutation();
   const onSubmit = (data: VariantType) => {
     console.log(data);
+    createVariantMutate(data);
   };
 
   return (

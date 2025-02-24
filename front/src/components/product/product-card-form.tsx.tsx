@@ -28,9 +28,10 @@ interface CardFormProps {
     undefined
   >;
   onSubmit: (data: any) => void;
+  isPending?: boolean;
 }
 
-const ProductCardForm = ({ form, onSubmit }: CardFormProps) => {
+const ProductCardForm = ({ form, onSubmit, isPending }: CardFormProps) => {
   return (
     <Card className="m-1">
       <CardHeader>
@@ -95,7 +96,9 @@ const ProductCardForm = ({ form, onSubmit }: CardFormProps) => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "저장 중..." : "저장"}
+            </Button>
           </form>
         </Form>
       </CardContent>

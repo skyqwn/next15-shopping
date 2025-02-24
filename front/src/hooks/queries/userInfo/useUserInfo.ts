@@ -1,6 +1,6 @@
 import { createInit, GET } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
-import { GetUserInfoResponseType, UserInfoProps } from "@/types";
+import { UserInfoProps } from "@/types";
 import {
   useSuspenseQuery,
   UseSuspenseQueryOptions,
@@ -13,8 +13,6 @@ interface UserResponse {
 }
 
 const getUserInfo = async (): Promise<UserResponse | undefined> => {
-  //ToDo id가 있을 경우 id를 넣어줘야함
-  //if(id) url = `${url}/${id}`;
   const data = await GET<UserResponse>(END_POINTS.USER_PROFILE, createInit());
 
   return data;

@@ -22,7 +22,7 @@ const ProductForm = () => {
   });
 
   const { data: userData } = useMyProfileQuery();
-  console.log("userData", userData);
+  // console.log("userData", userData);
 
   // if (userData) {
   //   if (userData?.data.role !== "ADMIN") router.push("/");

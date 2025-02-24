@@ -6,9 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useProductDetailQuery } from "@/hooks/queries/products/useProductDetailQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PartialProductType, ProductSchema, ProductType } from "@/schemas";
-import { useCreateProductMutation } from "@/hooks/queries/products/useCreateProductMutation";
 import ProductCardForm from "./product-card-form.tsx";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo.js";
+import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
 import { usePatchProductMutation } from "@/hooks/queries/products/usePatchProductMutation";
 
 const EditProductForm = () => {
@@ -18,23 +17,18 @@ const EditProductForm = () => {
 
   const { data } = useProductDetailQuery(productId);
   const { data: userData } = useMyProfileQuery();
-
-  if (userData) {
-    if (userData?.data.role !== "ADMIN") router.push("/");
-  }
+  const { mutate: patchProductMutation, isPending } =
+    usePatchProductMutation(productId);
 
   const form = useForm<ProductType>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      title: data.product.title || "",
-      price: data.product.price || 0,
-      description: data.product.description || "",
+      title: data.result.title || "",
+      price: data.result.price || 0,
+      description: data.result.description || "",
     },
     mode: "onChange",
   });
-
-  const { mutate: patchProductMutation, isPending } =
-    usePatchProductMutation(productId);
 
   const onSubmit = (data: PartialProductType) => {
     patchProductMutation(
@@ -47,7 +41,9 @@ const EditProductForm = () => {
     );
   };
 
-  return <ProductCardForm form={form} onSubmit={onSubmit} />;
+  return (
+    <ProductCardForm form={form} onSubmit={onSubmit} isPending={isPending} />
+  );
 };
 
 export default EditProductForm;

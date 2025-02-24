@@ -17,7 +17,7 @@ const EditProductPage = ({ params }: PageProps) => {
   ];
 
   return (
-    <Suspense>
+    <Suspense fallback={"loading..."}>
       <ServerFetchBoundary fetchOptions={serverFetchOptions}>
         <EditProductForm />
       </ServerFetchBoundary>

@@ -23,31 +23,21 @@ import { ProfileSchema, ProfileType } from "@/schemas";
 import ProfileImage from "./profile-image";
 import { useUpdateProfileMutation } from "@/hooks/queries/userInfo/useUpdateUserMutation";
 import useAuth from "@/hooks/queries/useAuth";
-import { useEffect } from "react";
 
 const ProfileForm = () => {
   const router = useRouter();
   const { data: userData } = useMyProfileQuery();
-  const updateProfileMutation = useUpdateProfileMutation();
+  const { mutate: updateProfileMutation, isPending } =
+    useUpdateProfileMutation();
   const { logoutMutation } = useAuth();
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: "",
-      profileImageUris: "",
-      description: "",
+      name: userData?.data?.name || "",
+      profileImageUris: userData?.data?.imageUri || "",
+      description: userData?.data?.description || "",
     },
   });
-
-  useEffect(() => {
-    if (userData?.data) {
-      form.reset({
-        name: userData.data.name || "",
-        profileImageUris: userData.data.imageUri || "",
-        description: userData.data.description || "",
-      });
-    }
-  }, [userData, form]);
 
   const { handleFileRemove, handleImageChange } = useImagePicker({
     isProfile: true,
@@ -69,7 +59,7 @@ const ProfileForm = () => {
   };
 
   const onSubmit = async (data: ProfileType) => {
-    updateProfileMutation.mutate(data);
+    updateProfileMutation(data);
   };
 
   return (
@@ -125,7 +115,9 @@ const ProfileForm = () => {
                 )}
               />
             </div>
-            <Button type="submit">변경하기 </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "저장 중..." : "변경하기"}
+            </Button>
           </form>
         </Form>
       </section>
