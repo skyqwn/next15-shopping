@@ -4,6 +4,7 @@ import Image from "next/image";
 import { formatNumber } from "@/lib/utils";
 import { useShopSearchParams } from "@/hooks/useShopSearchParams";
 import { useProducts } from "@/hooks/queries/products/useProductsQuery";
+import { ShopPagination } from "./shop-pagination";
 
 const ProductGrid = () => {
   const { searchQuery, sort } = useShopSearchParams();
@@ -40,6 +41,7 @@ const ProductGrid = () => {
           </div>
         ))}
       </div>
+      <ShopPagination totalPage={10} />
     </div>
   );
 };

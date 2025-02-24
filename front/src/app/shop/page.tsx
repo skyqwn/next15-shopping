@@ -10,6 +10,7 @@ import ProductGrid from "@/components/shop/product-grid";
 import { generateFakeProducts } from "./action";
 import { formatNumber } from "@/lib/utils";
 import { getProductsQueryOptions } from "@/hooks/queries/products/useProductsQuery";
+import { ShopPagination } from "@/components/shop/shop-pagination";
 
 const Shop = ({
   searchParams,

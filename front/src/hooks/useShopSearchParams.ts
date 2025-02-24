@@ -1,4 +1,6 @@
-import { useQueryState } from "nuqs";
+"use client";
+
+import { parseAsInteger, useQueryState } from "nuqs";
 import { parseAsString } from "nuqs";
 import { debounce } from "lodash";
 import { useCallback, useState, useEffect } from "react";
@@ -8,6 +10,12 @@ const validSorts = ["popular", "latest", "price_high", "price_low"] as const;
 export type SortOption = "popular" | "latest" | "price_high" | "price_low";
 
 export const useShopSearchParams = () => {
+  const [page, setPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1).withOptions({
+      history: "push",
+    }),
+  );
   const [searchQuery, setSearchQuery] = useQueryState(
     "q",
     parseAsString.withDefault("").withOptions({
@@ -53,5 +61,7 @@ export const useShopSearchParams = () => {
     handleSearchChange,
     sort,
     handleSortChange,
+    setPage,
+    page,
   };
 };
