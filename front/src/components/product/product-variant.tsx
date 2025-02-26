@@ -3,7 +3,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -25,11 +24,15 @@ import { Button } from "../ui/button";
 import InputTags from "./input-tags";
 import VariantImages from "./variant-images";
 import { useCreateVariantMutation } from "@/hooks/queries/product-variant/useCreateVariantMutation";
+import { useEffect, useState } from "react";
+import { usePatchVariantMutation } from "@/hooks/queries/product-variant/usePatchVariantMutation";
+import { ProductVariantType } from "@/hooks/queries/products/useProductsQuery";
+import { useDeleteVariantMutation } from "@/hooks/queries/product-variant/useDeleteVariantMutation";
 
 interface ProductVariantProps {
   editMode?: boolean;
   productId: number;
-  variant?: any;
+  variant?: ProductVariantType;
   children: React.ReactNode;
 }
 
@@ -39,23 +42,68 @@ const ProductVariant = ({
   productId,
   variant,
 }: ProductVariantProps) => {
+  const [open, setOpen] = useState(true);
+  const { mutate: createVariantMutate } = useCreateVariantMutation();
+  const { mutate: updateVariantMutate } = usePatchVariantMutation();
+  const { mutate: deleteVariantMutate } = useDeleteVariantMutation();
+
   const form = useForm<VariantType>({
     resolver: zodResolver(VariantSchema),
     defaultValues: {
       tags: [],
       variantImages: [],
       color: "#000000",
-      id: undefined,
+      id: variant?.id,
       productId,
       productType: "흰셔츠",
     },
     mode: "onChange",
   });
 
-  const { mutate: createVariantMutate } = useCreateVariantMutation();
+  const setEdit = () => {
+    if (editMode && variant) {
+      form.setValue("id", variant.id);
+      form.setValue("productId", variant.productId);
+      form.setValue("productType", variant.productType);
+      form.setValue("color", variant.color);
+      form.setValue(
+        "tags",
+        variant.variantTags.map((tag) => tag.tag),
+      );
+      form.setValue(
+        "variantImages",
+        variant.variantImages.map((img) => ({
+          fileName: img.fileName,
+          size: img.size,
+          url: img.url,
+        })),
+      );
+    }
+  };
+
+  useEffect(() => {
+    setEdit();
+  }, []);
+
   const onSubmit = (data: VariantType) => {
-    console.log(data);
-    createVariantMutate(data);
+    if (editMode) {
+      updateVariantMutate(data);
+    } else {
+      createVariantMutate(data);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!variant?.id) return;
+
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      deleteVariantMutate(variant.id, {
+        onSuccess: () => {
+          setOpen(false); // Dialog 닫기
+        },
+      });
+    }
   };
 
   return (
@@ -63,7 +111,7 @@ const ProductVariant = ({
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="rouded-md max-h-[860px] overflow-y-scroll lg:max-w-screen-lg">
         <DialogHeader>
-          <DialogTitle>상품 내용 등록하기</DialogTitle>
+          <DialogTitle>상품 내용 {editMode ? "수정" : "등록"}하기</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -116,10 +164,19 @@ const ProductVariant = ({
                 )}
               />
 
-              {/* VariantImage설정 */}
               <VariantImages />
             </div>
-            <Button type="submit">변경하기 </Button>
+            {editMode && variant && (
+              <Button
+                variant={"destructive"}
+                className="mr-2"
+                type="button"
+                onClick={handleDelete}
+              >
+                삭제하기
+              </Button>
+            )}
+            <Button type="submit">{editMode ? "변경하기" : "등록하기"} </Button>
           </form>
         </Form>
       </DialogContent>

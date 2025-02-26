@@ -27,7 +27,7 @@ async function fetchWrapperServerSide<T>(uri: string, init?: RequestInit) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const userId = cookieStore.get("userId")?.value;
-
+  console.log("이걸로 작동??");
   if (!accessToken || !userId) {
     return null;
   }

@@ -2,7 +2,7 @@ import {
   UseSuspenseQueryOptions,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { GET } from "@/api/httpMethod";
+import { createInit, GET } from "@/api/httpMethod";
 import { END_POINTS } from "@/constants";
 import { SortOption } from "@/hooks/useShopSearchParams";
 
@@ -13,6 +13,12 @@ interface VariantImage {
   order: number;
 }
 
+interface VariantTag {
+  id: number;
+  tag: string;
+  variantId: number;
+}
+
 interface ProductVariant {
   id: number;
   color: string;
@@ -20,6 +26,7 @@ interface ProductVariant {
   createdAt: string;
   updatedAt: string;
   variantImages: VariantImage[];
+  variantTags: VariantTag[];
 }
 
 interface Product {
@@ -50,8 +57,6 @@ export const productsQueryKey = (params: ProductsParams) =>
 const getProductsFilter = async (
   params: ProductsParams,
 ): Promise<ProductsResponse> => {
-  console.log("Request Params:", params);
-
   const searchParams = new URLSearchParams();
   if (params.search) searchParams.set("q", params.search);
   if (params.sort) searchParams.set("sort", params.sort);
@@ -60,10 +65,10 @@ const getProductsFilter = async (
 
   const url = `${END_POINTS.FILTER_PRODUCTS}?${queryString}`;
 
-  const response = await GET<ProductsResponse>(`${url}`);
+  const response = await GET<ProductsResponse>(`${url}`, createInit());
 
   if (!response) {
-    throw new Error("Failed to fetch products");
+    return { success: false, result: [], message: "Failed to fetch products" };
   }
 
   return response;

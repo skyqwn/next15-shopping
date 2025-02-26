@@ -83,7 +83,7 @@ const VariantImages = () => {
                     <div className="flex items-center justify-center">
                       <Image
                         src={field.url}
-                        alt={field.fileName}
+                        alt={`제품 이미지 - ${field.fileName}`}
                         className="rounded-md"
                         width={72}
                         height={48}

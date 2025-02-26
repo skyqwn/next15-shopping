@@ -7,12 +7,9 @@ import { columns } from "./columns";
 import { useProductsQuery } from "@/hooks/queries/products/useProductsQuery";
 
 const ProductList = () => {
-  const data = useProductsQuery();
+  const { data } = useProductsQuery();
 
-  console.log(data);
-
-  const dataTable = data?.data?.result.map((product: any) => {
-    console.log("product", product);
+  const dataTable = data.result.map((product) => {
     if (product.productVariants.length === 0) {
       return {
         id: product.id,
@@ -22,6 +19,7 @@ const ProductList = () => {
         variants: [],
       };
     }
+
     const image = product.productVariants[0]?.variantImages[0]?.url;
     return {
       id: product.id,

@@ -27,11 +27,10 @@ async function fetchWrapperWithTokenHandler<T>(
 
   try {
     const { result } = await response.json();
-    console.log("리졀트", result);
     return result as T;
   } catch (error) {
     console.error(error);
-    return undefined;
+    return { success: false, result: [], message: "Fetch failed" } as T;
   }
 }
 
@@ -44,15 +43,9 @@ export function POST<T>(input: string, init?: RequestInit) {
 }
 
 export function PATCH<T>(input: string, init?: RequestInit) {
-  return fetchWrapperWithTokenHandler<T>(input, {
-    method: "PATCH",
-    ...init,
-  });
+  return fetchWrapperWithTokenHandler<T>(input, { method: "PATCH", ...init });
 }
 
 export function DELETE<T>(input: string, init?: RequestInit) {
-  return fetchWrapperWithTokenHandler<T>(input, {
-    method: "DELETE",
-    ...init,
-  });
+  return fetchWrapperWithTokenHandler<T>(input, { method: "DELETE", ...init });
 }

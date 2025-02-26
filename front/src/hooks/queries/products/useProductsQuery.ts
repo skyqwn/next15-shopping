@@ -2,19 +2,44 @@ import {
   UseSuspenseQueryOptions,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { GET } from "@/api/httpMethod";
+import { createInit, GET } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
 import { SortOption } from "@/hooks/useShopSearchParams";
 
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  immediatePrice: number;
-  imageUrl: string;
-  description?: string;
+interface VariantImage {
+  id: number;
+  url: string;
+  size: number;
+  fileName: string;
+  order: number;
+}
+
+interface VariantTag {
+  id: number;
+  tag: string;
+  variantId: number;
+}
+
+interface ProductVariantType {
+  id: number;
+  productId: number;
+  color: string;
+  productType: string;
   createdAt: string;
+  updatedAt: string;
+  variantImages: VariantImage[];
+  variantTags: VariantTag[];
+}
+
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+  productVariants: ProductVariantType[];
 }
 
 interface ProductsResponse {
@@ -23,13 +48,11 @@ interface ProductsResponse {
   message: string | null;
 }
 
-interface ProductsParams {
-  search?: string;
-  sort?: SortOption;
-}
-
 const getProducts = async (): Promise<ProductsResponse> => {
-  const response = await GET<ProductsResponse>(`${END_POINTS.PRODUCTS}`);
+  const response = await GET<ProductsResponse>(
+    `${END_POINTS.PRODUCTS}`,
+    createInit(),
+  );
 
   if (!response) {
     throw new Error("Failed to fetch products");
@@ -50,4 +73,10 @@ export const useProductsQuery = () => {
   return useSuspenseQuery<ProductsResponse, Error>(getProductsQueryOptions());
 };
 
-export type { Product, ProductsResponse, ProductsParams };
+export type {
+  Product,
+  ProductsResponse,
+  ProductVariantType,
+  VariantImage,
+  VariantTag,
+};

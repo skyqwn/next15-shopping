@@ -15,4 +15,6 @@ export const END_POINTS = {
   PATCH_PRODUCT: (id: number) => `/products/${id}`,
 
   CREATE_VARIANT: `/products/variant`,
+  UPDATE_VARIANT: (id: number) => `/products/variant/${id}`,
+  DELETE_VARIANT: (id: number) => `/products/variant/${id}`,
 } as const;

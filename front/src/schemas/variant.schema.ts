@@ -3,7 +3,6 @@ import * as z from "zod";
 export const VariantSchema = z.object({
   productId: z.number(),
   id: z.number().optional(),
-  // editMode: z.boolean(),
   productType: z
     .string()
     .min(3, { message: "상품타입을 최소 3자 입력해주세요" }),

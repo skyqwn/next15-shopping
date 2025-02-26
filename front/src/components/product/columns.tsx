@@ -13,12 +13,13 @@ import {
 } from "@/components/ui/tooltip";
 import { PlusCircle } from "lucide-react";
 import ProductVariant from "./product-variant";
+import { ProductVariantType } from "@/hooks/queries/products/useProductsQuery";
 
 export type ProductColumn = {
   title: string;
   price: number;
   image: string;
-  variants: any;
+  variants: ProductVariantType[];
   id: number;
 };
 
@@ -35,11 +36,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
     accessorKey: "variants",
     header: "Variants",
     cell: ({ row }) => {
-      const variants = row.getValue("variants") as any;
-      console.log("variants", variants);
+      const variants = row.getValue("variants") as ProductVariantType[];
       return (
-        <div>
-          {variants.map((variant: any) => {
+        <div className="flex gap-2">
+          {variants.map((variant) => (
             <div key={variant.id}>
               <TooltipProvider>
                 <Tooltip>
@@ -57,12 +57,12 @@ export const columns: ColumnDef<ProductColumn>[] = [
                     </ProductVariant>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Add to library</p>
+                    <p>{variant.productType}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </div>;
-          })}
+            </div>
+          ))}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
