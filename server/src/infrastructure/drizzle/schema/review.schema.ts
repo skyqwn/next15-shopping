@@ -44,3 +44,7 @@ export const reviewRelations = relations(reviews, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+export type ReviewSelectType = typeof reviews.$inferSelect;
+export type ReviewInsertType = typeof reviews.$inferInsert;
+export type ReviewUpdateType = Partial<ReviewInsertType>;

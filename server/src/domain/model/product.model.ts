@@ -3,6 +3,7 @@ import { ProductSelectType } from 'src/infrastructure/drizzle/schema/products.sc
 export class ProductModel {
   constructor(
     public id: number,
+
     public title: string,
     public description: string,
     public price: number,
@@ -11,6 +12,7 @@ export class ProductModel {
     public isDeleted: boolean,
     public productVariants: {
       id: number;
+      productId: number;
       color: string;
       productType: string;
       createdAt: Date | null;
@@ -22,6 +24,11 @@ export class ProductModel {
         fileName: string;
         order: number;
       }[];
+      variantTags: {
+        id: number;
+        tag: string;
+        variantId: number;
+      }[];
     }[] = [],
   ) {}
 
@@ -30,6 +37,7 @@ export class ProductModel {
       productVariants?: {
         id: number;
         color: string;
+        productId: number;
         productType: string;
         createdAt: Date | null;
         updatedAt: Date | null;
@@ -39,6 +47,11 @@ export class ProductModel {
           size: number;
           fileName: string;
           order: number;
+        }[];
+        variantTags?: {
+          id: number;
+          tag: string;
+          variantId: number;
         }[];
       }[];
     },
@@ -54,10 +67,12 @@ export class ProductModel {
       data.productVariants?.map((variant) => ({
         id: variant.id,
         color: variant.color,
+        productId: variant.productId,
         productType: variant.productType,
         createdAt: variant.createdAt,
         updatedAt: variant.updatedAt,
         variantImages: variant.variantImages || [],
+        variantTags: variant.variantTags || [],
       })) || [],
     );
   }

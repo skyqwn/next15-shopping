@@ -39,12 +39,14 @@ export class ProductCacheStore {
 
   findBy(productId: string): Effect.Effect<ProductModel | null, Error> {
     return pipe(
-      this.redisClient.get(this.CACHE_PREFIX, productId),
+      Effect.sync(() => console.time(`캐시-데이터-조회-${productId}`)), // 항상 시작
+      Effect.flatMap(() => this.redisClient.get(this.CACHE_PREFIX, productId)),
       Effect.tap((cachedData) =>
         Effect.sync(() => {
+          this.logger.debug('캐시 데이터:', cachedData);
+
           if (cachedData) {
             this.logger.debug(`캐시 히트! productId: ${productId}`);
-            console.time(`캐시-데이터-조회-${productId}`);
           } else {
             this.logger.debug(`캐시 미스! productId: ${productId}`);
           }
@@ -52,10 +54,12 @@ export class ProductCacheStore {
       ),
       Effect.map((cachedData) => (cachedData ? JSON.parse(cachedData) : null)),
       Effect.tap(() =>
-        Effect.sync(() => {
-          console.timeEnd(`캐시-데이터-조회-${productId}`);
-        }),
+        Effect.sync(() => console.timeEnd(`캐시-데이터-조회-${productId}`)),
       ),
+      Effect.catchAll((error) => {
+        console.timeEnd(`캐시-데이터-조회-${productId}`); // 에러 발생시에도 타이머 종료
+        return Effect.fail(error);
+      }),
     );
   }
 

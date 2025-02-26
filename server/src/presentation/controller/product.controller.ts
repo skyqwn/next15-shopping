@@ -15,14 +15,16 @@ import { ProductFacade } from 'src/application/facades';
 
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
 import { CreateProductDto } from '../dtos/product/request/create-product-request.dto';
-import { CreateVariantRequestDto } from '../dtos/variant/request';
+import {
+  CreateVariantRequestDto,
+  UpdateVariantRequestDto,
+} from '../dtos/variant/request';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productFacade: ProductFacade) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
   createProduct(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
     return pipe(
@@ -50,7 +52,6 @@ export class ProductController {
     );
   }
 
-  @IsPublic()
   @Get('/filter')
   getProducts(@Query('q') search?: string, @Query('sort') sort?: any) {
     return pipe(
@@ -83,7 +84,6 @@ export class ProductController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'))
   updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
     return pipe(
       this.productFacade.updateProduct(parseInt(id), updateProductDto),
@@ -97,7 +97,6 @@ export class ProductController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
   deleteProduct(@Param('id') id: string) {
     return pipe(
       this.productFacade.deleteProduct(parseInt(id)),
@@ -111,13 +110,42 @@ export class ProductController {
   }
 
   @Post('variant')
-  @UseGuards(AuthGuard('jwt'))
   createVariant(@Body() createVariantDto: CreateVariantRequestDto) {
+    console.log('createVariantDto', createVariantDto);
     return pipe(
       this.productFacade.createVariant(createVariantDto),
       Effect.map((variant) => ({
         success: true,
         result: variant,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Patch('variant/:id')
+  updateVariant(
+    @Param('id') id: string,
+    @Body() updateVariantDto: UpdateVariantRequestDto,
+  ) {
+    return pipe(
+      this.productFacade.updateVariant(parseInt(id), updateVariantDto),
+      Effect.map((variant) => ({
+        success: true,
+        result: variant,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Delete('variant/:id')
+  deleteVariant(@Param('id') id: string) {
+    return pipe(
+      this.productFacade.deleteVariant(parseInt(id)),
+      Effect.map(() => ({
+        success: true,
+        result: null,
         message: null,
       })),
       Effect.runPromise,

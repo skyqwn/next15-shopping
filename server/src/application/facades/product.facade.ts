@@ -5,7 +5,10 @@ import { ProductModel } from 'src/domain/model/product.model';
 import { CreateProductCriteria } from '../dtos/criteria/product/create-product-criteria';
 import { UpdateProductCriteria } from '../dtos/criteria/product/update-product-criteria';
 import { ProductService } from 'src/domain/service/product.service';
-import { CreateVariantCriteria } from '../dtos/criteria/variant';
+import {
+  CreateVariantCriteria,
+  UpdateVariantCriteria,
+} from '../dtos/criteria/variant';
 import { ProductVariantModel } from 'src/domain/model/product-variant.model';
 
 export type SortOption = 'popular' | 'latest' | 'price_high' | 'price_low';
@@ -51,5 +54,16 @@ export class ProductFacade {
     createVariantCriteria: CreateVariantCriteria,
   ): Effect.Effect<ProductVariantModel, Error> {
     return this.productService.createVariant(createVariantCriteria);
+  }
+
+  updateVariant(
+    id: number,
+    updateVariantCriteria: UpdateVariantCriteria,
+  ): Effect.Effect<ProductVariantModel, Error> {
+    return this.productService.updateVariant(id, updateVariantCriteria);
+  }
+
+  deleteVariant(id: number): Effect.Effect<void, Error> {
+    return this.productService.deleteVariant(id);
   }
 }

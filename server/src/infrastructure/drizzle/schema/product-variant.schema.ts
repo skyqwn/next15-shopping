@@ -22,8 +22,12 @@ export const productVariantsRelations = relations(
       fields: [productVariants.productId],
       references: [products.id],
     }),
-    variantImages: many(variantImages),
-    variantTags: many(variantTags),
+    variantImages: many(variantImages, {
+      relationName: 'variantImages',
+    }),
+    variantTags: many(variantTags, {
+      relationName: 'variantTags',
+    }),
   }),
 );
 

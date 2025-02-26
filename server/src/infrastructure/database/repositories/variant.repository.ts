@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import { Effect, pipe } from 'effect';
 
 import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
@@ -9,11 +9,14 @@ import { ErrorCodes } from 'src/common/error';
 import {
   ProductVariantInsertType,
   productVariants,
+  ProductVariantSelectType,
   ProductVariantUpdateType,
   VariantImageInsertType,
   variantImages,
+  VariantImageSelectType,
   VariantTagInsertType,
   variantTags,
+  VariantTagSelectType,
 } from 'src/infrastructure/drizzle/schema/schema';
 import { ProductVariantModel } from 'src/domain/model/product-variant.model';
 import { BaseRepository } from './base.repository';
@@ -159,20 +162,136 @@ export class ProductVariantRepository
 
   update(
     id: number,
-    data: ProductVariantUpdateType,
+    data: ProductVariantUpdateType & {
+      variantImages?: VariantImageInput[];
+      tags?: string[];
+    },
   ): Effect.Effect<ProductVariantModel, Error> {
     return pipe(
-      Effect.tryPromise(() =>
-        this.db
-          .update(productVariants)
-          .set({ ...data, updatedAt: new Date() })
-          .where(eq(productVariants.id, id))
-          .returning(),
-      ),
-      Effect.map(([variant]) => ProductVariantModel.from(variant)),
-      Effect.catchAll(() =>
-        Effect.fail(new AppNotFoundException(ErrorCodes.VARIANT_NOT_FOUND)),
-      ),
+      Effect.tryPromise(async () => {
+        return await this.db.transaction(async (tx) => {
+          const [variant] = await tx
+            .update(productVariants)
+            .set({
+              productType: data.productType,
+              color: data.color,
+              updatedAt: new Date(),
+            })
+            .where(eq(productVariants.id, id))
+            .returning();
+
+          if (!variant) {
+            throw new AppNotFoundException(ErrorCodes.VARIANT_NOT_FOUND);
+          }
+
+          let updatedImages: VariantImageSelectType[] = [];
+          if (data.variantImages) {
+            const existingImages = await tx
+              .select()
+              .from(variantImages)
+              .where(eq(variantImages.variantId, id));
+
+            const imagesToUpsert = data.variantImages.map((image, index) => ({
+              url: image.url,
+              size: image.size,
+              fileName: image.fileName,
+              order: index,
+              variantId: id,
+            }));
+
+            const existingUrls = new Set(existingImages.map((img) => img.url));
+            const newUrls = new Set(imagesToUpsert.map((img) => img.url));
+
+            const imagesToDelete = existingImages.filter(
+              (img) => !newUrls.has(img.url),
+            );
+            if (imagesToDelete.length > 0) {
+              await tx.delete(variantImages).where(
+                inArray(
+                  variantImages.id,
+                  imagesToDelete.map((img) => img.id),
+                ),
+              );
+            }
+
+            if (imagesToUpsert.length > 0) {
+              await tx
+                .insert(variantImages)
+                .values(imagesToUpsert)
+                .onConflictDoUpdate({
+                  target: variantImages.url,
+                  set: {
+                    size: sql`EXCLUDED.size`,
+                    fileName: sql`EXCLUDED.fileName`,
+                    order: sql`EXCLUDED.order`,
+                  },
+                });
+
+              updatedImages = await tx
+                .select()
+                .from(variantImages)
+                .where(eq(variantImages.variantId, id));
+            } else {
+              updatedImages = existingImages.filter((img) =>
+                newUrls.has(img.url),
+              );
+            }
+          }
+
+          let updatedTags: VariantTagSelectType[] = [];
+          if (data.tags) {
+            const existingTags = await tx
+              .select()
+              .from(variantTags)
+              .where(eq(variantTags.variantId, id));
+
+            const tagsToUpsert = data.tags.map((tag) => ({
+              variantId: id,
+              tag,
+            }));
+
+            const existingTagNames = new Set(existingTags.map((t) => t.tag));
+            const newTagNames = new Set(tagsToUpsert.map((t) => t.tag));
+
+            const tagsToDelete = existingTags.filter(
+              (t) => !newTagNames.has(t.tag),
+            );
+            if (tagsToDelete.length > 0) {
+              await tx.delete(variantTags).where(
+                inArray(
+                  variantTags.id,
+                  tagsToDelete.map((t) => t.id),
+                ),
+              );
+            }
+
+            const tagsToInsert = tagsToUpsert.filter(
+              (t) => !existingTagNames.has(t.tag),
+            );
+            if (tagsToInsert.length > 0) {
+              await tx.insert(variantTags).values(tagsToInsert);
+            }
+
+            updatedTags = await tx
+              .select()
+              .from(variantTags)
+              .where(eq(variantTags.variantId, id));
+          }
+
+          return {
+            ...variant,
+            variantImages: updatedImages,
+            variantTags: updatedTags,
+          };
+        });
+      }),
+      Effect.map(ProductVariantModel.from),
+      Effect.catchAll((error) => {
+        console.error('Variant update error:', error);
+        return Effect.fail(
+          new AppNotFoundException(ErrorCodes.VARIANT_NOT_FOUND),
+        );
+      }),
     );
   }
 
@@ -180,8 +299,8 @@ export class ProductVariantRepository
     data: CreateVariantRelationsInput,
   ): Effect.Effect<ProductVariantModel, Error> {
     return pipe(
-      Effect.tryPromise(() =>
-        this.db.transaction(async (tx) => {
+      Effect.tryPromise(async () => {
+        return await this.db.transaction(async (tx) => {
           const [variant] = await tx
             .insert(productVariants)
             .values(data.variant)
@@ -195,22 +314,32 @@ export class ProductVariantRepository
               order: index,
               variantId: variant.id,
             }));
-
             await tx.insert(variantImages).values(imagesWithOrder);
           }
 
           if (data.tags.length > 0) {
             const tagsData = data.tags.map((tag) => ({
               variantId: variant.id,
-              tag,
+              tag: tag,
             }));
-
             await tx.insert(variantTags).values(tagsData);
           }
 
-          return variant;
-        }),
-      ),
+          const result = await tx.query.productVariants.findFirst({
+            where: eq(productVariants.id, variant.id),
+            with: {
+              variantImages: true,
+              variantTags: true,
+            },
+          });
+
+          if (!result) {
+            throw new Error('Failed to create variant');
+          }
+
+          return result;
+        });
+      }),
       Effect.map(ProductVariantModel.from),
       Effect.catchAll((error) => {
         console.error('Variant creation error:', error);

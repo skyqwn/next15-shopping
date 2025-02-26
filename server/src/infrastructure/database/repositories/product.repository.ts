@@ -65,12 +65,19 @@ export class ProductRepository
   findOneBy(id: number): Effect.Effect<ProductModel | null, Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db.select().from(products).where(eq(products.id, id)).limit(1),
+        this.db.query.products.findFirst({
+          where: eq(products.id, id),
+          with: {
+            productVariants: {
+              with: {
+                variantImages: true,
+                variantTags: true,
+              },
+            },
+          },
+        }),
       ),
-      Effect.map((results) => {
-        const product = results[0];
-        return product ? ProductModel.from(product) : null;
-      }),
+      Effect.map((product) => (product ? ProductModel.from(product) : null)),
     );
   }
 
@@ -93,12 +100,14 @@ export class ProductRepository
             productVariants: {
               with: {
                 variantImages: true,
+                variantTags: true,
               },
             },
           },
         }),
       ),
       Effect.map((products) => {
+        console.log(products);
         return products.map(ProductModel.from);
       }),
       Effect.catchAll((error) => {
@@ -116,7 +125,9 @@ export class ProductRepository
       Effect.tryPromise(() =>
         this.db.query.products.findMany({
           with: {
-            productVariants: { with: { variantImages: true } },
+            productVariants: {
+              with: { variantImages: true, variantTags: true },
+            },
           },
           where: params.search
             ? or(

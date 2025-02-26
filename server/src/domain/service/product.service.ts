@@ -6,7 +6,10 @@ import { AppNotFoundException } from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ProductCacheStore } from 'src/infrastructure/cache/store/product.cache.store';
 import { CreateProductCommand, UpdateProductCommand } from '../dtos';
-import { CreateVariantCommand } from '../dtos/commands/variant';
+import {
+  CreateVariantCommand,
+  UpdateVariantCommand,
+} from '../dtos/commands/variant';
 import { ProductVariantRepository } from 'src/infrastructure/database/repositories/variant.repository';
 
 @Injectable()
@@ -57,23 +60,11 @@ export class ProductService {
 
   getProductById(id: number) {
     return pipe(
-      this.productCacheStore.findBy(id.toString()),
-      Effect.flatMap((cachedProduct) =>
-        cachedProduct
-          ? Effect.succeed(cachedProduct)
-          : pipe(
-              this.productRepository.findOneBy(id),
-              Effect.flatMap((product) =>
-                product
-                  ? pipe(
-                      this.productCacheStore.cache(id.toString(), product),
-                      Effect.map(() => product),
-                    )
-                  : Effect.fail(
-                      new AppNotFoundException(ErrorCodes.PRODUCT_NOT_FOUND),
-                    ),
-              ),
-            ),
+      this.productRepository.findOneBy(id),
+      Effect.flatMap((product) =>
+        product
+          ? Effect.succeed(product)
+          : Effect.fail(new AppNotFoundException(ErrorCodes.PRODUCT_NOT_FOUND)),
       ),
     );
   }
@@ -89,27 +80,60 @@ export class ProductService {
   }
 
   createVariant(createVariantCommand: CreateVariantCommand) {
+    console.log('createVariantCommand', createVariantCommand);
+    const input = {
+      variant: {
+        productId: createVariantCommand.productId,
+        productType: createVariantCommand.productType,
+        color: createVariantCommand.color,
+      },
+      images: createVariantCommand.variantImages.map((image, index) => ({
+        ...image,
+        order: index,
+      })),
+      tags: createVariantCommand.tags,
+    };
+    console.log('Preparing variant input:', input);
+
     return pipe(
-      this.getProductById(createVariantCommand.productId),
-      Effect.flatMap(() =>
-        this.productVariantRepository.createWithRelations({
-          variant: {
-            productId: createVariantCommand.productId,
-            productType: createVariantCommand.productType,
-            color: createVariantCommand.color,
-          },
-          images: createVariantCommand.variantImages,
-          tags: createVariantCommand.tags,
-        }),
-      ),
-      Effect.tap(() =>
-        this.productCacheStore.remove(
-          createVariantCommand.productId.toString(),
-        ),
+      this.productVariantRepository.createWithRelations(input),
+      Effect.tap((result) =>
+        Effect.sync(() => console.log('Created variant result:', result)),
       ),
       Effect.catchAll((error) => {
         console.error('Variant creation error:', error);
         return Effect.fail(new Error('Failed to create variant'));
+      }),
+    );
+  }
+
+  updateVariant(id: number, updateVariantCommand: UpdateVariantCommand) {
+    console.log('updateVariantCommand', updateVariantCommand);
+
+    return pipe(
+      this.productVariantRepository.update(id, {
+        productType: updateVariantCommand.productType,
+        color: updateVariantCommand.color,
+      }),
+      Effect.tap((variant) =>
+        Effect.sync(() => console.log('Updated variant:', variant)),
+      ),
+      Effect.catchAll((error) => {
+        console.error('Variant update error:', error);
+        return Effect.fail(new Error('Failed to update variant'));
+      }),
+    );
+  }
+
+  deleteVariant(id: number) {
+    return pipe(
+      this.productVariantRepository.delete(id),
+
+      Effect.catchAll((error) => {
+        console.error('Variant deletion error:', error);
+        return Effect.fail(
+          new AppNotFoundException(ErrorCodes.VARIANT_NOT_FOUND),
+        );
       }),
     );
   }
