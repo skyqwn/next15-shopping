@@ -103,4 +103,9 @@ export const ErrorCodes = {
     code: 6004,
     message: '상품 내용을 찾을 수 없습니다.',
   },
+  REVIEW_NOT_FOUND: {
+    tag: 'REVIEW_NOT_FOUND',
+    code: 6005,
+    message: '리뷰가 존재하지 않습니다..',
+  },
 } as const;

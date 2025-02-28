@@ -24,6 +24,97 @@ import {
 export class ProductController {
   constructor(private readonly productFacade: ProductFacade) {}
 
+  @Get('variant')
+  @IsPublic()
+  getAllVariants() {
+    return pipe(
+      this.productFacade.findAllVariants(),
+      Effect.map((variants) => ({
+        success: true,
+        result: variants,
+        message: 'getVariants',
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Post('variant')
+  createVariant(@Body() createVariantDto: CreateVariantRequestDto) {
+    return pipe(
+      this.productFacade.createVariant(createVariantDto),
+      Effect.map((variant) => ({
+        success: true,
+        result: variant,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Get('variant/filter')
+  @IsPublic()
+  getVariantsWithFilters(
+    @Query('q') search?: string,
+    @Query('sort') sort?: string,
+  ) {
+    return pipe(
+      this.productFacade.getVariantsWithFilters({ search, sort }),
+      Effect.tap((variants) =>
+        console.log('Controller - Filtered variants:', variants.length),
+      ),
+      Effect.map((variants) => ({
+        success: true,
+        result: variants,
+        message: variants.length === 0 ? '찾는 상품이 없습니다' : null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @IsPublic()
+  @Get('variant/:id')
+  getVariantById(@Param('id') id: string) {
+    return pipe(
+      this.productFacade.getVariantById(parseInt(id)),
+      Effect.map((variant) => ({
+        success: true,
+        result: variant,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Patch('/variant/:id')
+  updateVariant(
+    @Param('id') id: string,
+    @Body() updateVariantDto: UpdateVariantRequestDto,
+  ) {
+    console.log('editmode', updateVariantDto);
+    return pipe(
+      this.productFacade.updateVariant(parseInt(id), updateVariantDto),
+      Effect.map((variant) => ({
+        success: true,
+        result: variant,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Delete('/variant/:id')
+  deleteVariant(@Param('id') id: string) {
+    return pipe(
+      this.productFacade.deleteVariant(parseInt(id)),
+      Effect.map(() => ({
+        success: true,
+        result: null,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
@@ -46,7 +137,7 @@ export class ProductController {
       Effect.map((products) => ({
         success: true,
         result: products,
-        message: products.length === 0 ? '찾는 상품이 없습니다' : null,
+        message: products.length === 0 ? '찾는 상품이 없습니다' : 'getProduct',
       })),
       Effect.runPromise,
     );
@@ -90,7 +181,7 @@ export class ProductController {
       Effect.map((product) => ({
         success: true,
         result: product,
-        message: null,
+        message: '상품이 성공적으로 업데이트 되었습니다',
       })),
       Effect.runPromise,
     );
@@ -100,49 +191,6 @@ export class ProductController {
   deleteProduct(@Param('id') id: string) {
     return pipe(
       this.productFacade.deleteProduct(parseInt(id)),
-      Effect.map(() => ({
-        success: true,
-        result: null,
-        message: null,
-      })),
-      Effect.runPromise,
-    );
-  }
-
-  @Post('variant')
-  createVariant(@Body() createVariantDto: CreateVariantRequestDto) {
-    console.log('createVariantDto', createVariantDto);
-    return pipe(
-      this.productFacade.createVariant(createVariantDto),
-      Effect.map((variant) => ({
-        success: true,
-        result: variant,
-        message: null,
-      })),
-      Effect.runPromise,
-    );
-  }
-
-  @Patch('variant/:id')
-  updateVariant(
-    @Param('id') id: string,
-    @Body() updateVariantDto: UpdateVariantRequestDto,
-  ) {
-    return pipe(
-      this.productFacade.updateVariant(parseInt(id), updateVariantDto),
-      Effect.map((variant) => ({
-        success: true,
-        result: variant,
-        message: null,
-      })),
-      Effect.runPromise,
-    );
-  }
-
-  @Delete('variant/:id')
-  deleteVariant(@Param('id') id: string) {
-    return pipe(
-      this.productFacade.deleteVariant(parseInt(id)),
       Effect.map(() => ({
         success: true,
         result: null,

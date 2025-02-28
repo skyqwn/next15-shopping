@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PlusCircle } from "lucide-react";
 import ProductVariant from "./product-variant";
-import { ProductVariantType } from "@/hooks/queries/products/useProductsQuery";
+import { ProductVariantType } from "@/types";
 
 export type ProductColumn = {
   title: string;
@@ -52,7 +52,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
                       <div
                         className="size-5 rounded-full"
                         key={variant.id}
-                        style={{ background: variant.color }}
+                        style={{
+                          background: variant.color,
+                          border: "1px solid #c0b7b7",
+                        }}
                       />
                     </ProductVariant>
                   </TooltipTrigger>

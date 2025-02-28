@@ -7,7 +7,7 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { LogMiddleware } from './middleware/log.middleware';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { PresentationModule } from './presentation/presentation.module';
 import { ApplicationModule } from './application/application.module';
 import { DomainModule } from './domain/domain.module';
@@ -15,6 +15,8 @@ import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './infrastructure/auth/guards/jwt-auth.guard';
 import { DrizzleModule } from './infrastructure/drizzle/drizzle.module';
+import { EffectInterceptor } from './presentation/interceptors/effect.interceptor';
+import { ErrorsInterceptor } from './presentation/interceptors/errors.interceptor';
 
 @Module({
   imports: [
@@ -35,6 +37,14 @@ import { DrizzleModule } from './infrastructure/drizzle/drizzle.module';
   ],
   providers: [
     ConfigService,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ErrorsInterceptor,
+    // },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: EffectInterceptor,
+    // },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

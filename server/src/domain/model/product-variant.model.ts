@@ -1,9 +1,23 @@
 import {
+  ProductSelectType,
   ProductVariantSelectType,
+  ReviewSelectType,
   VariantImageSelectType,
   VariantTagSelectType,
 } from 'src/infrastructure/drizzle/schema/schema';
 
+type ExtendedProductType = ProductSelectType & {
+  reviews?: Array<
+    ReviewSelectType & {
+      user?: {
+        id: number;
+        name: string;
+        email: string;
+      };
+    }
+  >;
+  productVariants?: Array<ProductVariantSelectType>;
+};
 export class ProductVariantModel {
   readonly id: number;
   readonly productId: number;
@@ -13,11 +27,13 @@ export class ProductVariantModel {
   readonly updatedAt: Date | null;
   readonly variantImages?: VariantImageSelectType[];
   readonly variantTags?: VariantTagSelectType[];
+  readonly product?: ExtendedProductType;
 
   constructor(
     props: ProductVariantSelectType & {
       variantImages?: VariantImageSelectType[];
       variantTags?: VariantTagSelectType[];
+      product?: ExtendedProductType;
     },
   ) {
     this.id = props.id;
@@ -28,12 +44,14 @@ export class ProductVariantModel {
     this.updatedAt = props.updatedAt;
     this.variantImages = props.variantImages;
     this.variantTags = props.variantTags;
+    this.product = props.product;
   }
 
   static from(
     props: ProductVariantSelectType & {
       variantImages?: VariantImageSelectType[];
       variantTags?: VariantTagSelectType[];
+      product?: ExtendedProductType;
     },
   ): ProductVariantModel {
     return new ProductVariantModel(props);

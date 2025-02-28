@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
 
-  app.useGlobalInterceptors(new SuccessResponseInterceptor());
+  // app.useGlobalInterceptors(new SuccessResponseInterceptor());
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalFilters(new ZodExceptionFilter());
   app.useGlobalPipes(new ZodValidationPipe());

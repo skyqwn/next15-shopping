@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, sql, inArray } from 'drizzle-orm';
+import { eq, sql, inArray, or, ilike, desc, asc } from 'drizzle-orm';
 import { Effect, pipe } from 'effect';
 
 import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
@@ -112,39 +112,112 @@ export class ProductVariantRepository
     );
   }
 
+  findAllWithFilters(params: {
+    search?: string;
+    sort?: string;
+  }): Effect.Effect<ProductVariantModel[], Error> {
+    return pipe(
+      Effect.tryPromise(() =>
+        this.db.query.productVariants.findMany({
+          with: {
+            variantImages: true,
+            variantTags: true,
+            product: {
+              with: {
+                productVariants: true,
+                reviews: {
+                  with: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+          where: params.search
+            ? or(
+                ilike(productVariants.productType, `%${params.search}%`),
+                ilike(productVariants.color, `%${params.search}%`),
+              )
+            : undefined,
+          orderBy:
+            params.sort === 'latest'
+              ? desc(productVariants.createdAt)
+              : params.sort === 'product_name'
+                ? asc(productVariants.productType)
+                : desc(productVariants.createdAt),
+        }),
+      ),
+      Effect.map((variants) => {
+        console.log('Found filtered variants:', variants);
+        return variants.map((variant) => ProductVariantModel.from(variant));
+      }),
+      Effect.catchAll((error) => {
+        console.error('Variant query error:', error);
+        return Effect.succeed([]);
+      }),
+    );
+  }
+
   findAll(): Effect.Effect<ProductVariantModel[], Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db
-          .select()
-          .from(productVariants)
-          .leftJoin(
-            variantImages,
-            eq(variantImages.variantId, productVariants.id),
-          )
-          .leftJoin(variantTags, eq(variantTags.variantId, productVariants.id)),
+        this.db.query.productVariants.findMany({
+          with: {
+            variantImages: true,
+            variantTags: true,
+            product: {
+              with: {
+                productVariants: true,
+                reviews: {
+                  with: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
       ),
-      Effect.map((results) => this.groupVariantResults(results)),
+      Effect.map((variants) => {
+        console.log('전체 variants:', variants);
+        return variants.map((variant) => ProductVariantModel.from(variant));
+      }),
+      Effect.catchAll((error) => {
+        console.error('Variant query error:', error);
+        return Effect.succeed([]);
+      }),
     );
   }
 
   findOneBy(id: number): Effect.Effect<ProductVariantModel | null, Error> {
     return pipe(
       Effect.tryPromise(() =>
-        this.db
-          .select()
-          .from(productVariants)
-          .where(eq(productVariants.id, id))
-          .leftJoin(
-            variantImages,
-            eq(variantImages.variantId, productVariants.id),
-          )
-          .leftJoin(variantTags, eq(variantTags.variantId, productVariants.id))
-          .limit(1),
+        this.db.query.productVariants.findFirst({
+          where: eq(productVariants.id, id),
+          with: {
+            variantImages: true,
+            variantTags: true,
+            product: {
+              with: {
+                productVariants: true,
+                reviews: {
+                  with: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
       ),
-      Effect.map((results) => {
-        const grouped = this.groupVariantResults(results);
-        return grouped.length > 0 ? grouped[0] : null;
+      Effect.map((variant) => {
+        if (!variant) return null;
+        console.log('Found Detail variant:', variant);
+        return ProductVariantModel.from(variant);
+      }),
+      Effect.catchAll((error) => {
+        console.error('Variant query error:', error);
+        return Effect.succeed(null);
       }),
     );
   }
@@ -215,22 +288,18 @@ export class ProductVariantRepository
             }
 
             if (imagesToUpsert.length > 0) {
-              await tx
+              updatedImages = await tx
                 .insert(variantImages)
                 .values(imagesToUpsert)
                 .onConflictDoUpdate({
                   target: variantImages.url,
                   set: {
-                    size: sql`EXCLUDED.size`,
-                    fileName: sql`EXCLUDED.fileName`,
-                    order: sql`EXCLUDED.order`,
+                    size: sql`excluded.size`,
+                    fileName: sql`excluded.name`,
+                    order: sql`excluded.order`,
                   },
-                });
-
-              updatedImages = await tx
-                .select()
-                .from(variantImages)
-                .where(eq(variantImages.variantId, id));
+                })
+                .returning();
             } else {
               updatedImages = existingImages.filter((img) =>
                 newUrls.has(img.url),
@@ -269,13 +338,13 @@ export class ProductVariantRepository
               (t) => !existingTagNames.has(t.tag),
             );
             if (tagsToInsert.length > 0) {
-              await tx.insert(variantTags).values(tagsToInsert);
+              updatedTags = await tx
+                .insert(variantTags)
+                .values(tagsToInsert)
+                .returning();
+            } else {
+              updatedTags = existingTags.filter((t) => newTagNames.has(t.tag));
             }
-
-            updatedTags = await tx
-              .select()
-              .from(variantTags)
-              .where(eq(variantTags.variantId, id));
           }
 
           return {

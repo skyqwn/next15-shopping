@@ -2,53 +2,14 @@ import {
   UseSuspenseQueryOptions,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createInit, GET } from "@/api/httpMethod";
+import { ApiResponse, createInit, GET } from "@/api/httpMethod";
 import { END_POINTS } from "@/constants";
 import { SortOption } from "@/hooks/useShopSearchParams";
-
-interface VariantImage {
-  url: string;
-  size: number;
-  fileName: string;
-  order: number;
-}
-
-interface VariantTag {
-  id: number;
-  tag: string;
-  variantId: number;
-}
-
-interface ProductVariant {
-  id: number;
-  color: string;
-  productType: string;
-  createdAt: string;
-  updatedAt: string;
-  variantImages: VariantImage[];
-  variantTags: VariantTag[];
-}
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  isDeleted: boolean;
-  productVariants: ProductVariant[];
-}
-
-interface ProductsResponse {
-  success: boolean;
-  result: Product[];
-  message: string | null;
-}
+import { GetProductResponseType } from "@/types";
 
 interface ProductsParams {
   search?: string;
-  sort?: SortOption;
+  sort?: string;
 }
 
 export const productsQueryKey = (params: ProductsParams) =>
@@ -56,7 +17,7 @@ export const productsQueryKey = (params: ProductsParams) =>
 
 const getProductsFilter = async (
   params: ProductsParams,
-): Promise<ProductsResponse> => {
+): Promise<ApiResponse<GetProductResponseType[]>> => {
   const searchParams = new URLSearchParams();
   if (params.search) searchParams.set("q", params.search);
   if (params.sort) searchParams.set("sort", params.sort);
@@ -65,26 +26,18 @@ const getProductsFilter = async (
 
   const url = `${END_POINTS.FILTER_PRODUCTS}?${queryString}`;
 
-  const response = await GET<ProductsResponse>(`${url}`, createInit());
-
-  if (!response) {
-    return { success: false, result: [], message: "Failed to fetch products" };
-  }
+  const response = await GET<GetProductResponseType[]>(`${url}`, createInit());
 
   return response;
 };
 
 export const getProductsFilterQueryOptions = (
   params: ProductsParams,
-): UseSuspenseQueryOptions<ProductsResponse, Error> => ({
+): UseSuspenseQueryOptions<ApiResponse<GetProductResponseType[]>> => ({
   queryKey: productsQueryKey(params),
   queryFn: () => getProductsFilter(params),
 });
 
 export const useProductsFilterQuery = (params: ProductsParams) => {
-  return useSuspenseQuery<ProductsResponse, Error>(
-    getProductsFilterQueryOptions(params),
-  );
+  return useSuspenseQuery(getProductsFilterQueryOptions(params));
 };
-
-export type { Product, ProductsResponse, ProductsParams };

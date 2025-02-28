@@ -8,7 +8,6 @@ import { useProductsQuery } from "@/hooks/queries/products/useProductsQuery";
 
 const ProductList = () => {
   const { data } = useProductsQuery();
-
   const dataTable = data.result.map((product) => {
     if (product.productVariants.length === 0) {
       return {

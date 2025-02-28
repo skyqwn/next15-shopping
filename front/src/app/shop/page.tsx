@@ -8,6 +8,7 @@ import ProductGridSkeleton from "@/components/shop/product-grid-skeleton";
 import { ServerFetchBoundary } from "@/components/prefetch-boundary";
 import { getProductsFilterQueryOptions } from "@/hooks/queries/products/useProductsFilterQuery";
 import { getMyProfileQueryOptions } from "@/hooks/queries/userInfo/useUserInfo";
+import { getVariantsFilterQueryOptions } from "@/hooks/queries/product-variant/useVariantsFilterQuery";
 
 const Shop = async ({
   searchParams,
@@ -17,15 +18,15 @@ const Shop = async ({
   const search = searchParams?.q;
   const sort = searchParams?.sort;
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <SearchBar />
       <SortOptionsFilter />
       <Suspense fallback={<ProductGridSkeleton />}>
         <ServerFetchBoundary
           fetchOptions={[
-            getProductsFilterQueryOptions({
+            getVariantsFilterQueryOptions({
               search,
-              sort: sort as any,
+              sort,
             }),
             getMyProfileQueryOptions(),
           ]}

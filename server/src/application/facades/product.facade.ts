@@ -56,6 +56,18 @@ export class ProductFacade {
     return this.productService.createVariant(createVariantCriteria);
   }
 
+  getVariantsWithFilters(params: { search?: string; sort?: string }) {
+    return this.productService.getVariantsWithFilters(params);
+  }
+
+  findAllVariants(): Effect.Effect<ProductVariantModel[], Error> {
+    return this.productService.findAllVariants();
+  }
+
+  getVariantById(id: number): Effect.Effect<ProductVariantModel, Error> {
+    return this.productService.getVariantById(id);
+  }
+
   updateVariant(
     id: number,
     updateVariantCriteria: UpdateVariantCriteria,

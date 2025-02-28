@@ -50,7 +50,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         where: eq(users.id, payload.userId),
       });
 
-      console.log('JWT Strategy - 찾은 user:', user);
+      // console.log('JWT Strategy - 찾은 user:', user);
 
       if (!user) {
         throw new UnauthorizedException('User not found');

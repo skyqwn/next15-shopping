@@ -3,12 +3,11 @@
 import { useForm } from "react-hook-form";
 import { useParams, useRouter } from "next/navigation";
 
+import { usePatchProductMutation } from "@/hooks/queries/products/usePatchProductMutation";
 import { useProductDetailQuery } from "@/hooks/queries/products/useProductDetailQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PartialProductType, ProductSchema, ProductType } from "@/schemas";
 import ProductCardForm from "./product-card-form.tsx";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
-import { usePatchProductMutation } from "@/hooks/queries/products/usePatchProductMutation";
 
 const EditProductForm = () => {
   const params = useParams();
@@ -16,16 +15,16 @@ const EditProductForm = () => {
   const router = useRouter();
 
   const { data } = useProductDetailQuery(productId);
-  const { data: userData } = useMyProfileQuery();
+  const product = data?.result;
   const { mutate: patchProductMutation, isPending } =
     usePatchProductMutation(productId);
 
   const form = useForm<ProductType>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      title: data.result.title || "",
-      price: data.result.price || 0,
-      description: data.result.description || "",
+      title: product.title || "",
+      price: product.price || 0,
+      description: product.description || "",
     },
     mode: "onChange",
   });

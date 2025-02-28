@@ -1,9 +1,10 @@
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createInit, PATCH } from "@/api/httpMethod";
+import { ApiResponse, createInit, PATCH } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
 import { PartialProductType } from "@/schemas";
+import { GetProductResponseType } from "@/types";
 
 interface PatchProductProps {
   productId: number;
@@ -13,8 +14,8 @@ interface PatchProductProps {
 const patchProduct = async ({
   createProductForm,
   productId,
-}: PatchProductProps) => {
-  const data = await PATCH(
+}: PatchProductProps): Promise<ApiResponse<GetProductResponseType>> => {
+  const data = await PATCH<GetProductResponseType>(
     END_POINTS.PATCH_PRODUCT(productId),
     createInit(createProductForm),
   );
@@ -30,7 +31,7 @@ export const usePatchProductMutation = (productId: number) => {
     onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.PRODUCTS, productId],
+        queryKey: [queryKeys.PRODUCTS],
       });
     },
   });

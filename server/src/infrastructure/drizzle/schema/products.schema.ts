@@ -22,7 +22,7 @@ export const products = pgTable('products', {
 
 export const productsRelations = relations(products, ({ many }) => ({
   productVariants: many(productVariants),
-  reviews: many(reviews, { relationName: 'reviews' }),
+  reviews: many(reviews),
 }));
 
 export type ProductSelectType = typeof products.$inferSelect;

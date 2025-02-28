@@ -15,6 +15,13 @@ export const END_POINTS = {
   PATCH_PRODUCT: (id: number) => `/products/${id}`,
 
   CREATE_VARIANT: `/products/variant`,
+  GET_VARIANTS: `/products/variant`,
+  VARIANT_DETAIL: (id: number) => `/products/variant/${id}`,
   UPDATE_VARIANT: (id: number) => `/products/variant/${id}`,
   DELETE_VARIANT: (id: number) => `/products/variant/${id}`,
+
+  REVIEW_PRODUCT: (productId: number) => `/reviews/${productId}`,
+  CREATE_REVIEW: `/reviews`,
+  UPDATE_REVIEW: (reviewId: number) => `/reviews/${reviewId}`,
+  DELETE_REVIEW: (reviewId: number) => `/reviews/${reviewId}`,
 } as const;

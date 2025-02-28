@@ -6,6 +6,7 @@ import {
 } from './repositories';
 import { DrizzleModule } from '../drizzle/drizzle.module';
 import { ProductVariantRepository } from './repositories/variant.repository';
+import { ReviewRepository } from './repositories/review.repository';
 
 @Module({
   imports: [DrizzleModule],
@@ -14,6 +15,7 @@ import { ProductVariantRepository } from './repositories/variant.repository';
     S3Repository,
     ProductRepository,
     ProductVariantRepository,
+    ReviewRepository,
   ],
   exports: [
     UserRepository,
@@ -21,6 +23,7 @@ import { ProductVariantRepository } from './repositories/variant.repository';
     S3Repository,
     ProductRepository,
     ProductVariantRepository,
+    ReviewRepository,
   ],
 })
 export class DatabaseModule {}

@@ -16,21 +16,28 @@ export function createInit<Body extends object | FormData>(
   };
 }
 
+export interface ApiResponse<T> {
+  success: boolean;
+  result: T;
+  message: string;
+}
+
 async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
-) {
+): Promise<ApiResponse<T>> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
     init,
   );
 
   try {
-    const { result } = await response.json();
-    return result as T;
+    const data = await response.json();
+    console.log("리절트", data);
+    return data as ApiResponse<T>;
   } catch (error) {
     console.error(error);
-    return { success: false, result: [], message: "Fetch failed" } as T;
+    return { success: false, result: null as T, message: "Fetch failed" };
   }
 }
 

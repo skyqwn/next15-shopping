@@ -26,16 +26,17 @@ import useAuth from "@/hooks/queries/useAuth";
 
 const ProfileForm = () => {
   const router = useRouter();
-  const { data: userData } = useMyProfileQuery();
+  const { data } = useMyProfileQuery();
+  const userData = data.data;
   const { mutate: updateProfileMutation, isPending } =
     useUpdateProfileMutation();
   const { logoutMutation } = useAuth();
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: userData?.data?.name || "",
-      profileImageUris: userData?.data?.imageUri || "",
-      description: userData?.data?.description || "",
+      name: userData?.name || "",
+      profileImageUris: userData?.imageUri || "",
+      description: userData?.description || "",
     },
   });
 
@@ -76,7 +77,7 @@ const ProfileForm = () => {
               <ProfileImage
                 handleFileRemove={handleFileRemove}
                 handleImageChange={handleImageChange}
-                initialImage={userData?.data?.imageUri}
+                initialImage={userData?.imageUri!}
               />
 
               <FormField

@@ -1,10 +1,4 @@
-import { CommonResponseType } from "./common";
-
-export interface GetUserInfoResponseType extends CommonResponseType {
-  data: UserInfoProps;
-}
-
-export interface UserInfoProps {
+export interface GetUserInfoResponseType {
   createdAt: string;
   deletedAt: string | null;
   description: string;

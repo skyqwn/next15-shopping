@@ -34,7 +34,7 @@ export class UserCacheStore {
     );
   }
 
-  findBy(userId: string): Effect.Effect<UserSelectType | null, Error> {
+  findBy(userId: string): Effect.Effect<UserSelectType | undefined, Error> {
     return pipe(
       this.redisClient.get(this.CACHE_PREFIX, userId),
       Effect.tap((cachedData) =>
@@ -47,7 +47,9 @@ export class UserCacheStore {
           }
         }),
       ),
-      Effect.map((cachedData) => (cachedData ? JSON.parse(cachedData) : null)),
+      Effect.map((cachedData) =>
+        cachedData ? JSON.parse(cachedData) : undefined,
+      ),
       Effect.tap(() =>
         Effect.sync(() => {
           console.timeEnd(`캐시-데이터-조회-${userId}`);

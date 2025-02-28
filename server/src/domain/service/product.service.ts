@@ -80,7 +80,6 @@ export class ProductService {
   }
 
   createVariant(createVariantCommand: CreateVariantCommand) {
-    console.log('createVariantCommand', createVariantCommand);
     const input = {
       variant: {
         productId: createVariantCommand.productId,
@@ -93,8 +92,6 @@ export class ProductService {
       })),
       tags: createVariantCommand.tags,
     };
-    console.log('Preparing variant input:', input);
-
     return pipe(
       this.productVariantRepository.createWithRelations(input),
       Effect.tap((result) =>
@@ -107,6 +104,32 @@ export class ProductService {
     );
   }
 
+  findAllVariants() {
+    return this.productVariantRepository.findAll();
+  }
+
+  getVariantsWithFilters(params: { search?: string; sort?: string }) {
+    return pipe(
+      this.productVariantRepository.findAllWithFilters(params),
+      Effect.tap((variants) =>
+        Effect.sync(() =>
+          console.log('Service - Filtered variants:', variants.length),
+        ),
+      ),
+    );
+  }
+
+  getVariantById(id: number) {
+    return pipe(
+      this.productVariantRepository.findOneBy(id),
+      Effect.flatMap((variant) =>
+        variant
+          ? Effect.succeed(variant)
+          : Effect.fail(new AppNotFoundException(ErrorCodes.VARIANT_NOT_FOUND)),
+      ),
+    );
+  }
+
   updateVariant(id: number, updateVariantCommand: UpdateVariantCommand) {
     console.log('updateVariantCommand', updateVariantCommand);
 
@@ -114,6 +137,7 @@ export class ProductService {
       this.productVariantRepository.update(id, {
         productType: updateVariantCommand.productType,
         color: updateVariantCommand.color,
+        variantImages: updateVariantCommand.variantImages,
       }),
       Effect.tap((variant) =>
         Effect.sync(() => console.log('Updated variant:', variant)),

@@ -4,7 +4,7 @@ import { relations } from 'drizzle-orm';
 
 export const variantImages = pgTable('variantImages', {
   id: serial('id').primaryKey(),
-  url: text('url').notNull(),
+  url: text('url').notNull().unique(),
   size: real('size').notNull(),
   fileName: text('name').notNull(),
   order: real('order').notNull(),

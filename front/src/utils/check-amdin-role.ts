@@ -27,7 +27,6 @@ async function fetchWrapperServerSide<T>(uri: string, init?: RequestInit) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const userId = cookieStore.get("userId")?.value;
-  console.log("이걸로 작동??");
   if (!accessToken || !userId) {
     return null;
   }
@@ -47,7 +46,7 @@ async function fetchWrapperServerSide<T>(uri: string, init?: RequestInit) {
       return null;
     }
 
-    const { result } = await response.json();
+    const result = await response.json();
     return result as T;
   } catch (error) {
     console.error("Server-side fetch error:", error);

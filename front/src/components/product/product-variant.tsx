@@ -26,8 +26,8 @@ import VariantImages from "./variant-images";
 import { useCreateVariantMutation } from "@/hooks/queries/product-variant/useCreateVariantMutation";
 import { useEffect, useState } from "react";
 import { usePatchVariantMutation } from "@/hooks/queries/product-variant/usePatchVariantMutation";
-import { ProductVariantType } from "@/hooks/queries/products/useProductsQuery";
 import { useDeleteVariantMutation } from "@/hooks/queries/product-variant/useDeleteVariantMutation";
+import { ProductVariantType } from "@/types";
 
 interface ProductVariantProps {
   editMode?: boolean;
@@ -87,6 +87,7 @@ const ProductVariant = ({
 
   const onSubmit = (data: VariantType) => {
     if (editMode) {
+      console.log("에딧모드 데이터", data);
       updateVariantMutate(data);
     } else {
       createVariantMutate(data);

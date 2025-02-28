@@ -1,4 +1,4 @@
-import { createInit, GET } from "@/api/httpMethod";
+import { ApiResponse, createInit, GET } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
 import {
   useSuspenseQuery,
@@ -34,16 +34,10 @@ interface Product {
   productVariants: ProductVariant[];
 }
 
-export interface ProductDetailResponse {
-  success: boolean;
-  result: Product;
-  message: string | null;
-}
-
-const getProductDetail = async (
+export const getProductDetail = async (
   productId: number,
-): Promise<ProductDetailResponse | undefined> => {
-  const data = await GET<ProductDetailResponse>(
+): Promise<ApiResponse<Product>> => {
+  const data = await GET<Product>(
     END_POINTS.PRODUCT_DETAIL(productId),
     createInit(),
   );
@@ -53,7 +47,7 @@ const getProductDetail = async (
 
 export const productDetilaQueryOptions = (
   productId: number,
-): UseSuspenseQueryOptions<ProductDetailResponse | undefined> => ({
+): UseSuspenseQueryOptions<ApiResponse<Product>> => ({
   queryKey: [queryKeys.PRODUCT_DETAIL, productId],
   queryFn: async () => await getProductDetail(productId),
 });

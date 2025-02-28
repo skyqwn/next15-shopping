@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import AuthButtonsWrapper from "./header/auth-button-wrapper";
+import { ThemeButton } from "./header/theme.button";
 
 const Header = () => {
   const routes = [
@@ -48,6 +49,7 @@ const Header = () => {
               height={24}
               alt="heart"
             />
+            <ThemeButton />
           </div>
         </ul>
       </nav>

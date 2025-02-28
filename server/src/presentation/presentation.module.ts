@@ -5,9 +5,15 @@ import {
   ImagesController,
 } from './controller';
 import { ApplicationModule } from 'src/application/application.module';
+import { ReviewController } from './controller/review.controller';
 
 @Module({
   imports: [ApplicationModule],
-  controllers: [UserController, ImagesController, ProductController],
+  controllers: [
+    UserController,
+    ImagesController,
+    ProductController,
+    ReviewController,
+  ],
 })
 export class PresentationModule {}

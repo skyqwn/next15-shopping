@@ -1,9 +1,13 @@
-import { formatNumber } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+"use client";
 
-const ProductItem = ({ product }: { product: any }) => {
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+import { formatPrice } from "@/lib/utils";
+import { ProductVariantType } from "@/types";
+
+const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -15,31 +19,25 @@ const ProductItem = ({ product }: { product: any }) => {
   }
 
   return (
-    <div className="group">
-      <Link href={`/shop/${product.id}`} prefetch={false}>
+    <figure className="group">
+      <Link href={`/shop/${variant.id}?type=${variant.productType}`}>
         <div className="relative aspect-square w-full overflow-hidden">
           <Image
-            src={
-              product.productVariants[0]?.variantImages?.[0]?.url ??
-              "/placeholder.jpg"
-            }
-            alt={
-              product.productVariants[0]?.variantImages?.[0]?.fileName ??
-              "상품 이미지"
-            }
+            src={variant.variantImages?.[0]?.url ?? "/placeholder.jpg"}
+            alt={variant.variantImages?.[0]?.fileName ?? "상품 이미지"}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className="object-cover transition-transform group-hover:scale-105"
           />
         </div>
         <div className="mt-2 space-y-1">
-          <h3 className="font-bold">{product.title}</h3>
+          <h3 className="font-bold">{variant.productType}</h3>
           <p className="text-sm text-gray-700">
-            {formatNumber(product.price)}원
+            {formatPrice(variant.product.price)}원
           </p>
         </div>
       </Link>
-    </div>
+    </figure>
   );
 };
 
