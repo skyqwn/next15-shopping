@@ -40,7 +40,6 @@ const ReviewsForm = ({ productId }: { productId: number }) => {
   const { mutate: createReviewMutate, isPending } = useCreateReviewMutation();
 
   const onSubmit = (data: ReviewType) => {
-    console.log("epdlekxkxk", data);
     createReviewMutate(data);
   };
 

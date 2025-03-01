@@ -1,13 +1,19 @@
 "use client";
 
-import Image from "next/image";
-
 import { motion } from "framer-motion";
-import { Card } from "../ui/card";
-import Stars from "./stars";
+import { useState } from "react";
+
 import { ReviewType } from "@/types";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import ReviewCard from "./review-card";
+
 const Review = ({ reviews }: { reviews: ReviewType[] }) => {
-  console.log(`reviewsss`, reviews);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const visibleReviews = reviews.slice(0, 4);
+  const hasMoreReviews = reviews.length > 4;
+
   return (
     <motion.div className="flex flex-col gap-4">
       {reviews.length === 0 && (
@@ -39,30 +45,37 @@ const Review = ({ reviews }: { reviews: ReviewType[] }) => {
           </p>
         </div>
       )}
-      {reviews.length > 0 &&
-        reviews.map((review) => (
-          <Card key={review.id} className="p-4">
-            <div className="flex items-center gap-2">
-              <Image
-                className="size-10 rounded-full"
-                width={32}
-                height={32}
-                alt={"asdasdsa"}
-                src={review.user.imageUri ?? "/placeholder.jpn"}
-              />
-              <div>
-                <p className="text-sm font-bold">{review.user.name}</p>
-                <div className="flex items-center gap-2">
-                  <Stars rating={review.rating} />
-                  <p className="text-bold text-xs text-muted-foreground">
-                    {/* {formatDistance(subDays(review.created!, 0), new Date())} */}
-                  </p>
-                </div>
+
+      {reviews.length > 0 && (
+        <>
+          {visibleReviews.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))}
+
+          {hasMoreReviews && (
+            <Button
+              variant="outline"
+              className="mt-2"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              모든 리뷰 보기 ({reviews.length}개)
+            </Button>
+          )}
+
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="max-h-[80vh] overflow-y-auto lg:max-w-5xl">
+              <DialogHeader>
+                <DialogTitle>고객 리뷰 ({reviews.length}개)</DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col gap-4 py-4">
+                {reviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} />
+                ))}
               </div>
-            </div>
-            <p className="py-2 font-medium">{review.comment}</p>
-          </Card>
-        ))}
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </motion.div>
   );
 };

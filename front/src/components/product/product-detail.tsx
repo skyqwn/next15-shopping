@@ -18,7 +18,6 @@ interface ProductDetailProps {
 }
 
 const ProductDetail = ({ productVariant }: ProductDetailProps) => {
-  console.log(`product Detail: `, productVariant);
   return (
     <main className="min-h-screen p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
@@ -41,7 +40,7 @@ const ProductDetail = ({ productVariant }: ProductDetailProps) => {
           <figure className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <Truck />
-              <p className="font-semibold">free shipping</p>
+              <p className="font-semibold">무료배송</p>
             </div>
           </figure>
           <Separator />

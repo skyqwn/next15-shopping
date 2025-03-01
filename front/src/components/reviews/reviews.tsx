@@ -3,6 +3,7 @@
 import { useReviewDetailQuery } from "@/hooks/queries/reviews/useReviewsQuery";
 import Review from "./review";
 import ReviewForm from "./review-form";
+import ReviewChart from "./review-chart";
 
 const Reviews = ({ productId }: { productId: number }) => {
   const { data } = useReviewDetailQuery(productId);
@@ -16,7 +17,7 @@ const Reviews = ({ productId }: { productId: number }) => {
           <Review reviews={reviewData} />
         </div>
         <div className="flex flex-1 flex-col gap-2">
-          {/* <ReviewChart reviews={data} /> */}
+          <ReviewChart reviews={reviewData} />
         </div>
       </div>
     </section>
