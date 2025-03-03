@@ -16,6 +16,7 @@ export const END_POINTS = {
 
   CREATE_VARIANT: `/products/variant`,
   GET_VARIANTS: `/products/variant`,
+  FILTER_VARIANTS: `/products/variant/filter`,
   VARIANT_DETAIL: (id: number) => `/products/variant/${id}`,
   UPDATE_VARIANT: (id: number) => `/products/variant/${id}`,
   DELETE_VARIANT: (id: number) => `/products/variant/${id}`,
@@ -24,4 +25,10 @@ export const END_POINTS = {
   CREATE_REVIEW: `/reviews`,
   UPDATE_REVIEW: (reviewId: number) => `/reviews/${reviewId}`,
   DELETE_REVIEW: (reviewId: number) => `/reviews/${reviewId}`,
+
+  CREATE_BANNER: "/banners",
+  UPDATE_BANNER: (id: number | string) => `/banners/${id}`,
+  GET_BANNERS: "/banners",
+  GET_BANNER: (id: number | string) => `/banners/${id}`,
+  DELETE_BANNER: (id: number | string) => `/banners/${id}`,
 } as const;

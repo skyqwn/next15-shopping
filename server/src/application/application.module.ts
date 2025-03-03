@@ -5,12 +5,25 @@ import {
   UserFacade,
   ProductFacade,
   ReviewFacade,
+  BannerFacade,
 } from './facades';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 
 @Module({
   imports: [InfrastructureModule, DomainModule],
-  providers: [UserFacade, ImagesFacade, ProductFacade, ReviewFacade],
-  exports: [UserFacade, ImagesFacade, ProductFacade, ReviewFacade],
+  providers: [
+    UserFacade,
+    ImagesFacade,
+    ProductFacade,
+    ReviewFacade,
+    BannerFacade,
+  ],
+  exports: [
+    UserFacade,
+    ImagesFacade,
+    ProductFacade,
+    ReviewFacade,
+    BannerFacade,
+  ],
 })
 export class ApplicationModule {}

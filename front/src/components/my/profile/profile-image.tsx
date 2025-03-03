@@ -23,6 +23,7 @@ const ProfileImage = ({
   const { control } = useFormContext<ProfileType>();
   const [mounted, setMounted] = useState(false);
   const [image, setImage] = useState(initialImage);
+
   useEffect(() => {
     setMounted(true);
     setImage(initialImage);
@@ -34,10 +35,9 @@ const ProfileImage = ({
       const previewUrl = URL.createObjectURL(file);
       setImage(previewUrl);
     }
-    handleImageChange(e); // 상위 컴포넌트의 이벤트 핸들러 호출
+    handleImageChange(e);
   };
 
-  // handleFileRemove가 호출될 때 이미지 초기화
   const onFileRemove = (imageUrl: string) => {
     setImage(undefined);
     handleFileRemove(imageUrl);

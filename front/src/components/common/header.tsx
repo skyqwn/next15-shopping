@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import AuthButtonsWrapper from "./header/auth-button-wrapper";
 import { ThemeButton } from "./header/theme.button";
+import CartDrawer from "../cart/cart-drawer";
 
 const Header = () => {
   const routes = [
@@ -36,6 +37,9 @@ const Header = () => {
                   </Link>
                 </div>
               ))}
+            </li>
+            <li className="flex cursor-pointer items-center hover:bg-muted">
+              <CartDrawer />
             </li>
             <Image
               src={"/svg/heart-outline.svg"}

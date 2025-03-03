@@ -13,6 +13,18 @@ import { ProductVariantModel } from 'src/domain/model/product-variant.model';
 
 export type SortOption = 'popular' | 'latest' | 'price_high' | 'price_low';
 
+export interface ProductResponse {
+  data: ProductModel[];
+  total: number;
+  hasMore: boolean;
+}
+
+export interface ProductVariantResponse {
+  data: ProductVariantModel[];
+  total: number;
+  hasMore: boolean;
+}
+
 @Injectable()
 export class ProductFacade {
   constructor(private readonly productService: ProductService) {}
@@ -37,7 +49,9 @@ export class ProductFacade {
   getProducts(params: {
     search?: string;
     sort?: string;
-  }): Effect.Effect<ProductModel[], Error> {
+    page?: string;
+    limit?: string;
+  }): Effect.Effect<ProductResponse, Error> {
     console.log(`Facade - Search Params: ${params}`);
     return this.productService.getProducts(params);
   }
@@ -56,7 +70,12 @@ export class ProductFacade {
     return this.productService.createVariant(createVariantCriteria);
   }
 
-  getVariantsWithFilters(params: { search?: string; sort?: string }) {
+  getVariantsWithFilters(params: {
+    search?: string;
+    sort?: string;
+    page?: string;
+    limit?: string;
+  }): Effect.Effect<ProductVariantResponse, Error> {
     return this.productService.getVariantsWithFilters(params);
   }
 

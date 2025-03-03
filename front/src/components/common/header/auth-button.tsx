@@ -53,9 +53,14 @@ const AuthButton = () => {
       )}
     </div>
   ) : (
-    <Link href="/auth/login" className="cursor-pointer">
-      <span>로그인</span>
-    </Link>
+    <div className="flex items-center gap-4">
+      <Link href="/auth/login" className="cursor-pointer">
+        <span>로그인</span>
+      </Link>
+      <Link href="/auth/register" className="cursor-pointer">
+        <span>회원가입</span>
+      </Link>
+    </div>
   );
 };
 export default AuthButton;

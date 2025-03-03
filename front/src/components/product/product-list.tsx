@@ -9,7 +9,7 @@ import { useProductsQuery } from "@/hooks/queries/products/useProductsQuery";
 const ProductList = () => {
   const { data } = useProductsQuery();
   const dataTable = data.result.map((product) => {
-    if (product.productVariants.length === 0) {
+    if (product.productVariants?.length === 0) {
       return {
         id: product.id,
         title: product.title,
@@ -17,16 +17,16 @@ const ProductList = () => {
         image: placeholder.src,
         variants: [],
       };
+    } else {
+      const image = product.productVariants[0]?.variantImages[0]?.url;
+      return {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        variants: product.productVariants,
+        image,
+      };
     }
-
-    const image = product.productVariants[0]?.variantImages[0]?.url;
-    return {
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      variants: product.productVariants,
-      image,
-    };
   });
 
   return (

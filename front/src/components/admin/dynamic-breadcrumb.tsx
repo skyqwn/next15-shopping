@@ -14,8 +14,7 @@ import React from "react";
 const pathMap: Record<string, string> = {
   admin: "관리자",
   products: "상품 관리",
-  "add-product": "상품 등록",
-  orders: "주문 관리",
+  banners: "배너 관리",
   users: "회원 관리",
   settings: "설정",
 };

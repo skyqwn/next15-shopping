@@ -54,7 +54,12 @@ export class ProductService {
     return this.productRepository.findAll();
   }
 
-  getProducts(params: { search?: string; sort?: string }) {
+  getProducts(params: {
+    search?: string;
+    sort?: string;
+    page?: string;
+    limit?: string;
+  }) {
     return this.productRepository.findAllWithFilters(params);
   }
 
@@ -108,15 +113,13 @@ export class ProductService {
     return this.productVariantRepository.findAll();
   }
 
-  getVariantsWithFilters(params: { search?: string; sort?: string }) {
-    return pipe(
-      this.productVariantRepository.findAllWithFilters(params),
-      Effect.tap((variants) =>
-        Effect.sync(() =>
-          console.log('Service - Filtered variants:', variants.length),
-        ),
-      ),
-    );
+  getVariantsWithFilters(params: {
+    search?: string;
+    sort?: string;
+    page?: string;
+    limit?: string;
+  }) {
+    return pipe(this.productVariantRepository.findAllWithFilters(params));
   }
 
   getVariantById(id: number) {

@@ -3,7 +3,6 @@ import { ProductSelectType } from 'src/infrastructure/drizzle/schema/products.sc
 export class ProductModel {
   constructor(
     public id: number,
-
     public title: string,
     public description: string,
     public price: number,

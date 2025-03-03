@@ -3,6 +3,7 @@ import {
   UserController,
   ProductController,
   ImagesController,
+  BannerController,
 } from './controller';
 import { ApplicationModule } from 'src/application/application.module';
 import { ReviewController } from './controller/review.controller';
@@ -14,6 +15,7 @@ import { ReviewController } from './controller/review.controller';
     ImagesController,
     ProductController,
     ReviewController,
+    BannerController,
   ],
 })
 export class PresentationModule {}

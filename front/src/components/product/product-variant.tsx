@@ -42,7 +42,7 @@ const ProductVariant = ({
   productId,
   variant,
 }: ProductVariantProps) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const { mutate: createVariantMutate } = useCreateVariantMutation();
   const { mutate: updateVariantMutate } = usePatchVariantMutation();
   const { mutate: deleteVariantMutate } = useDeleteVariantMutation();
@@ -87,10 +87,11 @@ const ProductVariant = ({
 
   const onSubmit = (data: VariantType) => {
     if (editMode) {
-      console.log("에딧모드 데이터", data);
       updateVariantMutate(data);
     } else {
       createVariantMutate(data);
+      form.reset();
+      setOpen(false);
     }
   };
 
@@ -101,14 +102,14 @@ const ProductVariant = ({
     if (window.confirm("정말 삭제하시겠습니까?")) {
       deleteVariantMutate(variant.id, {
         onSuccess: () => {
-          setOpen(false); // Dialog 닫기
+          setOpen(false);
         },
       });
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="rouded-md max-h-[860px] overflow-y-scroll lg:max-w-screen-lg">
         <DialogHeader>

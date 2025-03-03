@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Effect, pipe } from 'effect';
-import { ProductFacade } from 'src/application/facades';
+import {
+  ProductFacade,
+  ProductResponse,
+  ProductVariantResponse,
+} from 'src/application/facades';
 
 import { IsPublic } from 'src/common/decorators/is-public.decorator';
 import { CreateProductDto } from '../dtos/product/request/create-product-request.dto';
@@ -56,16 +60,16 @@ export class ProductController {
   getVariantsWithFilters(
     @Query('q') search?: string,
     @Query('sort') sort?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
     return pipe(
-      this.productFacade.getVariantsWithFilters({ search, sort }),
-      Effect.tap((variants) =>
-        console.log('Controller - Filtered variants:', variants.length),
-      ),
-      Effect.map((variants) => ({
+      this.productFacade.getVariantsWithFilters({ search, sort, page, limit }),
+      Effect.tap((result) => console.log('Controller - Result:', result.data)),
+      Effect.map((result: ProductVariantResponse) => ({
         success: true,
-        result: variants,
-        message: variants.length === 0 ? '찾는 상품이 없습니다' : null,
+        result,
+        message: result.data.length === 0 ? '찾는 상품 변형이 없습니다' : null,
       })),
       Effect.runPromise,
     );
@@ -144,21 +148,38 @@ export class ProductController {
   }
 
   @Get('/filter')
-  getProducts(@Query('q') search?: string, @Query('sort') sort?: any) {
+  getProducts(
+    @Query('q') search?: string,
+    @Query('sort') sort?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     return pipe(
-      this.productFacade.getProducts({ search, sort }),
-      Effect.tap((products) =>
-        console.log('Controller - Result:', products.length),
-      ),
-
-      Effect.map((products) => ({
+      this.productFacade.getProducts({ search, sort, page, limit }),
+      Effect.map((result: ProductResponse) => ({
         success: true,
-        result: products,
-        message: products.length === 0 ? '찾는 상품이 없습니다' : null,
+        result,
+        message: result.data.length === 0 ? '찾는 상품이 없습니다' : null,
       })),
       Effect.runPromise,
     );
   }
+  // @Get('/filter')
+  // getProducts(@Query('q') search?: string, @Query('sort') sort?: string) {
+  //   return pipe(
+  //     this.productFacade.getProducts({ search, sort }),
+  //     Effect.tap((products) =>
+  //       console.log('Controller - Result:', products.length),
+  //     ),
+
+  //     Effect.map((products) => ({
+  //       success: true,
+  //       result: products,
+  //       message: products.length === 0 ? '찾는 상품이 없습니다' : null,
+  //     })),
+  //     Effect.runPromise,
+  //   );
+  // }
 
   @IsPublic()
   @Get(':id')

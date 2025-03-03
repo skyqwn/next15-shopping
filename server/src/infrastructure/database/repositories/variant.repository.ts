@@ -115,48 +115,120 @@ export class ProductVariantRepository
   findAllWithFilters(params: {
     search?: string;
     sort?: string;
-  }): Effect.Effect<ProductVariantModel[], Error> {
+    page?: string;
+    limit?: string;
+  }): Effect.Effect<
+    { data: ProductVariantModel[]; total: number; hasMore: boolean },
+    Error
+  > {
+    const page = parseInt(params.page || '1', 10);
+    const limit = parseInt(params.limit || '20', 10);
+    const skip = (page - 1) * limit;
+
     return pipe(
       Effect.tryPromise(() =>
-        this.db.query.productVariants.findMany({
-          with: {
-            variantImages: true,
-            variantTags: true,
-            product: {
+        this.db
+          .select({ count: sql`count(*)`.mapWith(Number) })
+          .from(productVariants)
+          .where(
+            params.search
+              ? or(ilike(productVariants.productType, `%${params.search}%`))
+              : undefined,
+          )
+          .then((result) => result[0].count),
+      ),
+      Effect.flatMap((total) =>
+        pipe(
+          Effect.tryPromise(() =>
+            this.db.query.productVariants.findMany({
               with: {
-                productVariants: true,
-                reviews: {
+                variantImages: true,
+                variantTags: true,
+                product: {
                   with: {
-                    user: true,
+                    productVariants: true,
+                    reviews: {
+                      with: {
+                        user: true,
+                      },
+                    },
                   },
                 },
               },
-            },
-          },
-          where: params.search
-            ? or(
-                ilike(productVariants.productType, `%${params.search}%`),
-                ilike(productVariants.color, `%${params.search}%`),
-              )
-            : undefined,
-          orderBy:
-            params.sort === 'latest'
-              ? desc(productVariants.createdAt)
-              : params.sort === 'product_name'
-                ? asc(productVariants.productType)
-                : desc(productVariants.createdAt),
-        }),
+              where: params.search
+                ? or(ilike(productVariants.productType, `%${params.search}%`))
+                : undefined,
+              orderBy:
+                params.sort === 'latest'
+                  ? desc(productVariants.createdAt)
+                  : params.sort === 'product_name'
+                    ? asc(productVariants.productType)
+                    : desc(productVariants.createdAt),
+              limit,
+              offset: skip,
+            }),
+          ),
+          Effect.map((variants) => ({
+            data: variants.map((variant) => ProductVariantModel.from(variant)),
+            total,
+            hasMore: skip + variants.length < total,
+          })),
+        ),
       ),
-      Effect.map((variants) => {
-        console.log('Found filtered variants:', variants);
-        return variants.map((variant) => ProductVariantModel.from(variant));
-      }),
       Effect.catchAll((error) => {
-        console.error('Variant query error:', error);
-        return Effect.succeed([]);
+        console.error('Query error:', error);
+        return Effect.succeed({ data: [], total: 0, hasMore: false });
       }),
     );
   }
+
+  // findAllWithFilters(params: {
+  //   search?: string;
+  //   sort?: string;
+  //   page?: string;
+  //   limit?: string;
+  // }): Effect.Effect<ProductVariantModel[], Error> {
+  //   return pipe(
+  //     Effect.tryPromise(() =>
+  //       this.db.query.productVariants.findMany({
+  //         with: {
+  //           variantImages: true,
+  //           variantTags: true,
+  //           product: {
+  //             with: {
+  //               productVariants: true,
+  //               reviews: {
+  //                 with: {
+  //                   user: true,
+  //                 },
+  //               },
+  //             },
+  //           },
+  //         },
+  //         where: params.search
+  //           ? or(
+  //               ilike(productVariants.productType, `%${params.search}%`),
+  //               ilike(productVariants.color, `%${params.search}%`),
+  //             )
+  //           : undefined,
+  //         orderBy:
+  //           params.sort === 'latest'
+  //             ? desc(productVariants.createdAt)
+  //             : params.sort === 'product_name'
+  //               ? asc(productVariants.productType)
+  //               : desc(productVariants.createdAt),
+  //       }),
+  //     ),
+  //     Effect.map((variants) => {
+  //       console.log('Found filtered variants:', variants);
+  //       return variants.map((variant) => ProductVariantModel.from(variant));
+  //     }),
+  //     Effect.catchAll((error) => {
+  //       console.error('Variant query error:', error);
+  //       return Effect.succeed([]);
+  //     }),
+  //   );
+  // }
 
   findAll(): Effect.Effect<ProductVariantModel[], Error> {
     return pipe(

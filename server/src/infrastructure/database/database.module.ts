@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import {
+  BannerRepository,
   ProductRepository,
   S3Repository,
   UserRepository,
@@ -16,6 +17,7 @@ import { ReviewRepository } from './repositories/review.repository';
     ProductRepository,
     ProductVariantRepository,
     ReviewRepository,
+    BannerRepository,
   ],
   exports: [
     UserRepository,
@@ -24,6 +26,7 @@ import { ReviewRepository } from './repositories/review.repository';
     ProductRepository,
     ProductVariantRepository,
     ReviewRepository,
+    BannerRepository,
   ],
 })
 export class DatabaseModule {}

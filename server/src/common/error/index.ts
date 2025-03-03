@@ -108,4 +108,9 @@ export const ErrorCodes = {
     code: 6005,
     message: '리뷰가 존재하지 않습니다..',
   },
+  BANNER_NOT_FOUND: {
+    tag: 'BANNER_NOT_FOUND',
+    code: 6006,
+    message: '배너가 존재하지 않습니다..',
+  },
 } as const;

@@ -31,14 +31,14 @@ const navItems: NavItem[] = [
     icon: Package,
   },
   {
-    title: "주문 관리",
-    href: "#",
+    title: "배너 관리",
+    href: "/admin/banners",
     icon: ShoppingCart,
   },
   {
-    title: "회원 관리",
-    href: "#",
-    icon: Users,
+    title: "배너 등록",
+    href: "/admin/banners/add",
+    icon: ShoppingCart,
   },
   {
     title: "설정",

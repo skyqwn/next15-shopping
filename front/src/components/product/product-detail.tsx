@@ -18,6 +18,7 @@ interface ProductDetailProps {
 }
 
 const ProductDetail = ({ productVariant }: ProductDetailProps) => {
+  if (productVariant === null) return null;
   return (
     <main className="min-h-screen p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
@@ -31,11 +32,11 @@ const ProductDetail = ({ productVariant }: ProductDetailProps) => {
           </h2>
           <ProductType variant={productVariant?.product.productVariants!} />
           <div>
-            <ProductReviewStarts reviews={productVariant.product.reviews} />
+            <ProductReviewStarts reviews={productVariant?.product.reviews} />
           </div>
           <Separator className="my-2" />
           <p className="py-2 text-2xl font-medium">
-            {formatPrice(productVariant?.product!.price!)}원
+            {formatPrice(productVariant.product!.price!)}원
           </p>
           <figure className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
