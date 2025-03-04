@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import AuthButtonsWrapper from "./header/auth-button-wrapper";
 import { ThemeButton } from "./header/theme.button";
+import CartHeader from "../cart/cart-header";
 import CartDrawer from "../cart/cart-drawer";
 
 const Header = () => {
@@ -39,7 +40,7 @@ const Header = () => {
               ))}
             </li>
             <li className="flex cursor-pointer items-center hover:bg-muted">
-              <CartDrawer />
+              <CartHeader />
             </li>
             <Image
               src={"/svg/heart-outline.svg"}

@@ -60,7 +60,7 @@ const ProductDetail = ({ productVariant }: ProductDetailProps) => {
               />
             ))}
           </div>
-          <ProductAddCart />
+          <ProductAddCart variant={productVariant} />
         </div>
       </div>
       <div className="mt-10">
