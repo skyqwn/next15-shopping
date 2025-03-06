@@ -4,6 +4,7 @@ import {
   ProductController,
   ImagesController,
   BannerController,
+  OrderController,
 } from './controller';
 import { ApplicationModule } from 'src/application/application.module';
 import { ReviewController } from './controller/review.controller';
@@ -16,6 +17,7 @@ import { ReviewController } from './controller/review.controller';
     ProductController,
     ReviewController,
     BannerController,
+    OrderController,
   ],
 })
 export class PresentationModule {}

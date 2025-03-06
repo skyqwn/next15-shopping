@@ -6,6 +6,7 @@ import {
   ProductFacade,
   ReviewFacade,
   BannerFacade,
+  OrderFacade,
 } from './facades';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 
@@ -17,6 +18,7 @@ import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
     ProductFacade,
     ReviewFacade,
     BannerFacade,
+    OrderFacade,
   ],
   exports: [
     UserFacade,
@@ -24,6 +26,7 @@ import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
     ProductFacade,
     ReviewFacade,
     BannerFacade,
+    OrderFacade,
   ],
 })
 export class ApplicationModule {}

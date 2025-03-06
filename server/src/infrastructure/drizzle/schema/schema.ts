@@ -5,3 +5,5 @@ export * from './variant-images.schema';
 export * from './variant-tag.schema';
 export * from './review.schema';
 export * from './banner.schema';
+export * from './orders.schema';
+export * from './order-product.schema';

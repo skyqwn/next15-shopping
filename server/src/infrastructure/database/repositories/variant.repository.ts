@@ -251,7 +251,6 @@ export class ProductVariantRepository
         }),
       ),
       Effect.map((variants) => {
-        console.log('전체 variants:', variants);
         return variants.map((variant) => ProductVariantModel.from(variant));
       }),
       Effect.catchAll((error) => {

@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import {
   pgTable,
   serial,
@@ -6,6 +7,8 @@ import {
   timestamp,
   boolean,
 } from 'drizzle-orm/pg-core';
+import { reviews } from './review.schema';
+import { orders } from './orders.schema';
 
 export const loginTypeEnum = pgEnum('user_login_type_v2', [
   'email',
@@ -29,6 +32,11 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updatedAt').defaultNow(),
   deletedAt: timestamp('deletedAt'),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  reviews: many(reviews, { relationName: 'user_reviews' }),
+  orders: many(orders, { relationName: 'user_orders' }),
+}));
 
 export type UserSelectType = typeof users.$inferSelect;
 export type UserInsertType = typeof users.$inferInsert;

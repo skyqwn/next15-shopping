@@ -5,6 +5,7 @@ import { ImagesService } from './images.service';
 import { ProductService } from './product.service';
 import { ReviewService } from './review.service';
 import { BannerService } from './banner.service';
+import { OrderService } from './order.service';
 
 @Module({
   imports: [InfrastructureModule],
@@ -14,6 +15,7 @@ import { BannerService } from './banner.service';
     ProductService,
     ReviewService,
     BannerService,
+    OrderService,
   ],
   exports: [
     UserService,
@@ -21,6 +23,7 @@ import { BannerService } from './banner.service';
     ProductService,
     ReviewService,
     BannerService,
+    OrderService,
   ],
 })
 export class ServiceModule {}
