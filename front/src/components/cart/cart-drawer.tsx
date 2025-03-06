@@ -15,12 +15,26 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { ShoppingBag } from "lucide-react";
 import CartItems from "./cart-items";
+import CartMessage from "./cart-message";
+import { useEffect, useState } from "react";
+import CheckoutPage from "./cart-checkout";
+import OrderConfirmed from "./order-confirm";
 
 const CartDrawer = () => {
-  const { cart } = useCartStore();
-  console.log("cart", cart.length);
+  const { cart, checkoutProgress, isDrawerOpen } = useCartStore();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(isDrawerOpen);
+  }, [isDrawerOpen]);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    useCartStore.setState({ isDrawerOpen: isOpen });
+  };
+
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger>
         <div className="relative px-2">
           <AnimatePresence>
@@ -41,11 +55,13 @@ const CartDrawer = () => {
       <DrawerContent className="min-h-50vh">
         <DrawerHeader>
           <DrawerTitle className="text-center">
-            <span>장바구니 진행사항</span>
+            <CartMessage />
           </DrawerTitle>
         </DrawerHeader>
         <div className="overflow-auto p-4">
-          <CartItems />
+          {checkoutProgress === "cart-page" && <CartItems />}
+          {checkoutProgress === "payment-page" && <CheckoutPage />}
+          {checkoutProgress === "confirmation-page" && <OrderConfirmed />}
         </div>
       </DrawerContent>
     </Drawer>

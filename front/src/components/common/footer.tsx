@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-gray-200 bg-white px-4 py-4">
+    <footer className="h-24 border-t border-gray-200 bg-white px-4 py-4 md:h-32">
       <div className="mx-auto max-w-screen-xl">
         {/* 고객센터 및 SNS 링크 */}
         <div className="mb-8 flex flex-col justify-between gap-8 lg:flex-row">

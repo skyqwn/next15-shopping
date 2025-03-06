@@ -17,9 +17,12 @@ import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store";
 import emptyCart from "../../../public/empty-box.json";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const CartItems = () => {
-  const { cart, addToCart, removeFromCart } = useCartStore();
+  const router = useRouter();
+  const { cart, addToCart, removeFromCart, setCheckoutProgress } =
+    useCartStore();
   const totalPrice = useMemo(() => {
     return cart.reduce((acc, item) => {
       return acc + item.price * item.variant.quantity;
@@ -134,7 +137,13 @@ const CartItems = () => {
           ))}
         </AnimatePresence>
       </motion.div>
-      <Button className="w-full max-w-md" disabled={cart.length === 0}>
+      <Button
+        onClick={() => {
+          setCheckoutProgress("payment-page");
+        }}
+        className="w-full max-w-md"
+        disabled={cart.length === 0}
+      >
         구매하기
       </Button>
     </motion.div>
