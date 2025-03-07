@@ -27,7 +27,7 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
             alt={variant.variantImages?.[0]?.fileName ?? "상품 이미지"}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            className="object-cover transition-transform group-hover:scale-105"
+            className="rounded-md object-cover transition-transform group-hover:scale-105"
           />
         </div>
         <div className="mt-2 space-y-1">

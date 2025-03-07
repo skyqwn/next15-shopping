@@ -12,7 +12,7 @@ const Reviews = ({ productId }: { productId: number }) => {
     <section className="py-4">
       <div className="flex flex-col justify-stretch gap-2 lg:flex-row lg:gap-12">
         <div className="flex-1">
-          <h2 className="mb-4 text-2xl font-bold">Product Reviews</h2>
+          <h2 className="mb-4 text-2xl font-bold">상품 리뷰</h2>
           <ReviewForm productId={productId} />
           <Review reviews={reviewData} />
         </div>

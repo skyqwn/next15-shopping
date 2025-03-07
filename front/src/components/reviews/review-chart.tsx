@@ -25,7 +25,7 @@ const ReviewChart = ({ reviews }: { reviews: ReviewType[] }) => {
   return (
     <Card className="flex flex-col gap-4 rounded-md p-8">
       <div className="flex flex-col gap-2">
-        <CardTitle>Product Rating:</CardTitle>
+        <CardTitle>상품 평점:</CardTitle>
         <Stars size={18} rating={totalRating} totalReviews={reviews.length} />
         <CardDescription className="text-lg font-medium">
           {totalRating.toFixed(1)}

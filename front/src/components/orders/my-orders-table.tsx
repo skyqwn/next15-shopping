@@ -32,6 +32,7 @@ import "dayjs/locale/ko";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -152,7 +153,7 @@ const MyOrdersTable = () => {
                         <DropdownMenuItem>
                           <DialogTrigger asChild>
                             <Button className="w-full" variant={"ghost"}>
-                              더 보기
+                              자세히 보기
                             </Button>
                           </DialogTrigger>
                         </DropdownMenuItem>
@@ -161,6 +162,9 @@ const MyOrdersTable = () => {
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>주문 상세보기 #{order.id}</DialogTitle>
+                        <DialogDescription>
+                          모든 주문의 총액: ${order.totalPrice}
+                        </DialogDescription>
                         <Card className="flex flex-col gap-4 overflow-auto p-2">
                           <Table>
                             <TableHeader>
@@ -216,76 +220,6 @@ const MyOrdersTable = () => {
         </Table>
       </CardContent>
     </Card>
-  );
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">내 주문 내역 ({orders.length})</h2>
-
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <Card key={order.id} className="p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <div>
-                <span className="mr-2 text-sm text-muted-foreground">
-                  주문번호: {order.id}
-                </span>
-                {/* <span className="text-sm text-muted-foreground">
-                  {order.createdAt
-                    ? format(new Date(order.createdAt), "yyyy-MM-dd HH:mm")
-                    : "날짜 정보 없음"}
-                </span> */}
-              </div>
-              {/* <Badge variant={getStatusBadgeVariant(order.status as string)}>
-                {getStatusText(order.status as string)}
-              </Badge> */}
-            </div>
-
-            <div className="space-y-2">
-              {order.orderProducts.map((item) => (
-                <div key={item.id} className="flex items-center border-b pb-2">
-                  <div className="mr-3 h-16 w-16 flex-shrink-0">
-                    {item.productVariants?.variantImages?.[0]?.url ? (
-                      <img
-                        src={item.productVariants.variantImages[0].url}
-                        alt={item.product?.title || "상품 이미지"}
-                        className="h-full w-full rounded object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center rounded bg-muted">
-                        이미지 없음
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-grow">
-                    <div className="font-medium">
-                      {item.product?.title || "상품명 없음"}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {item.productVariants?.productType || "타입 정보 없음"} /
-                      {item.quantity}개
-                    </div>
-                  </div>
-
-                  <div className="font-medium">
-                    {Intl.NumberFormat("ko-KR").format(
-                      (item.product?.price || 0) * item.quantity,
-                    )}
-                    원
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 text-right font-bold">
-              총 결제금액: {Intl.NumberFormat("ko-KR").format(order.totalPrice)}
-              원
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
   );
 };
 

@@ -84,6 +84,7 @@ export default function CheckoutPage() {
       });
       useCartStore.setState({
         cart: [],
+        userInfo: null,
         isDrawerOpen: true,
         checkoutProgress: "confirmation-page",
       });

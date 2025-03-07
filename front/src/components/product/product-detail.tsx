@@ -48,7 +48,7 @@ const ProductDetail = ({ productVariant }: ProductDetailProps) => {
           <ParserHtml dirtyHtml={productVariant.product.description} />
           <Separator />
           <p className="mb-2 font-medium text-secondary-foreground">
-            Available Colors
+            선택 가능한 색상
           </p>
           <div className="flex gap-4">
             {productVariant?.product.productVariants?.map((prodVariant) => (
