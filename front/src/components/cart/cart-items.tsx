@@ -52,7 +52,7 @@ const CartItems = () => {
         </div>
       )}
       {cart.length > 0 && (
-        <div className="h-88 w-full overflow-y-auto">
+        <div className="max-h-80 w-full overflow-y-auto">
           <Table className="mx-auto max-w-2xl">
             <TableHeader>
               <TableRow>
@@ -139,7 +139,7 @@ const CartItems = () => {
       </motion.div>
       <Button
         onClick={() => {
-          setCheckoutProgress("payment-page");
+          setCheckoutProgress("shippingInfo-page");
         }}
         className="w-full max-w-md"
         disabled={cart.length === 0}

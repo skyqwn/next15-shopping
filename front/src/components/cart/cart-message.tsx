@@ -11,13 +11,14 @@ const CartMessage = () => {
   return (
     <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: 10 }}>
       <DrawerTitle>
-        {checkoutProgress === "cart-page" ? "장바구니" : null}
-        {checkoutProgress === "payment-page" ? "결제 하기" : null}
-        {checkoutProgress === "confirmation-page" ? "결제 완료" : null}
+        {checkoutProgress === "cart-page" && "장바구니"}
+        {checkoutProgress === "shippingInfo-page" ? "배송지 입력" : null}
+        {checkoutProgress === "payment-page" && "결제 하기"}
+        {checkoutProgress === "confirmation-page" && "결제 완료"}
       </DrawerTitle>
       <DrawerDescription className="py-1">
-        {checkoutProgress === "cart-page" ? "장바구니 확인 또는 수정" : null}
-        {checkoutProgress === "payment-page" ? (
+        {checkoutProgress === "cart-page" && "장바구니 확인 또는 수정"}
+        {checkoutProgress === "shippingInfo-page" && (
           <span
             onClick={() => setCheckoutProgress("cart-page")}
             className="flex cursor-pointer items-center justify-center gap-1 hover:text-primary"
@@ -25,8 +26,17 @@ const CartMessage = () => {
             <ArrowLeft size={14} />
             이전 단계로 넘어가기
           </span>
-        ) : null}
-        {checkoutProgress === "confirmation-page" ? "확정단계" : null}
+        )}
+        {checkoutProgress === "payment-page" && (
+          <span
+            onClick={() => setCheckoutProgress("shippingInfo-page")}
+            className="flex cursor-pointer items-center justify-center gap-1 hover:text-primary"
+          >
+            <ArrowLeft size={14} />
+            이전 단계로 넘어가기
+          </span>
+        )}
+        {checkoutProgress === "confirmation-page" && "확정단계"}
       </DrawerDescription>
     </motion.div>
   );

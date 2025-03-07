@@ -1,6 +1,25 @@
 import { OrderSelectType } from 'src/infrastructure/drizzle/schema/orders.schema';
 import { OrderProductSelectType } from 'src/infrastructure/drizzle/schema/order-product.schema';
 import { OrderStatusEnumType } from '../types/order.types';
+import {
+  ProductSelectType,
+  ProductVariantSelectType,
+  VariantImageSelectType,
+} from 'src/infrastructure/drizzle/schema/schema';
+
+type ExtendedOrderProduct = {
+  id: number;
+  quantity: number;
+  productVariantId: number;
+  productId: number;
+  orderId: number;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  product?: ProductSelectType;
+  productVariants?: ProductVariantSelectType & {
+    variantImages?: VariantImageSelectType[];
+  };
+};
 
 export class OrderModel {
   constructor(
@@ -12,20 +31,17 @@ export class OrderModel {
     public tossOrderId: string | null,
     public createdAt: Date | null,
     public updatedAt: Date | null,
-    public orderProducts: {
-      id: number;
-      quantity: number;
-      productVariantId: number;
-      productId: number;
-      orderId: number;
-      createdAt: Date | null;
-      updatedAt: Date | null;
-    }[] = [],
+    public orderProducts: ExtendedOrderProduct[] = [],
   ) {}
 
   static from(
     data: OrderSelectType & {
-      orderProduct?: OrderProductSelectType[];
+      orderProduct?: (OrderProductSelectType & {
+        product?: ProductSelectType;
+        productVariants?: ProductVariantSelectType & {
+          variantImages?: VariantImageSelectType[];
+        };
+      })[];
     },
   ): OrderModel {
     return new OrderModel(
@@ -45,6 +61,8 @@ export class OrderModel {
         orderId: orderProduct.orderId,
         createdAt: orderProduct.createdAt,
         updatedAt: orderProduct.updatedAt,
+        product: orderProduct.product,
+        productVariants: orderProduct.productVariants,
       })) || [],
     );
   }

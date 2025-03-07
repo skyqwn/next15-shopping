@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Lottie from "lottie-react";
 import { motion } from "framer-motion";
 
@@ -9,7 +8,7 @@ import { useCartStore } from "@/store";
 import orderConfirmed from "../../../public/order-confirm.json";
 
 const OrderConfirmed = () => {
-  const { setCheckoutProgress, isDrawerOpen, setCartOpen } = useCartStore();
+  const { setCheckoutProgress } = useCartStore();
   return (
     <div className="flex flex-col items-center gap-4">
       <motion.div
@@ -20,16 +19,13 @@ const OrderConfirmed = () => {
         <Lottie className="my-4 h-56" animationData={orderConfirmed} />
       </motion.div>
       <h2 className="text-2xl font-medium">구매해주셔서 감사합니다!</h2>
-      <Link href={"/dashboard/orders"}>
-        <Button
-          onClick={() => {
-            setCheckoutProgress("cart-page");
-            setCartOpen(false);
-          }}
-        >
-          주문단계로 돌아가기
-        </Button>
-      </Link>
+      <Button
+        onClick={() => {
+          setCheckoutProgress("cart-page");
+        }}
+      >
+        완료하기
+      </Button>
     </div>
   );
 };

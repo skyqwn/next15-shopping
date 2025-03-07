@@ -50,7 +50,16 @@ export class OrderRepository
       const orderWithProducts = await tx.query.orders.findFirst({
         where: eq(orders.id, newOrder.id),
         with: {
-          orderProduct: true,
+          orderProduct: {
+            with: {
+              product: true,
+              productVariants: {
+                with: {
+                  variantImages: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -119,7 +128,13 @@ export class OrderRepository
         this.db.query.orders.findMany({
           where: eq(orders.userId, userId),
           with: {
-            orderProduct: true,
+            orderProduct: {
+              with: {
+                product: true,
+                productVariants: { with: { variantImages: true } },
+                order: true,
+              },
+            },
           },
         }),
       ),
@@ -136,7 +151,16 @@ export class OrderRepository
       Effect.tryPromise(() =>
         this.db.query.orders.findMany({
           with: {
-            orderProduct: true,
+            orderProduct: {
+              with: {
+                product: true,
+                productVariants: {
+                  with: {
+                    variantImages: true,
+                  },
+                },
+              },
+            },
           },
         }),
       ),

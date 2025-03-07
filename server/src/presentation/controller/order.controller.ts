@@ -23,7 +23,6 @@ export class OrderController {
     @Body() createOrderDto: CreateOrderDto,
     @GetUser() user: UserSelectType,
   ) {
-    console.log('createOrderDto', createOrderDto);
     return pipe(
       this.orderFacade.createOrder({ ...createOrderDto, userId: user.id }),
       Effect.map((order) => ({

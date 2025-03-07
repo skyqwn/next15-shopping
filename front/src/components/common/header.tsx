@@ -42,7 +42,7 @@ const Header = () => {
             <li className="flex cursor-pointer items-center hover:bg-muted">
               <CartHeader />
             </li>
-            <Image
+            {/* <Image
               src={"/svg/heart-outline.svg"}
               width={24}
               height={24}
@@ -53,7 +53,7 @@ const Header = () => {
               width={24}
               height={24}
               alt="heart"
-            />
+            /> */}
             <ThemeButton />
           </div>
         </ul>

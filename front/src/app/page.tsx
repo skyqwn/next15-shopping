@@ -3,7 +3,9 @@ import MainBannerSwiper from "@/components/main/main-banner-swiper";
 export default function Home() {
   return (
     <div className="">
-      <MainBannerSwiper />
+      <div className="px-4">
+        <MainBannerSwiper />
+      </div>
       {/* Just Dropped */}
       <section className="px-4">
         <h2 className="mb-4 text-xl font-bold">Just Dropped</h2>

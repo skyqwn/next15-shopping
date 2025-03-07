@@ -16,9 +16,9 @@ const ProfileAsideMenu = () => {
             <a href="/my/profile">프로필 관리</a>
           </li>
           <li
-            className={`${pathname === "/my/favorite" ? "font-bold text-primary" : ""}`}
+            className={`${pathname === "/my/orders" ? "font-bold text-primary" : ""}`}
           >
-            <a href="/my/favorite">내가 좋아요한 글</a>
+            <a href="/my/orders">주문 목록</a>
           </li>
           <li>
             <a href="#">로그아웃</a>

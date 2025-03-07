@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type UserInfo = {
+  name: string;
+  phone: string;
+  shippingAddress: string;
+};
+
 export type Variant = {
   variantId: number;
   quantity: number;
@@ -18,13 +24,24 @@ export type CartState = {
   cart: CartItem[];
   isDrawerOpen: boolean;
   setCartOpen: (val: boolean) => void;
-  checkoutProgress: "cart-page" | "payment-page" | "confirmation-page";
+  checkoutProgress:
+    | "cart-page"
+    | "shippingInfo-page"
+    | "payment-page"
+    | "confirmation-page";
   setCheckoutProgress: (
-    progress: "cart-page" | "payment-page" | "confirmation-page",
+    progress:
+      | "cart-page"
+      | "shippingInfo-page"
+      | "payment-page"
+      | "confirmation-page",
   ) => void;
   clearCart: () => void;
   addToCart: (item: CartItem) => void;
   removeFromCart: (item: CartItem) => void;
+  userInfo: UserInfo | null;
+  setUserInfo: (info: UserInfo) => void;
+  clearUserInfo: () => void;
 };
 
 export const useCartStore = create<CartState>()(
@@ -91,6 +108,9 @@ export const useCartStore = create<CartState>()(
             ),
           };
         }),
+      userInfo: null,
+      setUserInfo: (info) => set({ userInfo: info }),
+      clearUserInfo: () => set({ userInfo: null }),
     }),
     { name: "cart-storage" },
   ),

@@ -2,12 +2,17 @@ import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
 import { orders } from './orders.schema';
 import { relations } from 'drizzle-orm';
 import { products } from './products.schema';
+import { productVariants } from './product-variant.schema';
 
 export const orderProduct = pgTable('order_product', {
   id: serial('id').primaryKey(),
   quantity: integer('quantity').notNull(),
-  productVariantId: serial('productVariantId').notNull(),
-  productId: serial('productId').notNull(),
+  productVariantId: serial('productVariantId')
+    .notNull()
+    .references(() => productVariants.id),
+  productId: serial('productId')
+    .notNull()
+    .references(() => products.id),
   orderId: serial('orderId')
     .notNull()
     .references(() => orders.id, { onDelete: 'cascade' }),
@@ -25,6 +30,11 @@ export const orderProductRelations = relations(orderProduct, ({ one }) => ({
     fields: [orderProduct.productId],
     references: [products.id],
     relationName: 'products',
+  }),
+  productVariants: one(productVariants, {
+    fields: [orderProduct.productVariantId],
+    references: [productVariants.id],
+    relationName: 'productVariants',
   }),
 }));
 

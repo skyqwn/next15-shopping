@@ -19,6 +19,7 @@ import CartMessage from "./cart-message";
 import { useEffect, useState } from "react";
 import CheckoutPage from "./cart-checkout";
 import OrderConfirmed from "./order-confirm";
+import CartShipInfo from "./cart-ship-info";
 
 const CartDrawer = () => {
   const { cart, checkoutProgress, isDrawerOpen } = useCartStore();
@@ -60,6 +61,7 @@ const CartDrawer = () => {
         </DrawerHeader>
         <div className="overflow-auto p-4">
           {checkoutProgress === "cart-page" && <CartItems />}
+          {checkoutProgress === "shippingInfo-page" && <CartShipInfo />}
           {checkoutProgress === "payment-page" && <CheckoutPage />}
           {checkoutProgress === "confirmation-page" && <OrderConfirmed />}
         </div>

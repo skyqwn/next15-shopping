@@ -9,6 +9,9 @@ const queryKeys = {
   VARIANT_DETAIL: "variant-detail",
   REVIEWS: "reviews",
   BANNER: "banner",
+  ORDERS: "orders",
+  ORDER_DETAIL: "orderDetail",
+  USER_ORDERS: "userOrders",
 } as const;
 
 export { queryKeys };

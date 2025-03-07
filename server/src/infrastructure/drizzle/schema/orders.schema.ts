@@ -25,6 +25,7 @@ export const orders = pgTable('orders', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   totalPrice: real('totalPrice').notNull(),
+  shippingAddress: text('shippingAddress'),
   status: orderSatus('status').notNull(),
   receiptURL: text('receiptURL'),
   tossOrderId: text('tossOrderId'),
