@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   ShoppingCart,
-  Users,
   Settings,
   Package,
   LucideIcon,
+  ChartNoAxesCombined,
 } from "lucide-react";
 
 interface NavItem {
@@ -31,9 +31,9 @@ const navItems: NavItem[] = [
     icon: Package,
   },
   {
-    title: "배너 관리",
-    href: "/admin/banners",
-    icon: ShoppingCart,
+    title: "주문 관리",
+    href: "/admin/analytics",
+    icon: ChartNoAxesCombined,
   },
   {
     title: "배너 등록",

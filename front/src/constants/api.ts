@@ -39,4 +39,6 @@ export const END_POINTS = {
   GET_USER_ORDERS: (userId: number) => `/orders/user/${userId}`,
   UPDATE_ORDER: (id: number) => `/orders/${id}`,
   DELETE_ORDER: (id: number) => `/orders/${id}`,
+
+  GET_ORDER_PRODUCTS: "/orders/products",
 } as const;

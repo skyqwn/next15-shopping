@@ -12,6 +12,8 @@ const queryKeys = {
   ORDERS: "orders",
   ORDER_DETAIL: "orderDetail",
   USER_ORDERS: "userOrders",
+
+  ORDER_PRODUCTS: "orderProducts",
 } as const;
 
 export { queryKeys };

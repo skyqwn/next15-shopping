@@ -18,7 +18,7 @@ const getOrders = async (userId: number): Promise<ApiResponse<OrderType[]>> => {
 export const getUserOrdersQueryOptions = (
   userId: number,
 ): UseSuspenseQueryOptions<ApiResponse<OrderType[]>> => ({
-  queryKey: [queryKeys.PRODUCTS, userId],
+  queryKey: [queryKeys.ORDERS, userId],
   queryFn: () => getOrders(userId),
 });
 
