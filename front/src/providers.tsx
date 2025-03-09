@@ -10,18 +10,18 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
-    // <NextThemesProvider
-    //   attribute="class"
-    //   defaultTheme="system"
-    //   enableSystem
-    //   disableTransitionOnChange
-    // >
-    <QueryClientProvider client={getQueryClient()}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <NuqsAdapter>
-        {children} <Toaster richColors />
-      </NuqsAdapter>
-    </QueryClientProvider>
-    // </NextThemesProvider>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <QueryClientProvider client={getQueryClient()}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <NuqsAdapter>
+          {children} <Toaster richColors />
+        </NuqsAdapter>
+      </QueryClientProvider>
+    </NextThemesProvider>
   );
 }

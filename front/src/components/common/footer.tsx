@@ -2,13 +2,12 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="h-24 border-t border-gray-200 bg-white px-4 py-4 md:h-32">
+    <footer className="border-gray-200px-4 h-24 border-t py-4 md:h-32">
       <div className="mx-auto max-w-screen-xl">
-        {/* 고객센터 및 SNS 링크 */}
         <div className="mb-8 flex flex-col justify-between gap-8 lg:flex-row">
           <div>
             <h3 className="mb-4 text-lg font-bold">고객센터 1588-1234</h3>
-            <div className="space-y-2 text-sm text-gray-600">
+            <div className="space-y-2 text-sm">
               <p>운영시간 평일 11:00 - 18:00 (토∙일, 공휴일 휴무)</p>
               <p>점심시간 평일 13:00 - 14:00</p>
               <button className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm">
@@ -40,8 +39,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* 회사 정보 및 링크 */}
-        <div className="grid gap-8 text-sm text-gray-600 lg:grid-cols-2">
+        <div className="grid gap-8 text-sm lg:grid-cols-2">
           <div className="space-y-4">
             <div className="flex flex-wrap gap-3">
               <Link href="#" className="hover:underline">
@@ -79,10 +77,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* 카피라이트 */}
-        <p className="mt-8 text-center text-xs text-gray-500">
-          © 2024 KBH Corp.
-        </p>
+        <p className="mt-8 text-center text-xs">© 2024 KBH Corp.</p>
       </div>
     </footer>
   );

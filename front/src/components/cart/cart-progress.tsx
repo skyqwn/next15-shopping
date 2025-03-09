@@ -31,7 +31,7 @@ const CartProgres = () => {
             transition={{ delay: 0.25 }}
             className="z-50 rounded-full bg-primary p-2"
           >
-            <ShoppingCart className="text-white" size={14} />
+            <ShoppingCart className="text-white dark:text-black" size={14} />
           </motion.div>
           <motion.div
             initial={{ scale: 0 }}
@@ -48,7 +48,7 @@ const CartProgres = () => {
             transition={{ delay: 0.25 }}
             className="z-50 rounded-full bg-primary p-2"
           >
-            <Notebook className="text-white" size={14} />
+            <Notebook className="text-white dark:text-black" size={14} />
           </motion.div>
           <motion.div
             initial={{ scale: 0 }}
@@ -63,7 +63,7 @@ const CartProgres = () => {
             transition={{ delay: 0.25 }}
             className="z-50 rounded-full bg-primary p-2"
           >
-            <CreditCard className="text-white" size={14} />
+            <CreditCard className="text-white dark:text-black" size={14} />
           </motion.div>
           <motion.div
             initial={{ scale: 0 }}
@@ -73,7 +73,7 @@ const CartProgres = () => {
             transition={{ delay: 0.25 }}
             className="z-50 rounded-full bg-primary p-2"
           >
-            <Check className="text-white" size={14} />
+            <Check className="text-white dark:text-black" size={14} />
           </motion.div>
         </div>
       </div>

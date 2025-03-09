@@ -1,7 +1,7 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
 const AdminPage = () => {
-  return <div>amdin</div>;
+  redirect("/admin/add-product");
 };
 
 export default AdminPage;

@@ -7,7 +7,7 @@ const SearchBar = () => {
   const { inputValue, handleSearchChange } = useShopSearchParams();
 
   return (
-    <div className="sticky top-0 z-10 border-b bg-white">
+    <div className="sticky top-0 z-10 border-b bg-white dark:bg-black">
       <div className="mx-auto max-w-screen-xl px-4 py-3">
         <div className="relative">
           <Input
