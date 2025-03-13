@@ -50,9 +50,6 @@ function useLogout() {
   return useMutation({
     mutationFn: postLogout,
     onSuccess: () => {
-      // queryClient.invalidateQueries({
-      //   queryKey: [queryKeys.USER_INFO],
-      // });
       queryClient.setQueryData([queryKeys.USER_INFO], {
         isLoggedIn: false,
         data: null,

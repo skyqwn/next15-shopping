@@ -5,15 +5,11 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ProductVariant } from "@/hooks/queries/products/useProductDetailQuery";
 
 import { cn } from "@/lib/utils";
 import { ProductVariantType } from "@/types";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface ProductShowcaseProps {
@@ -23,8 +19,6 @@ interface ProductShowcaseProps {
 const ProductShowcase = ({ variant }: ProductShowcaseProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [activeThumbnail, setActiveThumbnail] = useState([0]);
-  const searchParams = useSearchParams();
-  // const selectedColor = searchParams.get("type") || variants[0].productType;
 
   const updatePreview = (index: number) => {
     api?.scrollTo(index);

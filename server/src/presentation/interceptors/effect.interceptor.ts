@@ -17,7 +17,6 @@ import { AppNotFoundException } from 'src/domain/exceptions/app-not-found.except
 export class EffectInterceptor implements NestInterceptor {
   constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
     const handler = context.getHandler();

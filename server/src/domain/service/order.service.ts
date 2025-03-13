@@ -55,17 +55,6 @@ export class OrderService {
     return this.orderRepository.findByUserId(userId);
   }
 
-  //   getOrders(params: {
-  //     search?: string;
-  //     status?: string;
-  //     userId?: string;
-  //     sort?: string;
-  //     page?: string;
-  //     limit?: string;
-  //   }) {
-  //     return this.orderRepository.findAllWithFilters(params);
-  //   }
-
   getOrderById(id: number) {
     return pipe(
       this.orderRepository.findOneBy(id),
@@ -84,5 +73,9 @@ export class OrderService {
         Effect.fail(new AppNotFoundException(ErrorCodes.ORDER_NOT_FOUND)),
       ),
     );
+  }
+
+  findManyOrderProducts() {
+    return this.orderRepository.findManyOrderProducts();
   }
 }

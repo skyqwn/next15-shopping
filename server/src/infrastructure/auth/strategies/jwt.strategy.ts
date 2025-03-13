@@ -18,16 +18,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          // console.log('토큰 추출 시도:', request?.cookies);
           const token = request?.cookies?.accessToken;
           if (!token) {
-            // console.log('토큰이 없음');
             return null;
           }
           try {
             const decoded = this.jwtService.verify(token);
-            // console.log('토큰 검증 결과:', decoded);
-
             if (decoded.exp && decoded.exp * 1000 < Date.now()) {
               console.log('토큰 만료됨');
               return null;
@@ -49,8 +45,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       const user = await this.db.query.users.findFirst({
         where: eq(users.id, payload.userId),
       });
-
-      // console.log('JWT Strategy - 찾은 user:', user);
 
       if (!user) {
         throw new UnauthorizedException('User not found');

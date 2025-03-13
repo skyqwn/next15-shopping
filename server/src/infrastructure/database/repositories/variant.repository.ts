@@ -32,7 +32,7 @@ type CreateVariantRelationsInput = {
   images: VariantImageInput[];
   tags: string[];
 };
-
+type SortOption = 'popular' | 'latest' | 'price_high' | 'price_low';
 @Injectable()
 export class ProductVariantRepository
   implements BaseRepository<ProductVariantInsertType, ProductVariantModel>
@@ -122,7 +122,7 @@ export class ProductVariantRepository
     Error
   > {
     const page = parseInt(params.page || '1', 10);
-    const limit = parseInt(params.limit || '20', 10);
+    const limit = parseInt(params.limit || '1', 10);
     const skip = (page - 1) * limit;
 
     return pipe(
@@ -172,6 +172,7 @@ export class ProductVariantRepository
             data: variants.map((variant) => ProductVariantModel.from(variant)),
             total,
             hasMore: skip + variants.length < total,
+            page,
           })),
         ),
       ),
@@ -182,53 +183,30 @@ export class ProductVariantRepository
     );
   }
 
-  // findAllWithFilters(params: {
-  //   search?: string;
-  //   sort?: string;
-  //   page?: string;
-  //   limit?: string;
-  // }): Effect.Effect<ProductVariantModel[], Error> {
-  //   return pipe(
-  //     Effect.tryPromise(() =>
-  //       this.db.query.productVariants.findMany({
-  //         with: {
-  //           variantImages: true,
-  //           variantTags: true,
-  //           product: {
-  //             with: {
-  //               productVariants: true,
-  //               reviews: {
-  //                 with: {
-  //                   user: true,
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //         where: params.search
-  //           ? or(
-  //               ilike(productVariants.productType, `%${params.search}%`),
-  //               ilike(productVariants.color, `%${params.search}%`),
-  //             )
-  //           : undefined,
-  //         orderBy:
-  //           params.sort === 'latest'
-  //             ? desc(productVariants.createdAt)
-  //             : params.sort === 'product_name'
-  //               ? asc(productVariants.productType)
-  //               : desc(productVariants.createdAt),
-  //       }),
-  //     ),
-  //     Effect.map((variants) => {
-  //       console.log('Found filtered variants:', variants);
-  //       return variants.map((variant) => ProductVariantModel.from(variant));
-  //     }),
-  //     Effect.catchAll((error) => {
-  //       console.error('Variant query error:', error);
-  //       return Effect.succeed([]);
-  //     }),
-  //   );
-  // }
+  private getOrderByClause(sort?: string) {
+    switch (sort) {
+      case 'latest':
+        return [desc(productVariants.createdAt)];
+      case 'popular':
+        return [desc(productVariants.createdAt)];
+      case 'price_high':
+        return [
+          desc(
+            sql`(SELECT price FROM products WHERE products.id = product_variants.product_id)`,
+          ),
+        ];
+      case 'price_low':
+        return [
+          asc(
+            sql`(SELECT price FROM products WHERE products.id = product_variants.product_id)`,
+          ),
+        ];
+      case 'product_name':
+        return [asc(productVariants.productType)];
+      default:
+        return [desc(productVariants.createdAt)];
+    }
+  }
 
   findAll(): Effect.Effect<ProductVariantModel[], Error> {
     return pipe(

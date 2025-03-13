@@ -3,13 +3,12 @@ import { getVariantDetail } from "@/hooks/queries/product-variant/useVariantDeta
 import { getVariants } from "@/hooks/queries/product-variant/useVariantQuery";
 
 import { ProductVariantType } from "@/types";
+import { getUserInfo } from "@/utils/check-amdin-role";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const variants = await getVariants();
-
-  console.log("variants", variants);
 
   if (variants) {
     return variants.result.map((variant: ProductVariantType) => ({
@@ -28,7 +27,6 @@ const ShopDetail = async ({ params }: PageProps) => {
   const productId = +params.id;
   const productVariantResponse = await getVariantDetail(productId);
   const productVariant = productVariantResponse.result;
-
   return (
     <>
       <ProductDetail productVariant={productVariant} />

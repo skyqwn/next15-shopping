@@ -48,11 +48,11 @@ const getProductsFilter = async (
 export const getProductsFilterInfiniteQueryOptions = (
   params: ProductsParams,
 ): UseInfiniteQueryOptions<
-  ApiResponse<ProductResponse>, // 각 페이지의 데이터 타입
-  Error, // 에러 타입
-  InfiniteData<ApiResponse<ProductResponse>, number>, // 전체 데이터 타입 (pages와 pageParams 포함)
-  ApiResponse<ProductResponse>, // TQueryData - 쿼리함수의 반환 데이터 타입
-  QueryKey, // pageParam 타입,
+  ApiResponse<ProductResponse>,
+  Error,
+  InfiniteData<ApiResponse<ProductResponse>, number>,
+  ApiResponse<ProductResponse>,
+  QueryKey,
   number
 > => ({
   queryKey: productsQueryKey(params),

@@ -45,4 +45,8 @@ export class OrderFacade {
   deleteOrder(id: number): Effect.Effect<void, Error> {
     return this.orderService.deleteOrder(id);
   }
+
+  findManyOrderProducts(): Effect.Effect<any[], Error> {
+    return this.orderService.findManyOrderProducts();
+  }
 }

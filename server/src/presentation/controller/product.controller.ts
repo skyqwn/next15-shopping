@@ -7,9 +7,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Effect, pipe } from 'effect';
 import {
   ProductFacade,
@@ -23,6 +21,8 @@ import {
   CreateVariantRequestDto,
   UpdateVariantRequestDto,
 } from '../dtos/variant/request';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { UserSelectType } from 'src/infrastructure/drizzle/schema/users.schema';
 
 @Controller('products')
 export class ProductController {
@@ -119,6 +119,30 @@ export class ProductController {
     );
   }
 
+  @Post('viewed')
+  addViewedProduct(@Body() body: { productId: number }, @GetUser() user: any) {
+    return pipe(
+      this.productFacade.addViewedProduct(body.productId, user.id),
+      Effect.map(() => ({
+        success: true,
+        message: 'Added to viewed products',
+      })),
+      Effect.runPromise,
+    );
+  }
+
+  @Get('viewed')
+  getViewedProducts(@GetUser() user: UserSelectType) {
+    return pipe(
+      this.productFacade.getViewedProducts(user.id),
+      Effect.map((products) => ({
+        success: true,
+        result: products,
+        message: null,
+      })),
+      Effect.runPromise,
+    );
+  }
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
@@ -164,22 +188,6 @@ export class ProductController {
       Effect.runPromise,
     );
   }
-  // @Get('/filter')
-  // getProducts(@Query('q') search?: string, @Query('sort') sort?: string) {
-  //   return pipe(
-  //     this.productFacade.getProducts({ search, sort }),
-  //     Effect.tap((products) =>
-  //       console.log('Controller - Result:', products.length),
-  //     ),
-
-  //     Effect.map((products) => ({
-  //       success: true,
-  //       result: products,
-  //       message: products.length === 0 ? '찾는 상품이 없습니다' : null,
-  //     })),
-  //     Effect.runPromise,
-  //   );
-  // }
 
   @IsPublic()
   @Get(':id')

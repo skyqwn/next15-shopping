@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { Effect, pipe } from 'effect';
 
 import { DRIZZLE } from 'src/infrastructure/drizzle/drizzle.module';
@@ -16,6 +16,7 @@ import {
 } from 'src/infrastructure/drizzle/schema/orders.schema';
 import { orderProduct } from 'src/infrastructure/drizzle/schema/order-product.schema';
 import { OrderModel } from 'src/domain/model/order.model';
+import { OrderProductWithDetails } from '../types/order-product';
 
 @Injectable()
 export class OrderRepository
@@ -165,6 +166,35 @@ export class OrderRepository
         }),
       ),
       Effect.map((orders) => orders.map(OrderModel.from)),
+      Effect.catchAll((error) => {
+        console.error('Query error:', error);
+        return Effect.succeed([]);
+      }),
+    );
+  }
+
+  findManyOrderProducts(): Effect.Effect<OrderProductWithDetails[], Error> {
+    return pipe(
+      Effect.tryPromise(() =>
+        this.db.query.orderProduct.findMany({
+          orderBy: [desc(orderProduct.id)],
+          limit: 10,
+          with: {
+            order: {
+              with: {
+                user: true,
+              },
+            },
+            product: true,
+            productVariants: {
+              with: {
+                variantImages: true,
+              },
+            },
+          },
+        }),
+      ),
+      Effect.map((orderProducts) => orderProducts),
       Effect.catchAll((error) => {
         console.error('Query error:', error);
         return Effect.succeed([]);

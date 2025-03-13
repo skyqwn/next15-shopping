@@ -1,5 +1,3 @@
-import React from "react";
-
 import { formatPrice } from "@/lib/utils";
 import { ProductVariantType } from "@/types";
 
@@ -18,7 +16,6 @@ interface ProductDetailProps {
 }
 
 const ProductDetail = ({ productVariant }: ProductDetailProps) => {
-  if (productVariant === null) return null;
   return (
     <main className="min-h-screen p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">

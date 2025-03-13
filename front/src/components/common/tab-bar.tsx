@@ -9,7 +9,7 @@ const TabBar = () => {
   const pathname = usePathname();
   return (
     <nav className="fixed bottom-0 left-0 h-16 w-full border-t border-gray-200 bg-white text-sm lg:hidden">
-      <ul className="grid h-full grid-cols-4 items-center border-t text-center">
+      <ul className="grid h-full grid-cols-3 items-center border-t text-center">
         <li>
           <Link href="/" className="flex flex-col items-center">
             <Image
@@ -38,21 +38,6 @@ const TabBar = () => {
               alt="shop"
             />
             <span className="text-xs">Shop</span>
-          </Link>
-        </li>
-        <li>
-          <Link href="/community" className="flex flex-col items-center">
-            <Image
-              src={
-                pathname === "/community"
-                  ? "/svg/clothes-fill.svg"
-                  : "/svg/clothes-outline.svg"
-              }
-              width={28}
-              height={28}
-              alt="Clothes"
-            />
-            <span className="text-xs">Style</span>
           </Link>
         </li>
         <li>

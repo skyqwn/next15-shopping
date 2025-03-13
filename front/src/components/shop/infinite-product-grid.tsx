@@ -3,23 +3,15 @@
 import { useEffect, useRef } from "react";
 import ProductItem from "./product-item";
 import { useInfinityVariantFilterQuery } from "@/hooks/queries/product-variant/useInfinityVariantFilterQuery";
+import { useShopSearchParams } from "@/hooks/useShopSearchParams";
+import ProductSkeleton from "./product-skeleton";
 
-interface InfiniteProductGridProps {
-  search?: string;
-  sort?: string;
-}
-
-const InfiniteProductGrid = ({ search, sort }: InfiniteProductGridProps) => {
+const InfiniteProductGrid = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const { sort, searchQuery: search } = useShopSearchParams();
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useInfinityVariantFilterQuery({ search, sort });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfinityVariantFilterQuery({ search, sort });
 
   const products = data?.pages.flatMap((page) => page.result.data) || [];
 
@@ -49,9 +41,13 @@ const InfiniteProductGrid = ({ search, sort }: InfiniteProductGridProps) => {
   return (
     <div className="mx-auto flex h-full min-h-[calc(100vh-4rem)] max-w-screen-xl flex-col justify-between px-4 py-4">
       {isLoading ? (
-        <div>Loading...</div>
-      ) : isError ? (
-        <div>Error loading products</div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          {Array(10)
+            .fill(0)
+            .map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))}
+        </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

@@ -1,4 +1,3 @@
-// 사용자 정보를 위한 인터페이스
 export interface User {
   id: number;
   email: string;

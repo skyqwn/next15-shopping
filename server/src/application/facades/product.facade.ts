@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Effect } from 'effect';
 import { ProductModel } from 'src/domain/model/product.model';
-// import { SortOption } from 'src/domain/dtos';
 import { CreateProductCriteria } from '../dtos/criteria/product/create-product-criteria';
 import { UpdateProductCriteria } from '../dtos/criteria/product/update-product-criteria';
 import { ProductService } from 'src/domain/service/product.service';
@@ -96,5 +95,16 @@ export class ProductFacade {
 
   deleteVariant(id: number): Effect.Effect<void, Error> {
     return this.productService.deleteVariant(id);
+  }
+
+  addViewedProduct(
+    productId: number,
+    userId: number,
+  ): Effect.Effect<void, Error> {
+    return this.productService.addViewedProduct(productId, userId);
+  }
+
+  getViewedProducts(userId: number): Effect.Effect<ProductModel[], Error> {
+    return this.productService.getViewedProducts(userId);
   }
 }

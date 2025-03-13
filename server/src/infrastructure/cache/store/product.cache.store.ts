@@ -9,6 +9,8 @@ export class ProductCacheStore {
   private readonly logger = new Logger(ProductCacheStore.name);
   private readonly CACHE_PREFIX = 'product';
   private readonly CACHE_EXPIRY = 60 * 60; // 1시간
+  private readonly MAX_VIEWED_PRODUCTS = 5;
+  private readonly VIEWED_PRODUCTS_PREFIX = 'viewed_products';
 
   constructor(
     private readonly redisClient: RedisClient,
@@ -39,7 +41,7 @@ export class ProductCacheStore {
 
   findBy(productId: string): Effect.Effect<ProductModel | null, Error> {
     return pipe(
-      Effect.sync(() => console.time(`캐시-데이터-조회-${productId}`)), // 항상 시작
+      Effect.sync(() => console.time(`캐시-데이터-조회-${productId}`)),
       Effect.flatMap(() => this.redisClient.get(this.CACHE_PREFIX, productId)),
       Effect.tap((cachedData) =>
         Effect.sync(() => {
@@ -57,7 +59,7 @@ export class ProductCacheStore {
         Effect.sync(() => console.timeEnd(`캐시-데이터-조회-${productId}`)),
       ),
       Effect.catchAll((error) => {
-        console.timeEnd(`캐시-데이터-조회-${productId}`); // 에러 발생시에도 타이머 종료
+        console.timeEnd(`캐시-데이터-조회-${productId}`);
         return Effect.fail(error);
       }),
     );
@@ -71,6 +73,61 @@ export class ProductCacheStore {
           this.logger.log(`Cache removed for productId: ${productId}`),
         ),
       ),
+    );
+  }
+
+  addViewedProduct(
+    userId: number,
+    productId: number,
+    expirySeconds: number = 60 * 60 * 24 * 3,
+  ): Effect.Effect<void, Error> {
+    const key = `${this.VIEWED_PRODUCTS_PREFIX}:${userId}`;
+    const productIdStr = productId.toString();
+
+    return pipe(
+      this.redisClient.lrem(key, 0, productIdStr),
+      Effect.flatMap(() => this.redisClient.lpush(key, productIdStr)),
+      Effect.flatMap(() =>
+        this.redisClient.ltrim(key, 0, this.MAX_VIEWED_PRODUCTS - 1),
+      ),
+      Effect.flatMap(() => this.redisClient.expire(key, expirySeconds)),
+      Effect.tap(() =>
+        Effect.sync(() =>
+          this.logger.log(
+            `Product ${productId} added to viewed products for user ${userId} with ${expirySeconds} seconds expiry`,
+          ),
+        ),
+      ),
+      Effect.catchAll((error) => {
+        this.logger.error(
+          `Failed to add viewed product: ${error.message}`,
+          error.stack,
+        );
+        return Effect.fail(error);
+      }),
+    );
+  }
+
+  getViewedProducts(userId: number): Effect.Effect<number[], Error> {
+    const key = `${this.VIEWED_PRODUCTS_PREFIX}:${userId}`;
+
+    return pipe(
+      this.redisClient.lrange(key, 0, this.MAX_VIEWED_PRODUCTS - 1),
+      Effect.map((productIds) => productIds.map(Number)),
+      Effect.tap((productIds) =>
+        Effect.sync(() =>
+          this.logger.log(
+            `Retrieved ${productIds.length} viewed products for user ${userId}`,
+          ),
+        ),
+      ),
+      Effect.catchAll((error) => {
+        this.logger.error(
+          `Failed to get viewed products: ${error.message}`,
+          error.stack,
+        );
+        return Effect.fail(error);
+      }),
     );
   }
 }

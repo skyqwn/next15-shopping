@@ -2,45 +2,85 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import Image from "next/image";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useState } from "react";
+import banner1 from "../../../public/banners/banner1.webp";
+import banner2 from "../../../public/banners/banner2.webp";
+import banner3 from "../../../public/banners/banner3.webp";
+import { useRouter } from "next/navigation";
+
+const bannerImages = [
+  {
+    id: 1,
+    src: banner1,
+    alt: "패치 카고 팬츠",
+    title: "패치 카고 팬츠",
+    description: "2025 패치 카고 팬츠",
+    url: "/shop/81",
+  },
+  {
+    id: 2,
+    src: banner2,
+    alt: "후드 윈드 카켓",
+    title: "후드 윈드 카켓",
+    description: "2025 후드 윈드 카켓",
+    url: "/shop/71",
+  },
+  {
+    id: 3,
+    src: banner3,
+    alt: "피그먼트 트레이닝 세트",
+    title: "피그먼트 트레이닝 세트",
+    description: "2025 피그먼트 트레이닝 세트",
+    url: "/shop/87",
+  },
+];
 
 const MainBannerSwiper = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  console.log(activeIndex);
+  const router = useRouter();
+
   return (
-    <Swiper
-      className="h-[500px] w-full"
-      // install Swiper modules
-      modules={[Navigation, Pagination, Autoplay]}
-      spaceBetween={50}
-      slidesPerView={1}
-      // autoplay={{
-      //   delay: 3500, // 지연 시간 (한 슬라이더에 머물르는 시간)
-      //   disableOnInteraction: false, // 마우스 제어 이후 자동 재생을 막을지 말지
-      // }}
-      speed={500} // 슬라이드 속도
-      navigation
-      pagination={{ clickable: true }}
-      onSwiper={(swiper) => console.log(swiper)}
-      onSlideChange={(e) => setActiveIndex(e.activeIndex)}
-    >
-      <SwiperSlide className="relative bg-gray-200">
-        <span className="flex h-full items-center justify-center">Slide 1</span>
-      </SwiperSlide>
-      <SwiperSlide className="flex h-96 w-full items-center justify-center bg-gray-300">
-        <span>Slide 2</span>
-      </SwiperSlide>
-      <SwiperSlide className="flex h-96 w-full items-center justify-center bg-gray-400">
-        <span>Slide 3</span>
-      </SwiperSlide>
-      <SwiperSlide className="flex h-96 w-full items-center justify-center bg-gray-500">
-        <span>Slide 4</span>
-      </SwiperSlide>
-    </Swiper>
+    <section>
+      <Swiper
+        className="h-[50vh] w-full"
+        modules={[Navigation, Pagination, Autoplay]}
+        spaceBetween={50}
+        slidesPerView={1}
+        autoplay={{
+          delay: 3500,
+          disableOnInteraction: false,
+        }}
+        speed={500}
+        navigation
+        pagination={{ clickable: true }}
+        onSwiper={(swiper) => console.log(swiper)}
+        onSlideChange={(e) => setActiveIndex(e.activeIndex)}
+      >
+        {bannerImages.map((banner) => (
+          <SwiperSlide key={banner.id} className="relative cursor-pointer">
+            <div
+              className="relative h-full w-full"
+              onClick={() => router.push(banner.url)}
+            >
+              <Image
+                src={banner.src}
+                alt={banner.alt}
+                fill
+                sizes="100vw"
+                priority={banner.id === 1}
+                className="object-contain object-center"
+                objectFit="cover"
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </section>
   );
 };
 

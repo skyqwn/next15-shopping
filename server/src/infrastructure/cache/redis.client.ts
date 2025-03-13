@@ -60,6 +60,12 @@ export class RedisClient implements OnModuleDestroy {
     return Effect.tryPromise(() => this.redis.del(fullKey).then(() => void 0));
   }
 
+  expire(key: string, seconds: number) {
+    return Effect.tryPromise(() =>
+      this.redis.expire(key, seconds).then(() => void 0),
+    );
+  }
+
   setWithExpiry(prefix: string, key: string, value: string, expiry: number) {
     return Effect.tryPromise(() =>
       this.redis.set(`${prefix}:${key}`, value, 'EX', expiry),
@@ -72,36 +78,25 @@ export class RedisClient implements OnModuleDestroy {
     );
   }
 
-  // 전체 멤버 수 카운트
-  zcount(prefix: string, key: string) {
+  lpush(prefix: string, value: string) {
     return Effect.tryPromise(() =>
-      this.redis.zcount(`${prefix}:${key}`, '-inf', '+inf'),
+      this.redis.lpush(`${prefix}`, value).then(() => void 0),
     );
   }
 
-  // 점수 범위 삭제
-  zremrangebyscore(
-    prefix: string,
-    key: number,
-    min: number | string,
-    max: number | string,
-  ) {
+  lrem(prefix: string, count: number, value: string) {
     return Effect.tryPromise(() =>
-      this.redis.zremrangebyscore(`${prefix}:${key}`, min, max),
+      this.redis.lrem(`${prefix}`, count, value).then(() => void 0),
     );
   }
 
-  // 패턴 매칭 스캔
-  zscan(prefix: string, key: string, pattern: string) {
+  ltrim(prefix: string, start: number, stop: number) {
     return Effect.tryPromise(() =>
-      this.redis.zscan(`${prefix}:${key}`, 0, 'MATCH', pattern),
+      this.redis.ltrim(`${prefix}`, start, stop).then(() => void 0),
     );
   }
 
-  // 멤버 삭제
-  zrem(prefix: string, key: string, ...members: string[]) {
-    return Effect.tryPromise(() =>
-      this.redis.zrem(`${prefix}:${key}`, ...members),
-    );
+  lrange(prefix: string, start: number, stop: number) {
+    return Effect.tryPromise(() => this.redis.lrange(`${prefix}`, start, stop));
   }
 }

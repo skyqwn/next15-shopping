@@ -23,7 +23,6 @@ export class UserRepository
 
   create(data: UserInsertType): Effect.Effect<UserModel, AppConflictException> {
     return pipe(
-      // 로깅 추가
       Effect.sync(() => console.log('Create 입력 데이터:', data)),
       Effect.flatMap(() =>
         Effect.tryPromise(() => this.db.insert(users).values(data).returning()),

@@ -47,7 +47,6 @@ const CartUserInfo = () => {
     let extraAddress = "";
 
     if (data.addressType === "R") {
-      // 도로명 주소
       if (data.bname !== "") {
         extraAddress += data.bname;
       }

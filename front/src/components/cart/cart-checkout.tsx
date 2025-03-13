@@ -27,7 +27,7 @@ export default function CheckoutPage() {
     process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ||
     "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
-  const customerKey = nanoid(); // 고객 식별용 고유 키 (비회원 결제 시 랜덤 생성)
+  const customerKey = nanoid();
 
   const totalPrice = useMemo(() => {
     return cart.reduce((acc, item) => {
@@ -35,7 +35,6 @@ export default function CheckoutPage() {
     }, 0);
   }, [cart]);
 
-  // 결제 위젯 초기화 및 렌더링
   useEffect(() => {
     (async () => {
       const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
@@ -49,7 +48,6 @@ export default function CheckoutPage() {
     })();
   }, [clientKey, customerKey, totalPrice]);
 
-  // 금액 업데이트 (예: 쿠폰 적용 시)
   useEffect(() => {
     const paymentMethodsWidget = paymentMethodsWidgetRef.current;
     if (paymentMethodsWidget) {
@@ -57,7 +55,6 @@ export default function CheckoutPage() {
     }
   }, [totalPrice]);
 
-  // 결제 요청 함수
   const handlePaymentRequest = async () => {
     setCartOpen(false);
 

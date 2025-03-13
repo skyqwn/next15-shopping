@@ -32,7 +32,6 @@ export const END_POINTS = {
   GET_BANNER: (id: number | string) => `/banners/${id}`,
   DELETE_BANNER: (id: number | string) => `/banners/${id}`,
 
-  // 주문 관련 엔드포인트
   CREATE_ORDER: "/orders",
   GET_ORDERS: "/orders",
   GET_ORDER: (id: number) => `/orders/${id}`,
@@ -41,4 +40,7 @@ export const END_POINTS = {
   DELETE_ORDER: (id: number) => `/orders/${id}`,
 
   GET_ORDER_PRODUCTS: "/orders/products",
+
+  VIEWED_PRODUCT: "/products/viewed",
+  VIEWED_PRODUCTS: "/products/viewed",
 } as const;

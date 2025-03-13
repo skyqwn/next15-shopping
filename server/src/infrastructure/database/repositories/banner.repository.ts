@@ -102,7 +102,6 @@ export class BannerRepository
     const skip = (page - 1) * limit;
 
     return pipe(
-      // 1. 총 개수 쿼리
       Effect.tryPromise(() =>
         this.db
           .select({ count: sql`count(*)`.mapWith(Number) })
@@ -115,7 +114,6 @@ export class BannerRepository
           .then((result) => result[0].count),
       ),
       Effect.flatMap((total) =>
-        // 2. 페이지네이션된 데이터 쿼리
         pipe(
           Effect.tryPromise(() =>
             this.db.query.banners.findMany({

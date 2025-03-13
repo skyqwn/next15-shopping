@@ -1,4 +1,3 @@
-// filters/zod-exception.filter.ts
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { ZodValidationException } from 'nestjs-zod';
 import { Response, Request } from 'express';

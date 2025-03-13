@@ -1,4 +1,3 @@
-// pipes/custom-zod-validation.pipe.ts
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { ZodValidationException } from 'nestjs-zod';
 import { ZodSchema } from 'zod';
@@ -7,7 +6,6 @@ import { ZodSchema } from 'zod';
 export class CustomZodValidationPipe implements PipeTransform {
   async transform(value: any, metadata: ArgumentMetadata) {
     try {
-      // DTO의 스키마를 가져옵니다
       const dto = metadata.metatype as { schema?: ZodSchema };
       if (!dto?.schema) return value;
 

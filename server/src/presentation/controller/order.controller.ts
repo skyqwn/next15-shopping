@@ -47,6 +47,19 @@ export class OrderController {
     );
   }
 
+  @Get('/products')
+  findManyOrderProducts() {
+    return pipe(
+      this.orderFacade.findManyOrderProducts(),
+      Effect.map((orderProducts) => ({
+        success: true,
+        result: orderProducts,
+        message: orderProducts.length === 0 ? '주문된 상품이 없습니다' : null,
+      })),
+      Effect.runPromise,
+    );
+  }
+
   @Get('/user/:userId')
   findByUserId(@Param('userId') userId: string) {
     return pipe(

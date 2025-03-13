@@ -58,20 +58,6 @@ export class UserCacheStore {
     );
   }
 
-  //   findBy(userId: string): Effect.Effect<UserSelectType | null, Error> {
-  //     return pipe(
-  //       this.redisClient.get(this.CACHE_PREFIX, userId),
-  //       Effect.map((cachedData) => (cachedData ? JSON.parse(cachedData) : null)),
-  //       Effect.tap((result) =>
-  //         Effect.sync(() =>
-  //           result
-  //             ? this.logger.log(`Cache hit for userId: ${userId}`)
-  //             : this.logger.log(`Cache miss for userId: ${userId}`),
-  //         ),
-  //       ),
-  //     );
-  //   }
-
   remove(userId: string): Effect.Effect<void, Error> {
     return pipe(
       this.redisClient.delete(this.CACHE_PREFIX, userId),

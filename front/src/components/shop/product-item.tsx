@@ -6,13 +6,19 @@ import Image from "next/image";
 
 import { formatPrice } from "@/lib/utils";
 import { ProductVariantType } from "@/types";
+import { useViewedProductMutation } from "@/hooks/queries/product-variant/useViewedProductMutation";
 
 const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
   const [mounted, setMounted] = useState(false);
+  const { mutate: recordViewedProduct } = useViewedProductMutation();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleProductClick = (e: React.MouseEvent) => {
+    recordViewedProduct(variant.id);
+  };
 
   if (!mounted) {
     return <div className="group h-[300px] animate-pulse bg-gray-200" />;
@@ -20,7 +26,10 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
 
   return (
     <figure className="group">
-      <Link href={`/shop/${variant.id}?type=${variant.productType}`}>
+      <Link
+        onClick={handleProductClick}
+        href={`/shop/${variant.id}?type=${variant.productType}`}
+      >
         <div className="relative aspect-square w-full overflow-hidden">
           <Image
             src={variant.variantImages?.[0]?.url ?? "/placeholder.jpg"}

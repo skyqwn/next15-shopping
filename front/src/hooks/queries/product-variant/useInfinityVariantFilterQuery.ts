@@ -29,7 +29,7 @@ interface VariantParams {
 }
 
 export const variantQueryKey = (params: VariantParams) =>
-  ["product-variants", params] as const;
+  ["product-variants", params.search || "", params.sort || ""] as const;
 
 const getVariantsFilter = async (
   params: VariantParams & { page?: number },
@@ -41,12 +41,18 @@ const getVariantsFilter = async (
     searchParams.set("productId", params.productId.toString());
   if (params.status) searchParams.set("status", params.status);
   searchParams.set("page", (params.page || 1).toString());
-  searchParams.set("limit", "20");
+  searchParams.set("limit", "8");
 
   const queryString = searchParams.toString();
   const url = `${END_POINTS.FILTER_VARIANTS}?${queryString}`;
 
+  console.log("API 요청 URL:", url);
+  console.log("검색어:", params.search);
+
   const response = await GET<VariantResponse>(url, createInit());
+
+  console.log("API 응답:", response);
+
   return response;
 };
 
