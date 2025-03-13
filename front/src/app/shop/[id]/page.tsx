@@ -1,9 +1,7 @@
 import ProductDetail from "@/components/product/product-detail";
 import { getVariantDetail } from "@/hooks/queries/product-variant/useVariantDetailQuery";
 import { getVariants } from "@/hooks/queries/product-variant/useVariantQuery";
-
 import { ProductVariantType } from "@/types";
-import { getUserInfo } from "@/utils/check-amdin-role";
 
 export const revalidate = 3600;
 
@@ -18,13 +16,13 @@ export async function generateStaticParams() {
   return [];
 }
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const ShopDetail = async ({ params }: PageProps) => {
-  const productId = +params.id;
+  const resolvedParams = await params;
+  const productId = parseInt(resolvedParams.id, 10);
   const productVariantResponse = await getVariantDetail(productId);
   const productVariant = productVariantResponse.result;
   return (

@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  front:
+    image: keemba/next-front:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://server:4000/api
+  server:
+    image: keemba/nest-server:latest
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ACCESS_TOKEN_EXPIRATION=${JWT_ACCESS_TOKEN_EXPIRATION}
+      - JWT_REFRESH_TOKEN_EXPIRATION=${JWT_REFRESH_TOKEN_EXPIRATION}
+      - REFRESH_TOKEN_TTL=${REFRESH_TOKEN_TTL}
+      - EMAIL_VERIFICATION_TOKEN_TTL=${EMAIL_VERIFICATION_TOKEN_TTL}
+      - CLIENT_URL=${CLIENT_URL}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CALLBACK_URL=${KAKAO_CALLBACK_URL}
+      - AWS_BUCKET_REGION=${AWS_BUCKET_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - REDIS_REFRESH_TOKEN_EXPIRATION=${REDIS_REFRESH_TOKEN_EXPIRATION}
+      - UPSTASH_REDIS=${UPSTASH_REDIS}
+      - UPSTASH_REDIS_PASSWORD=${UPSTASH_REDIS_PASSWORD}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+
+  nginx:
+    image: keemba/nginx-proxy:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - front
+      - server

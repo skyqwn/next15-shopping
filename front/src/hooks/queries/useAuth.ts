@@ -23,8 +23,13 @@ export interface ErrorResponse extends ServerResponse<null> {
 function useLogin() {
   return useMutation({
     mutationFn: postLogin,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (!data.success) {
+        toast.error(data.message || "로그인에 실패했습니다");
+        return;
+      }
       window.location.href = "/";
+      toast.success(data.message);
     },
     onError: (error: ServerResponse<null>) => {
       toast.error(error.message);

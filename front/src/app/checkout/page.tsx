@@ -7,22 +7,14 @@ import {
 } from "@tosspayments/payment-widget-sdk";
 import { nanoid } from "nanoid";
 import { useCartStore } from "@/store";
-import { toast } from "sonner";
-import { useMyProfileQuery } from "@/hooks/queries/userInfo/useUserInfo";
 
 export default function CheckoutPage() {
-  const { data } = useMyProfileQuery();
-  const userData = data?.data;
-
-  console.log("userData", userData);
-
-  const { checkoutProgress, setCheckoutProgress, cart, isDrawerOpen } =
-    useCartStore();
+  const { cart } = useCartStore();
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance["renderPaymentMethods"]
   > | null>(null);
-  const [price, setPrice] = useState(50000); // 결제 금액 (예: 50,000원)
+  const [price, setPrice] = useState(50000);
   const clientKey =
     process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ||
     "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -33,7 +25,6 @@ export default function CheckoutPage() {
     }, 0);
   }, [cart]);
 
-  // 결제 위젯 초기화 및 렌더링
   useEffect(() => {
     (async () => {
       const paymentWidget = await loadPaymentWidget(clientKey, customerKey);

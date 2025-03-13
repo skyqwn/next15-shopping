@@ -3,7 +3,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -19,10 +18,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { OrderProduct } from "@/types";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import { OrderProduct } from "@/types/order-product";
 
 const Sales = ({ totalOrders }: { totalOrders: OrderProduct[] }) => {
   return (

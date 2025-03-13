@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 import { ApiResponse, createInit, GET } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
-import { ProductVariantType } from "@/types";
+import { ProductVariantType } from "@/types/product";
 
 export const getVariants = async (): Promise<
   ApiResponse<ProductVariantType[]>

@@ -10,12 +10,12 @@ export interface UploadImageResponse {
 export async function uploadImagesRequest(
   formData: FormData,
 ): Promise<UploadImageResponse[]> {
-  const result = await POST<{ result: UploadImageResponse[] }>(
+  const result = await POST<UploadImageResponse[]>(
     END_POINTS.IMAGES_UPLOAD,
     createInit(formData),
   );
 
-  if (!result) {
+  if (!result.success || !result.result) {
     throw new Error("이미지 업로드에 실패했습니다.");
   }
 

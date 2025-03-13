@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 import { ApiResponse, createInit, GET } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
-import { OrderProduct } from "@/types";
+import { OrderProduct } from "@/types/order-product";
 
 const getOrderProducts = async (): Promise<ApiResponse<OrderProduct[]>> => {
   const response = await GET<OrderProduct[]>(

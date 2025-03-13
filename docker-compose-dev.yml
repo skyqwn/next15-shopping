@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://host.docker.internal:4000/api
+    environment:
+      - NEXT_PUBLIC_API_URL=http://server:4000/api
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ACCESS_TOKEN_EXPIRATION=${JWT_ACCESS_TOKEN_EXPIRATION}
+      - JWT_REFRESH_TOKEN_EXPIRATION=${JWT_REFRESH_TOKEN_EXPIRATION}
+      - REFRESH_TOKEN_TTL=${REFRESH_TOKEN_TTL}
+      - EMAIL_VERIFICATION_TOKEN_TTL=${EMAIL_VERIFICATION_TOKEN_TTL}
+      - CLIENT_URL=${CLIENT_URL}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CALLBACK_URL=${KAKAO_CALLBACK_URL}
+      - AWS_BUCKET_REGION=${AWS_BUCKET_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - REDIS_HOST=redis # Redis 서비스 이름으로 변경
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_REFRESH_TOKEN_EXPIRATION=${REDIS_REFRESH_TOKEN_EXPIRATION}
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.0-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

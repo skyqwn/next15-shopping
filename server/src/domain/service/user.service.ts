@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { pipe, Effect } from 'effect';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { UserRepository } from 'src/infrastructure/database/repositories/user.repository';
 import {
@@ -11,11 +11,7 @@ import {
   UpdateProfileCommand,
   UserInfo,
 } from '../dtos';
-import {
-  AppAuthException,
-  AppConflictException,
-  AppNotFoundException,
-} from '../exceptions';
+import { AppAuthException, AppNotFoundException } from '../exceptions';
 import { ErrorCodes } from 'src/common/error';
 import { ConfigService } from '@nestjs/config';
 import {

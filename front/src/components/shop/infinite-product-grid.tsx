@@ -58,10 +58,10 @@ const InfiniteProductGrid = () => {
 
           <div ref={loadMoreRef} className="py-4 text-center">
             {isFetchingNextPage
-              ? "Loading more..."
+              ? "상품을 불러오는 중 입니다.."
               : hasNextPage
-                ? "Loading more products..."
-                : "No more products to load"}
+                ? "상품을 불러오는 중 입니다.."
+                : ""}
           </div>
         </>
       )}

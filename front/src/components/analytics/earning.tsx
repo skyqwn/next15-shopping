@@ -1,6 +1,5 @@
 "use client";
 
-import { OrderProduct } from "@/types";
 import {
   Card,
   CardContent,
@@ -15,6 +14,7 @@ import { useMemo } from "react";
 import { weeklyChart } from "./weekly-chart";
 import { Bar, BarChart, ResponsiveContainer, Tooltip } from "recharts";
 import { monthlyChart } from "./monthly.chart";
+import { OrderProduct } from "@/types/order-product";
 
 export default function Earnings({
   totalOrders,

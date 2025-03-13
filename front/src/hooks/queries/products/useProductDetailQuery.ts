@@ -45,7 +45,7 @@ export const getProductDetail = async (
   return data;
 };
 
-export const productDetilaQueryOptions = (
+export const productDetailQueryOptions = (
   productId: number,
 ): UseSuspenseQueryOptions<ApiResponse<Product>> => ({
   queryKey: [queryKeys.PRODUCT_DETAIL, productId],
@@ -53,5 +53,5 @@ export const productDetilaQueryOptions = (
 });
 
 export function useProductDetailQuery(productId: number) {
-  return useSuspenseQuery(productDetilaQueryOptions(productId));
+  return useSuspenseQuery(productDetailQueryOptions(productId));
 }

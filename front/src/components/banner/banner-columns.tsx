@@ -3,9 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { ArrowUpDown, Edit, Trash } from "lucide-react";
-import Link from "next/link";
-import { GetBannerResponseType } from "@/types/banners";
+import { ArrowUpDown } from "lucide-react";
 import ParserHtml from "../common/parser-html";
 import BannerActionCell from "./banner-action-cell";
 

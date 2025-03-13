@@ -1,12 +1,15 @@
-import { createInit, PATCH } from "@/api/httpMethod";
+import { ApiResponse, createInit, PATCH } from "@/api/httpMethod";
 import { END_POINTS, queryKeys } from "@/constants";
 import { ProfileType } from "@/schemas";
+import { GetUserInfoResponseType } from "@/types";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-async function updateProfileRequest(data: ProfileType): Promise<any> {
-  const result = await PATCH<{ user: any }>(
+async function updateProfileRequest(
+  data: ProfileType,
+): Promise<GetUserInfoResponseType> {
+  const result = await PATCH<{ user: GetUserInfoResponseType }>(
     END_POINTS.USER_PROFILE_UPDATE,
     createInit(data),
   );
@@ -16,7 +19,7 @@ async function updateProfileRequest(data: ProfileType): Promise<any> {
   }
   console.log("응답 데이터:", result);
 
-  return result.user;
+  return result.result.user;
 }
 
 export const useUpdateProfileMutation = () => {

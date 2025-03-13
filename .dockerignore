@@ -1,0 +1,21 @@
+# Node.js 관련
+node_modules/
+npm-debug.log
+pnpm-debug.log
+
+# Next.js 빌드 결과물
+.next/
+out/
+
+# Git 관련
+.git/
+.gitignore
+
+# Docker 관련
+.dockerignore
+Dockerfile
+
+# 기타 불필요한 파일들
+README.md
+*.pem
+*.md

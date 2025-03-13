@@ -11,7 +11,7 @@ export class S3Repository {
     this.s3Client = new S3Client({
       region: this.configService.get('AWS_BUCKET_REGION'),
       credentials: {
-        accessKeyId: this.configService.get('S3_ACCESS_KET_ID')!,
+        accessKeyId: this.configService.get('S3_ACCESS_KEY_ID')!,
         secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY')!,
       },
     });

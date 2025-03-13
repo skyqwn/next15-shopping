@@ -35,8 +35,7 @@ const EmailRegisterForm = () => {
   const { signupMutation } = useAuth();
   const { clickedEyes, handleClickedEyes } = usePasswordEyes();
 
-  const onSubmit = async (values: any) => {
-    console.log(values);
+  const onSubmit = async (values: SignupType) => {
     signupMutation.mutate(values);
   };
 

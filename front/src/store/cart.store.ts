@@ -53,7 +53,7 @@ export const useCartStore = create<CartState>()(
       checkoutProgress: "cart-page",
       clearCart: () => set({ cart: [] }),
       setCheckoutProgress: (progress) =>
-        set((state) => ({ checkoutProgress: progress })),
+        set(() => ({ checkoutProgress: progress })),
       addToCart: (item) =>
         set((state) => {
           const existingItem = state.cart.find(

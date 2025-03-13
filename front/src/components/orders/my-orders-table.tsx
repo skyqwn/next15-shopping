@@ -16,7 +16,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -46,6 +45,7 @@ import {
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
+import { OrderProductType } from "@/types/order";
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 
@@ -178,7 +178,11 @@ const MyOrdersTable = () => {
                             </TableHeader>
                             <TableBody>
                               {order.orderProducts.map(
-                                ({ product, productVariants, quantity }) => (
+                                ({
+                                  product,
+                                  productVariants,
+                                  quantity,
+                                }: OrderProductType) => (
                                   <TableRow key={product?.id}>
                                     <TableCell>
                                       <Image

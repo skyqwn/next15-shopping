@@ -65,7 +65,6 @@ export class ProductController {
   ) {
     return pipe(
       this.productFacade.getVariantsWithFilters({ search, sort, page, limit }),
-      Effect.tap((result) => console.log('Controller - Result:', result.data)),
       Effect.map((result: ProductVariantResponse) => ({
         success: true,
         result,

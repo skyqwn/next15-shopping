@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublic = isPublicRoute(pathname);
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname === "/shop") {
     return NextResponse.next();
   }
 
