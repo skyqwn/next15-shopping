@@ -9,11 +9,26 @@ export class RedisClient implements OnModuleDestroy {
   private readonly logger = new Logger(RedisClient.name);
 
   constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis({
-      host: this.configService.getOrThrow('REDIS_HOST'),
-      port: this.configService.getOrThrow('REDIS_PORT'),
-      password: this.configService.getOrThrow('REDIS_PASSWORD'),
-    });
+    const environment = this.configService.get<string>(
+      'NODE_ENV',
+      'development',
+    );
+    console.log(`Running in ${environment} environment`);
+
+    if (environment === 'production') {
+      const upstashUrl =
+        this.configService.getOrThrow<string>('UPSTASH_REDIS_URL');
+      this.redis = new Redis(upstashUrl);
+    } else {
+      const host = this.configService.getOrThrow<string>('REDIS_HOST');
+      const port = this.configService.getOrThrow<number>('REDIS_PORT');
+      const password = this.configService.getOrThrow<string>('REDIS_PASSWORD');
+      this.redis = new Redis({
+        host,
+        port,
+        password,
+      });
+    }
 
     this.redis.on('connecting', () => {
       this.logger.log('Redis 연결 시도 중...');

@@ -261,7 +261,6 @@ export class ProductVariantRepository
       ),
       Effect.map((variant) => {
         if (!variant) return null;
-        console.log('Found Detail variant:', variant);
         return ProductVariantModel.from(variant);
       }),
       Effect.catchAll((error) => {

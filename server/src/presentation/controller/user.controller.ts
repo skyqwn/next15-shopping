@@ -74,7 +74,7 @@ export class UserController {
           accessToken: result.accessToken,
           userId: result.user.id,
         });
-        return { user: result.user };
+        return { user: result.user, success: true, message: '로그인 성공' };
       }),
       Effect.runPromise,
     );

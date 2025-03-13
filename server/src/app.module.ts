@@ -20,7 +20,10 @@ import { ErrorsInterceptor } from './presentation/interceptors/errors.intercepto
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env'],
+    }),
     DrizzleModule,
     PresentationModule,
     ApplicationModule,
@@ -37,10 +40,10 @@ import { ErrorsInterceptor } from './presentation/interceptors/errors.intercepto
   ],
   providers: [
     ConfigService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: ErrorsInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorsInterceptor,
+    },
     // {
     //   provide: APP_INTERCEPTOR,
     //   useClass: EffectInterceptor,
