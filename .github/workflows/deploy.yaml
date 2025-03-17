@@ -32,6 +32,7 @@ jobs:
       - name: Build and push Front
         working-directory: ./front
         run: |
+          echo "Secrets NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}"
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
