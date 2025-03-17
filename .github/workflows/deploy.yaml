@@ -23,17 +23,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Front
-        working-directory: ./front
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
-
       - name: Build and push Server
         working-directory: ./server
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
+
+      - name: Build and push Front
+        working-directory: ./front
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
       - name: Build and push Nginx
         working-directory: ./nginx
