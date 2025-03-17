@@ -9,10 +9,7 @@ export class RedisClient implements OnModuleDestroy {
   private readonly logger = new Logger(RedisClient.name);
 
   constructor(private readonly configService: ConfigService) {
-    const environment = this.configService.get<string>(
-      'NODE_ENV',
-      'development',
-    );
+    const environment = this.configService.get<string>('NODE_ENV');
     console.log(`Running in ${environment} environment`);
 
     if (environment === 'production') {
