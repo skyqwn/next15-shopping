@@ -6,14 +6,15 @@ import { ProductVariantType } from "@/types";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const variants = await getVariants();
+  // const variants = await getVariants();
 
-  if (variants) {
-    return variants.result.map((variant: ProductVariantType) => ({
-      id: variant.id.toString(),
-    }));
-  }
-  return [];
+  // if (variants) {
+  //   return variants.result.map((variant: ProductVariantType) => ({
+  //     id: variant.id.toString(),
+  //   }));
+  // }
+  // return [];
+  return [{ id: "1" }, { id: "2" }, { id: "3" }];
 }
 interface PageProps {
   params: Promise<{ id: string }>;
