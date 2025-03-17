@@ -46,7 +46,7 @@ const getUserInfo = async (): Promise<AuthStatusResponse> => {
     createInit(),
   );
 
-  return data as any;
+  return data.result;
 };
 
 export const getMyProfileQueryOptions = (

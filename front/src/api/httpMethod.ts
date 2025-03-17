@@ -29,6 +29,8 @@ async function fetchWrapperWithTokenHandler<T>(
   const response = await fetch(`http://server:4000/api${uri}`, init);
 
   try {
+    if (!response.ok)
+      throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
     const data = await response.json();
     console.log("리절트", data);
     return data as ApiResponse<T>;
