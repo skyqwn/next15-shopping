@@ -13,8 +13,7 @@ export class RedisClient implements OnModuleDestroy {
     console.log(`Running in ${environment} environment`);
 
     if (environment === 'production') {
-      const upstashUrl =
-        this.configService.getOrThrow<string>('UPSTASH_REDIS_URL');
+      const upstashUrl = this.configService.getOrThrow<string>('UPSTASH_REDIS');
       this.redis = new Redis(upstashUrl);
     } else {
       const host = this.configService.getOrThrow<string>('REDIS_HOST');
