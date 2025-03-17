@@ -6,7 +6,7 @@ import { Suspense } from "react";
 const Shop = async () => {
   return (
     <div>
-      <Suspense fallback={<div>Loading search...</div>}>
+      <Suspense fallback={<div>Loading search....</div>}>
         <SearchBar />
       </Suspense>
       {/* <Suspense fallback={<div>Loading filters...</div>}>
