@@ -26,10 +26,7 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
-    init,
-  );
+  const response = await fetch(`http://server:4000/api${uri}`, init);
 
   try {
     const data = await response.json();
