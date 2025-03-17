@@ -26,7 +26,7 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(`http://server:4000/api${uri}`, init);
+  const response = await fetch(`http://13.125.84.188:4000/api${uri}`, init);
 
   try {
     if (!response.ok)
