@@ -28,8 +28,8 @@ async function fetchWrapperWithTokenHandler<T>(
 ): Promise<ApiResponse<T>> {
   const apiUrl =
     typeof window === "undefined"
-      ? process.env.NEXT_PUBLIC_API_URL
-      : "http://13.125.84.188:4000/api";
+      ? process.env.API_URL
+      : process.env.NEXT_PUBLIC_API_URL;
   const response = await fetch(`${apiUrl}${uri}`, init);
 
   // const response = await fetch(`http://server:4000/api${uri}`, init);
