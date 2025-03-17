@@ -10,5 +10,5 @@ RUN pnpm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/.next /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
