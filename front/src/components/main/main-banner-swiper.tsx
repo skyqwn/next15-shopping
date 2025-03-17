@@ -58,7 +58,6 @@ const MainBannerSwiper = () => {
         speed={500}
         navigation
         pagination={{ clickable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
         onSlideChange={(e) => setActiveIndex(e.activeIndex)}
       >
         {bannerImages.map((banner) => (
