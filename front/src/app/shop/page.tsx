@@ -9,9 +9,9 @@ const Shop = async () => {
       <Suspense fallback={<div>Loading search...</div>}>
         <SearchBar />
       </Suspense>
-      <Suspense fallback={<div>Loading filters...</div>}>
+      {/* <Suspense fallback={<div>Loading filters...</div>}>
         <SortOptionsFilter />
-      </Suspense>
+      </Suspense> */}
       <Suspense fallback={<div>Loading products...</div>}>
         <InfiniteProductGrid />
       </Suspense>
