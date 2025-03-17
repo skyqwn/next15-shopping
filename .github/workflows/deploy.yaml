@@ -57,13 +57,6 @@ jobs:
             version: '3.8'
 
             services:
-              front:
-                image: ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
-                ports:
-                  - "3000:3000"
-                environment:
-                  - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-
               server:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
                 ports:
@@ -89,6 +82,13 @@ jobs:
                   - UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
                   - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 
+              front:
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
+                ports:
+                  - "3000:3000"
+                environment:
+                  - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+
               nginx:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
                 ports:
@@ -96,12 +96,15 @@ jobs:
                 depends_on:
                   - front
                   - server
-            EOF
 
-            # 배포
-            sudo docker system prune -af
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
+            EOF
+            echo "docker-compose.yml created"
+            docker --version
+            docker-compose --version
+            sudo docker system prune -af || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
             docker-compose down
             docker-compose up -d
+            echo "Deployment completed"d
