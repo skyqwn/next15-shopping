@@ -92,7 +92,12 @@ jobs:
                   - "3000:3000"
                 environment:
                   - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-                  
+                  - API_URL=http://server:4000/api
+                healthcheck:
+                  test: ["CMD", "curl", "-f", "http://localhost:3000"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
 
               nginx:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
