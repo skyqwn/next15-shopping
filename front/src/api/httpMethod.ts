@@ -30,7 +30,7 @@ async function fetchWrapperWithTokenHandler<T>(
   //   `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
   //   init,
   // );
-  const response = await fetch(`https://www.cicardi.shop${uri}`, init);
+  const response = await fetch(`https://www.cicardi.store${uri}`, init);
 
   try {
     if (!response.ok)
