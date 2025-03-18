@@ -26,7 +26,15 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(`http://13.125.84.188:4000/api${uri}`, init);
+  let apiUrl: string;
+
+  if (process.env.NODE_ENV === "production") {
+    apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
+  } else {
+    apiUrl = "http://localhost:4000/api";
+  }
+
+  const response = await fetch(`${apiUrl}${uri}`, init);
 
   try {
     if (!response.ok)
