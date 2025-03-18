@@ -30,11 +30,9 @@ async function fetchWrapperWithTokenHandler<T>(
   //   `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
   //   init,
   // );
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api"; // 기본값 설정
   console.log("API URL:", apiUrl);
-  if (!apiUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not defined");
-  }
   const response = await fetch(`${apiUrl}${uri}`, init);
   // const response = await fetch(`http://13.125.84.188/api${uri}`, init);
 

@@ -33,7 +33,9 @@ jobs:
         working-directory: ./front
         run: |
           echo "Secrets NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}"
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
+          docker build \
+             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+             -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
       - name: Build and push Nginx
@@ -91,7 +93,7 @@ jobs:
                 ports:
                   - "3000:3000"
                 environment:
-                  - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+                  - NEXT_PUBLIC_API_URL=https://www.cicardi.store/api
                   - API_URL=http://server:4000/api
                 healthcheck:
                   test: ["CMD", "curl", "-f", "http://localhost:3000"]

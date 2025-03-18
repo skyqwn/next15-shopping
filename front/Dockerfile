@@ -1,10 +1,18 @@
-FROM node:18-alpine
+FROM node:18-alpine AS base
+
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm && pnpm install
-COPY . .
+
+FROM base AS build
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+COPY . .
 RUN pnpm run build
-EXPOSE 3000
+
+FROM base AS production
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
 CMD ["pnpm", "start"]
