@@ -26,12 +26,8 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  // const response = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
-  //   init,
-  // );
   const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api"; // 기본값 설정
+    process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api";
   console.log("API URL:", apiUrl);
   const response = await fetch(`${apiUrl}${uri}`, init);
   // const response = await fetch(`http://13.125.84.188/api${uri}`, init);

@@ -17,9 +17,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ZodValidationPipe());
 
   app.enableCors({
-    origin: 'https://www.cicardi.store',
-    // origin: process.env.CLIENT_URL || 'https://cicardi.store',
-    // origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: process.env.CLIENT_URL || 'https://cicardi.store',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],

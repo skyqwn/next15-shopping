@@ -14,8 +14,6 @@ const ProductAddCart = ({ variant }: { variant: ProductVariantType }) => {
   const params = useSearchParams();
   const type = params.get("type");
 
-  console.log("추가해야할", variant);
-
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
