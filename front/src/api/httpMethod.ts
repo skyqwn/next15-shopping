@@ -26,7 +26,8 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(`http://13.125.84.188/api${uri}`, init);
+  const response = await fetch(`https://cicardi.store/api${uri}`, init);
+  // const response = await fetch(`http://13.125.84.188/api${uri}`, init);
 
   try {
     if (!response.ok)

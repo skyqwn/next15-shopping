@@ -39,7 +39,8 @@ const LoginForm = () => {
   };
 
   const handleKakaoSignup = () => {
-    window.location.href = "http://localhost:4000/api/auth/kakao/signin";
+    window.location.href = "http://cicardi.store/api/auth/kakao/signin";
+    // window.location.href = "http://localhost:4000/api/auth/kakao/signin";
   };
 
   return (
