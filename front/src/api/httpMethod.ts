@@ -28,20 +28,39 @@ async function fetchWrapperWithTokenHandler<T>(
 ): Promise<ApiResponse<T>> {
   // const response = await fetch(`https://cicardi.store/api${uri}`, init);
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api${uri}`,
-    init,
-  );
+  // const response = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_URL}${uri}`,
+  //   init,
+  // );
   // const response = await fetch(`http://13.125.84.188/api${uri}`, init);
 
+  const baseUrl =
+    typeof window === "undefined"
+      ? process.env.API_URL
+      : process.env.NEXT_PUBLIC_API_URL;
+
+  // baseUrl 검증
+  if (!baseUrl) {
+    console.error("Base URL is not defined:", {
+      API_URL: process.env.API_URL,
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    });
+    throw new Error("Base URL (API_URL or NEXT_PUBLIC_API_URL) is not defined");
+  }
+
+  const fullUrl = `${baseUrl}${uri.startsWith("/") ? "" : "/"}${uri}`;
+  console.log("Fetching URL:", fullUrl);
+
   try {
-    if (!response.ok)
+    const response = await fetch(fullUrl, init);
+    if (!response.ok) {
       throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
+    }
     const data = await response.json();
-    console.log("리절트", data);
+    console.log("Result:", data);
     return data as ApiResponse<T>;
   } catch (error) {
-    console.log("에러에러에러", error);
+    console.error("Fetch error:", error);
     return { success: false, result: null as T, message: "Fetch failed" };
   }
 }
