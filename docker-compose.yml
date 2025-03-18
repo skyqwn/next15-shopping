@@ -8,6 +8,11 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=https://www.cicardi.store/api
       - API_URL=http://server:4000/api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   server:
     image: keemba/nest-server:latest
     ports:
@@ -31,7 +36,11 @@ services:
       - UPSTASH_REDIS_PASSWORD=${UPSTASH_REDIS_PASSWORD}
       - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
       - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   nginx:
     image: keemba/nginx-proxy:latest
     ports:
