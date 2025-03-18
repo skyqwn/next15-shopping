@@ -80,7 +80,11 @@ jobs:
                   - UPSTASH_REDIS_PASSWORD=${{ secrets.UPSTASH_REDIS_PASSWORD }}
                   - UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }}
                   - UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-                 
+                healthcheck:
+                  test: ["CMD", "curl", "-f", "http://localhost:4000/api/health"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
 
               front:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
@@ -88,6 +92,12 @@ jobs:
                   - "3000:3000"
                 environment:
                   - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+                  - API_URL=http://server:4000/api
+                healthcheck:
+                  test: ["CMD", "curl", "-f", "http://localhost:3000"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
 
               nginx:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
