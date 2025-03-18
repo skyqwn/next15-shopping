@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
+  metadataBase: new URL("https://www.cicardi.store"),
   images: {
+    domains: ["www.cicardi.store"],
     remotePatterns: [
       {
         protocol: "https",
