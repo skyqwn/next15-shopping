@@ -33,7 +33,7 @@ jobs:
         working-directory: ./front
         run: |
           echo "Secrets NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}"
-          docker build --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
       - name: Build and push Nginx
@@ -92,12 +92,7 @@ jobs:
                   - "3000:3000"
                 environment:
                   - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-                  - API_URL=http://server:4000/api
-                healthcheck:
-                  test: ["CMD", "curl", "-f", "http://localhost:3000"]
-                  interval: 30s
-                  timeout: 10s
-                  retries: 3
+                  
 
               nginx:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
@@ -105,10 +100,8 @@ jobs:
                   - "80:80"
                   - "443:443"
                 depends_on:
-                  front:
-                    condition: service_healthy
-                  server:
-                    condition: service_healthy
+                  - front
+                  - server
 
             EOF
             echo "docker-compose.yml created"
@@ -120,4 +113,4 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
             docker-compose down
             docker-compose up -d
-            echo "Deployment completed"
+            echo "Deployment completed"d
