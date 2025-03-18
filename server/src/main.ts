@@ -18,6 +18,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: 'https://cicardi.store',
+    // origin: process.env.CLIENT_URL || 'https://cicardi.store',
     // origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
