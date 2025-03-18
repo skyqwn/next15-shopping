@@ -8,7 +8,7 @@ import { useCartStore } from "@/store";
 import orderConfirmed from "../../../public/order-confirm.json";
 
 const OrderConfirmed = () => {
-  const { setCheckoutProgress } = useCartStore();
+  const { setCheckoutProgress, clearCart } = useCartStore();
   return (
     <div className="flex flex-col items-center gap-4">
       <motion.div
@@ -22,6 +22,7 @@ const OrderConfirmed = () => {
       <Button
         onClick={() => {
           setCheckoutProgress("cart-page");
+          clearCart();
         }}
       >
         완료하기

@@ -40,7 +40,7 @@ const EmailRegisterForm = () => {
   };
 
   return (
-    <div className="mx-auto h-full max-w-[400px] py-20">
+    <div className="mx-auto h-full max-w-[400px] px-4 py-10">
       <div className="mb-12 flex w-full flex-col text-3xl font-bold">
         <h2>Next Shopping에</h2>
         <span>오신걸 환영합니다!</span>

@@ -28,15 +28,13 @@ async function fetchWrapperWithTokenHandler<T>(
 ): Promise<ApiResponse<T>> {
   const apiUrl =
     process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api";
-  console.log("API URL:", apiUrl);
   const response = await fetch(`${apiUrl}${uri}`, init);
-  // const response = await fetch(`http://13.125.84.188/api${uri}`, init);
 
   try {
     if (!response.ok)
       throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
     const data = await response.json();
-    console.log("리절트", data);
+    // console.log("리절트", data);
     return data as ApiResponse<T>;
   } catch (error) {
     console.log("에러에러에러", error);

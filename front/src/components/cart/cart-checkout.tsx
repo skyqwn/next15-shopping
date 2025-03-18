@@ -85,9 +85,9 @@ export default function CheckoutPage() {
         isDrawerOpen: true,
         checkoutProgress: "confirmation-page",
       });
-    } catch (error) {
-      console.log(error);
-      console.error("결제 요청 실패:", error);
+    } catch (error: any) {
+      toast.error(error);
+      // console.error("결제 요청 실패:", error);
     }
   };
 
