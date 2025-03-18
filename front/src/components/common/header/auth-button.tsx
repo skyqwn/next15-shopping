@@ -158,10 +158,10 @@ const AuthButton = () => {
   ) : (
     <div className="flex items-center gap-4">
       <Link href="/auth/login" className="cursor-pointer">
-        <span>로그인</span>
+        <span className="text-xs sm:text-base md:text-lg">로그인</span>
       </Link>
       <Link href="/auth/register" className="cursor-pointer">
-        <span>회원가입</span>
+        <span className="text-xs sm:text-base md:text-lg">회원가입</span>
       </Link>
     </div>
   );

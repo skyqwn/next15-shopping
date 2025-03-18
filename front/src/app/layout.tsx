@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/cicardi-logo.webp",
+        url: "https://www.cicardi.store/cicardi-logo.webp",
         width: 1200,
         height: 630,
         alt: "시카디",
