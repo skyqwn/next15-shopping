@@ -93,6 +93,7 @@ jobs:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy:latest
                 ports:
                   - "80:80"
+                  - "433:433"
                 depends_on:
                   - front
                   - server
