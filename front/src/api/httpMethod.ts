@@ -26,15 +26,7 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  let apiUrl: string;
-
-  if (process.env.NODE_ENV === "production") {
-    apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
-  } else {
-    apiUrl = "http://localhost:4000/api";
-  }
-
-  const response = await fetch(`${apiUrl}${uri}`, init);
+  const response = await fetch(`https://www.cicardi.store/api${uri}`, init);
 
   try {
     if (!response.ok)
