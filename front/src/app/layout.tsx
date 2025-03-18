@@ -13,23 +13,24 @@ export const metadata: Metadata = {
   title: "시카디 | cicadi",
   description: "시카디에서 이쁜 옷들을 구매해보세요.",
   icons: {
-    icon: "../../public/favicon.ico",
+    icon: "/favicon.ico",
     apple: "/icons/og.png",
   },
   openGraph: {
     title: "시카디 | cicadi",
     description: "시카디에서 이쁜 옷들을 구매해보세요.",
+    url: "/",
     images: [
       {
-        url: "../../public/cicardi-logo.webp",
-        width: 800,
-        height: 600,
+        url: "/cicardi-logo.webp",
+        width: 1200,
+        height: 630,
         alt: "시카디",
       },
     ],
     type: "website",
     siteName: "시카디 | cicadi",
-    locale: "ko",
+    locale: "ko_KR",
   },
 };
 

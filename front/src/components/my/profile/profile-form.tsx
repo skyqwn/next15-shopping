@@ -85,7 +85,7 @@ const ProfileForm = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>프로필 이름</FormLabel>
+                    <FormLabel className="mt-4">프로필 이름</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Jone Doe" type="text" />
                     </FormControl>
