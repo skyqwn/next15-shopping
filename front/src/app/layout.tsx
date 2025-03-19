@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   description: "시카디에서 이쁜 옷들을 구매해보세요.",
   icons: {
     icon: "/favicon.ico",
+    apple: [
+      { url: "/apple-icon.png" },
+      { url: "/apple-icon-152x152.png", sizes: "152x152", type: "image/png" },
+      { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-icon-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
   },
   openGraph: {
     title: "시카디 | cicadi",
@@ -32,6 +38,12 @@ export const metadata: Metadata = {
     siteName: "시카디 | cicadi",
     locale: "ko_KR",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "시카디 | cicadi",
+    description: "시카디에서 이쁜 옷들을 구매해보세요.",
+    images: ["https://www.cicardi.store/cicardi-meta.png"],
+  },
 };
 
 export default function RootLayout({
@@ -41,6 +53,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <meta property="og:title" content="시카디 | cicadi" />
+        <meta
+          property="og:description"
+          content="시카디에서 이쁜 옷들을 구매해보세요."
+        />
+        <meta
+          property="og:image"
+          content="https://www.cicardi.store/cicardi-meta.png"
+        />
+        <meta property="og:url" content="https://www.cicardi.store" />
+      </head>
       <body suppressHydrationWarning>
         <Providers>
           <div className="flex min-h-screen flex-1 flex-col">
