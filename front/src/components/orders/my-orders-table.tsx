@@ -85,7 +85,7 @@ const MyOrdersTable = () => {
       <div className="space-y-4">
         <h2 className="text-xl font-bold">내 주문 내역</h2>
         <p className="py-10 text-center text-muted-foreground">
-          아직 주문 내역이 없습니다.
+          아직 주문 내역이 없습니다
         </p>
       </div>
     );
