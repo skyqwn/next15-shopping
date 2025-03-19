@@ -27,9 +27,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/cicardi-meta.png",
-        width: 1200,
-        height: 630,
+        url: "/cicardi-meta.png?v=1",
         alt: "시카디",
         type: "image/png",
       },
@@ -53,18 +51,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <head>
-        <meta property="og:title" content="시카디 | cicadi" />
-        <meta
-          property="og:description"
-          content="시카디에서 이쁜 옷들을 구매해보세요."
-        />
-        <meta
-          property="og:image"
-          content="https://www.cicardi.store/cicardi-meta.png"
-        />
-        <meta property="og:url" content="https://www.cicardi.store" />
-      </head>
       <body suppressHydrationWarning>
         <Providers>
           <div className="flex min-h-screen flex-1 flex-col">
