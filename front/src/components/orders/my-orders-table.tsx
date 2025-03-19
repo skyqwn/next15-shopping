@@ -67,20 +67,7 @@ const MyOrdersTable = () => {
   const orders = ordersData?.result || [];
   const isLoading = isProfileLoading || isOrdersLoading || !isMounted;
 
-  if (!isMounted) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold">내 주문 내역</h2>
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20 w-full" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <div className="space-y-4">
         <h2 className="text-xl font-bold">내 주문 내역</h2>
