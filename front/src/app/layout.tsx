@@ -12,17 +12,17 @@ import ViewedProductsSidebar from "@/components/shop/viewed-products-sidebar";
 const font = localFont({
   src: [
     {
-      path: "../../public/fonts/42dotSans/42dotSans-Light.ttf",
+      path: "../../../public/fonts/42dotSans/42dotSans-Light.ttf",
       weight: "300",
       style: "normal",
     },
     {
-      path: "../../public/fonts/42dotSans/42dotSans-Medium.ttf",
+      path: "../../../public/fonts/42dotSans/42dotSans-Medium.ttf",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../public/fonts/42dotSans/42dotSans-Bold.ttf",
+      path: "../../../public/fonts/42dotSans/42dotSans-Bold.ttf",
       weight: "700",
       style: "normal",
     },
