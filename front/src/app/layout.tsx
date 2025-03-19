@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "https://www.cicardi.store/cicardi-meta.png",
+        url: "/meta_img.png",
         height: 630,
         alt: "시카디",
       },
