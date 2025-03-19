@@ -8,6 +8,7 @@ FROM base AS build
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY . .
+RUN ls -l /app/src/fonts/42dotSans/
 RUN pnpm run build
 
 FROM base AS production
