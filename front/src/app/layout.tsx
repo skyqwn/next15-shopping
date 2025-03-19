@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/cicardi-meta.png?v=1",
+        url: "/cicardi-meta-image.png?v=3",
         alt: "시카디",
         type: "image/png",
       },
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "시카디 | cicadi",
     description: "시카디에서 이쁜 옷들을 구매해보세요.",
-    images: ["https://www.cicardi.store/cicardi-meta.png"],
+    images: ["https://www.cicardi.store/cicardi-meta-image.png"],
   },
 };
 
