@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 
 import { Providers } from "@/providers";
 import Header from "@/components/common/header";
@@ -7,6 +8,27 @@ import TabBar from "@/components/common/tab-bar";
 import Footer from "@/components/common/footer";
 import "./globals.css";
 import ViewedProductsSidebar from "@/components/shop/viewed-products-sidebar";
+
+const font = localFont({
+  src: [
+    {
+      path: "../public/fonts/42dotSans/42dotSans-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/42dotSans/42dotSans-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/42dotSans/42dotSans-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-42dot",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.cicardi.store"),
@@ -51,7 +73,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body suppressHydrationWarning>
+      <body className={`${font.variable} font-sans antialiased`}>
         <Providers>
           <div className="flex min-h-screen flex-1 flex-col">
             <Header />
