@@ -9,7 +9,7 @@ import "./globals.css";
 import ViewedProductsSidebar from "@/components/shop/viewed-products-sidebar";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.cicardi.store"),
+  // metadataBase: new URL("https://www.cicardi.store"),
   title: "시카디 | cicadi",
   description: "시카디에서 이쁜 옷들을 구매해보세요.",
   icons: {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "https://www.cicardi.store/cicardi-logo.webp",
+        url: "/cicardi-meta.png",
         width: 1200,
         height: 630,
         alt: "시카디",
