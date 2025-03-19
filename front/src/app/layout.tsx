@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   description: "시카디에서 이쁜 옷들을 구매해보세요.",
   icons: {
     icon: "/favicon.ico",
-    apple: "/icons/og.png",
   },
   openGraph: {
     title: "시카디 | cicadi",
@@ -22,9 +21,11 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/meta_img.png",
+        url: "/cicardi-meta.png",
+        width: 1200,
         height: 630,
         alt: "시카디",
+        type: "image/png",
       },
     ],
     type: "website",
