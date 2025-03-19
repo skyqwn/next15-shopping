@@ -8,8 +8,8 @@ const Footer = () => {
           <div>
             <h3 className="mb-4 text-lg font-bold">고객센터 1588-1234</h3>
             <div className="space-y-2 text-sm">
-              <p>운영시간 평일 11:00 - 18:00 (토∙일, 공휴일 휴무)</p>
-              <p>점심시간 평일 13:00 - 14:00</p>
+              <p>운영시간 평일 09:00 - 18:00 (토∙일, 공휴일 휴무)</p>
+              <p>점심시간 평일 12:00 - 13:00</p>
               <button className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm">
                 자주 묻는 질문
               </button>
@@ -57,7 +57,7 @@ const Footer = () => {
             </div>
             <div className="space-y-2">
               <p>
-                김바 주식회사 · 대표 김병호 · 사업자등록번호 : 123-45-67890 ·
+                Cicardi · 대표 김병호 · 사업자등록번호 : 123-45-67890 ·
                 통신판매업 : 제 2024-서울강남-00000호
               </p>
               <p>
@@ -67,7 +67,7 @@ const Footer = () => {
           </div>
           <div className="space-y-4 lg:text-right">
             <div>
-              <h4 className="mb-2 font-bold">김바(주)</h4>
+              <h4 className="mb-2 font-bold">Cicardi</h4>
               <p>채무지급보증 안내</p>
               <p className="text-xs">
                 당사는 고객님의 현금 결제 금액에 대해 하나은행과 채무지급보증
@@ -77,7 +77,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs">© 2024 KBH Corp.</p>
+        <p className="mt-8 text-center text-xs">© 2024 Cicardi .</p>
       </div>
     </footer>
   );
