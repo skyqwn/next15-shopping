@@ -78,9 +78,9 @@ jobs:
       - name: Build and push Front
         working-directory: ./front
         run: |
-          echo "Secrets NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}"
+          echo "Using temporary server for build: http://localhost:4000/api"
           docker build \
-             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+             --build-arg NEXT_PUBLIC_API_URL=http://localhost:4000/api \
              -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
