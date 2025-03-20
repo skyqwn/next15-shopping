@@ -5,6 +5,7 @@ import {
   ImagesController,
   BannerController,
   OrderController,
+  HealthCheckController,
 } from './controller';
 import { ApplicationModule } from 'src/application/application.module';
 import { ReviewController } from './controller/review.controller';
@@ -18,6 +19,7 @@ import { ReviewController } from './controller/review.controller';
     ReviewController,
     BannerController,
     OrderController,
+    HealthCheckController,
   ],
 })
 export class PresentationModule {}

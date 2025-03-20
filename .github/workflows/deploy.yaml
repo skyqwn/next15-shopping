@@ -31,7 +31,12 @@ jobs:
 
       - name: Start Server for Frontend Build
         run: |
+          # 도커 네트워크 생성
+          docker network create app-network || true
+
+          # 백엔드 서버 실행
           docker run -d --name temp-server \
+            --network app-network \
             -p 4000:4000 \
             -e NODE_ENV=production \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
@@ -52,22 +57,30 @@ jobs:
             -e UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }} \
             -e UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
-          # 서버가 준비될 때까지 대기
-          for i in {1..30}; do
+
+          # 서버가 준비될 때까지 대기 (최대 120초)
+          for i in {1..60}; do
             if curl -f http://localhost:4000/api/health; then
               echo "Server is ready!"
               break
             fi
-            echo "Waiting for server... ($i/30)"
+            echo "Waiting for server... ($i/60)"
             sleep 2
           done
+
+          # 서버가 준비되지 않으면 에러 발생
+          if ! curl -f http://localhost:4000/api/health; then
+            echo "Server failed to start within 120 seconds"
+            docker logs temp-server
+            exit 1
+          fi
 
       - name: Build and push Front
         working-directory: ./front
         run: |
-          echo "Secrets NEXT_PUBLIC_API_URL: http://localhost:4000/api"
+          echo "Secrets NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}"
           docker build \
-             --build-arg NEXT_PUBLIC_API_URL=http://localhost:4000/api \
+             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
              -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
@@ -75,6 +88,7 @@ jobs:
         run: |
           docker stop temp-server
           docker rm temp-server
+          docker network rm app-network || true
 
       - name: Build and push Nginx
         working-directory: ./nginx
