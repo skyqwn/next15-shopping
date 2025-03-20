@@ -11,7 +11,7 @@ export const getVariantDetail = async (
 ): Promise<ApiResponse<ProductVariantType>> => {
   const data = await GET<ProductVariantType>(
     END_POINTS.VARIANT_DETAIL(variantId),
-    createInit(),
+    createInit(undefined, "force-cache"),
   );
 
   return data;
