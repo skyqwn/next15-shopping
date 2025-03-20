@@ -147,7 +147,7 @@ jobs:
                   - API_URL=http://server:4000/api
                 depends_on:
                   server:
-                    condition: service_healthy
+                    condition: service_started
                 healthcheck:
                   test: ["CMD", "curl", "-f", "http://localhost:3000"]
                   interval: 30s

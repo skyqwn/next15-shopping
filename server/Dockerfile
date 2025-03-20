@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm && pnpm install
 COPY . .
+RUN apk add --no-cache curl
 RUN pnpm run build
 
 FROM node:18-alpine
