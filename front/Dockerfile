@@ -7,6 +7,7 @@ RUN npm install -g pnpm && pnpm install
 FROM base AS build
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 COPY . .
 RUN apk add --no-cache curl
 RUN pnpm run build
