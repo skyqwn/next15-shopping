@@ -118,7 +118,7 @@ const ShopDetail = async ({ params }: PageProps) => {
     const productVariantResponse = await getVariantDetail(productId);
     productVariant = productVariantResponse.result;
   } catch (error) {
-    console.error("제품 상세 데이터를 가져오지 못했습니다:", error);
+    console.error("제품 상세 데이터를 가져오지 못했습니다", error);
     return <div>제품을 찾을 수 없습니다.</div>;
   }
 
