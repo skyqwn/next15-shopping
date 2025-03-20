@@ -1,6 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+const navigation = [
+  { name: "프로필 관리", href: "/my/profile" },
+  { name: "주문 목록", href: "/my/orders" },
+  { name: "로그아웃", href: "#" },
+];
 
 const ProfileAsideMenu = () => {
   const pathname = usePathname();
@@ -10,19 +17,20 @@ const ProfileAsideMenu = () => {
       <h3 className="mb-2 text-lg font-semibold">내 정보</h3>
       <nav>
         <ul className="flex flex-col gap-2 text-[15px] text-secondary">
-          <li
-            className={`${pathname === "/my/profile" ? "font-bold text-primary" : ""}`}
-          >
-            <a href="/my/profile">프로필 관리</a>
-          </li>
-          <li
-            className={`${pathname === "/my/orders" ? "font-bold text-primary" : ""}`}
-          >
-            <a href="/my/orders">주문 목록</a>
-          </li>
-          <li>
-            <a href="#">로그아웃</a>
-          </li>
+          {navigation.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={`${
+                  pathname === item.href
+                    ? "bg-gray-100 font-bold text-gray-900 dark:bg-gray-900 dark:text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-white"
+                } hover:font-bold`}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </aside>

@@ -25,7 +25,7 @@ const Header = () => {
                 >
                   <Link href={page.path} className="invisible md:visible">
                     <div>
-                      <span className="text-xl font-thin">{page.label}</span>
+                      <span className="text-xl font-bold">{page.label}</span>
                     </div>
                   </Link>
                 </div>

@@ -66,8 +66,8 @@ const ProfileForm = () => {
   return (
     <div>
       <section className="max-w-[520px] flex-1">
-        <div className="mb-10 hidden md:block">
-          <h2 className="text-2xl font-bold">프로필 관리</h2>
+        <div className="mb-4 hidden md:block">
+          <h2 className="text-3xl font-bold">프로필 관리</h2>
         </div>
 
         <h2 className="mb-2 text-xl font-bold">프로필 정보</h2>
@@ -84,8 +84,8 @@ const ProfileForm = () => {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="mt-4">프로필 이름</FormLabel>
+                  <FormItem className="mt-4">
+                    <FormLabel>프로필 이름</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Jone Doe" type="text" />
                     </FormControl>

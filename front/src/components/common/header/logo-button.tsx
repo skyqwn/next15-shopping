@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const LogoButton = () => {
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
   const isDarkMode =
     mounted &&
     (theme === "dark" || (theme === "system" && systemTheme === "dark"));

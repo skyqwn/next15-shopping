@@ -47,7 +47,10 @@ const AuthButton = () => {
   }
 
   const handleLogout = () => {
-    logoutMutation.mutate();
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+      logoutMutation.mutate();
+    }
+    return;
   };
 
   return userInfo?.isLoggedIn ? (

@@ -46,6 +46,7 @@ import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { OrderProductType } from "@/types/order";
+import { formatPrice } from "@/lib/utils";
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 
@@ -95,120 +96,125 @@ const MyOrdersTable = () => {
     <Card className="p-6">
       <CardHeader>
         <CardTitle>주문 내역</CardTitle>
-        <CardDescription>Card Description</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>주문 번호</TableHead>
-              <TableHead>총합</TableHead>
-              <TableHead>주문 상태</TableHead>
-              <TableHead>주문 일자</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{order.id}</TableCell>
-                <TableCell>{order.totalPrice}원</TableCell>
-                <TableCell>
-                  <Badge
-                    className={
-                      order.status === "cancelled"
-                        ? "bg-green-500"
-                        : "bg-secondary-foreground"
-                    }
-                  >
-                    {order.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-xs font-medium">
-                  {dayjs(order.createdAt).format("YYYY-MM-DD HH:mm")}
-                </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"}>
-                          <MoreHorizontal size={16} />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem>
-                          <DialogTrigger asChild>
-                            <Button className="w-full" variant={"ghost"}>
-                              자세히 보기
-                            </Button>
-                          </DialogTrigger>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>주문 상세보기 #{order.id}</DialogTitle>
-                        <DialogDescription>
-                          모든 주문의 총액: ${order.totalPrice}
-                        </DialogDescription>
-                        <Card className="flex flex-col gap-4 overflow-auto p-2">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>상품 이미지</TableHead>
-                                <TableHead>가격</TableHead>
-                                <TableHead>상품</TableHead>
-                                <TableHead>색상</TableHead>
-                                <TableHead>수량</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {order.orderProducts.map(
-                                ({
-                                  product,
-                                  productVariants,
-                                  quantity,
-                                }: OrderProductType) => (
-                                  <TableRow key={product?.id}>
-                                    <TableCell>
-                                      <Image
-                                        src={
-                                          productVariants?.variantImages[0]
-                                            .url ?? ""
-                                        }
-                                        width={48}
-                                        height={48}
-                                        alt={product!.title}
-                                      />
-                                    </TableCell>
-                                    <TableCell>{product!.title}</TableCell>
-                                    <TableCell>
-                                      {productVariants!.productType}
-                                    </TableCell>
-                                    <TableCell>
-                                      <div
-                                        style={{
-                                          background: productVariants!.color,
-                                        }}
-                                        className="size-4 rounded-full"
-                                      />
-                                    </TableCell>
-                                    <TableCell>{quantity}</TableCell>
-                                  </TableRow>
-                                ),
-                              )}
-                            </TableBody>
-                          </Table>
-                        </Card>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
+        <div className="">
+          <Table>
+            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableHeader>
+              <TableRow className="text-xs md:text-base">
+                <TableHead>주문 번호</TableHead>
+                <TableHead>총합</TableHead>
+                <TableHead>주문 상태</TableHead>
+                <TableHead>주문 일자</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {orders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell>{order.id}</TableCell>
+                  <TableCell className="text-xs">
+                    {formatPrice(order.totalPrice)}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      className={
+                        order.status === "cancelled"
+                          ? "bg-green-500"
+                          : "bg-secondary-foreground"
+                      }
+                    >
+                      {order.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs font-medium">
+                    {dayjs(order.createdAt).format("MM.DD HH:mm")}
+                  </TableCell>
+                  <TableCell>
+                    <Dialog>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant={"ghost"}>
+                            <MoreHorizontal size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem>
+                            <DialogTrigger asChild>
+                              <Button className="w-full" variant={"ghost"}>
+                                자세히 보기
+                              </Button>
+                            </DialogTrigger>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>주문 상세보기 #{order.id}</DialogTitle>
+                          <DialogDescription>
+                            모든 주문의 총액: {formatPrice(order.totalPrice)}원
+                          </DialogDescription>
+                          <Card className="flex flex-col gap-4 overflow-auto p-2">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>상품 이미지</TableHead>
+                                  <TableHead>가격</TableHead>
+                                  <TableHead>상품</TableHead>
+                                  <TableHead>색상</TableHead>
+                                  <TableHead>수량</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {order.orderProducts.map(
+                                  ({
+                                    product,
+                                    productVariants,
+                                    quantity,
+                                  }: OrderProductType) => (
+                                    <TableRow key={product?.id}>
+                                      <TableCell>
+                                        <Image
+                                          src={
+                                            productVariants?.variantImages[0]
+                                              .url ?? ""
+                                          }
+                                          width={48}
+                                          height={48}
+                                          alt={product!.title}
+                                        />
+                                      </TableCell>
+                                      <TableCell className="text-xs md:text-sm">
+                                        {formatPrice(product!.price)}원
+                                      </TableCell>
+                                      <TableCell>
+                                        {productVariants!.productType}
+                                      </TableCell>
+                                      <TableCell>
+                                        <div
+                                          style={{
+                                            background: productVariants!.color,
+                                          }}
+                                          className="size-4 rounded-full"
+                                        />
+                                      </TableCell>
+                                      <TableCell>{quantity}</TableCell>
+                                    </TableRow>
+                                  ),
+                                )}
+                              </TableBody>
+                            </Table>
+                          </Card>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
