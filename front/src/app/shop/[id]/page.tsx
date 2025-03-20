@@ -1,8 +1,9 @@
-import ProductDetail from "@/components/product/product-detail";
+import { Metadata } from "next";
+
 import { getVariantDetail } from "@/hooks/queries/product-variant/useVariantDetailQuery";
 import { getVariants } from "@/hooks/queries/product-variant/useVariantQuery";
+import ProductDetail from "@/components/product/product-detail";
 import { ProductVariantType } from "@/types";
-import { create } from "lodash";
 
 export const revalidate = 3600;
 
@@ -44,6 +45,69 @@ export async function generateStaticParams() {
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const productId = parseInt(resolvedParams.id, 10);
+
+  let productVariant;
+  try {
+    const productVariantResponse = await getVariantDetail(productId);
+    productVariant = productVariantResponse.result;
+  } catch (error) {
+    console.error("메타데이터 생성 중 오류:", error);
+    return {
+      title: "제품을 찾을 수 없습니다 | 시카디",
+      description: "시카디에서 이쁜 옷들을 구매해보세요.",
+    };
+  }
+
+  if (!productVariant) {
+    return {
+      title: "제품을 찾을 수 없습니다 | 시카디",
+      description: "시카디에서 이쁜 옷들을 구매해보세요.",
+    };
+  }
+
+  return {
+    title: `${productVariant.product.title} | 시카디`,
+    description:
+      productVariant.product.description ||
+      "시카디에서 이쁜 옷들을 구매해보세요.",
+    openGraph: {
+      title: `${productVariant.product.title} | 시카디`,
+      description:
+        productVariant.product.description ||
+        "시카디에서 이쁜 옷들을 구매해보세요.",
+      url: `/shop/${productId}`,
+      images: [
+        {
+          url: productVariant.variantImages[0].url || "/cicardi-meta.png",
+          width: 1200,
+          height: 628,
+          alt: productVariant.product.title,
+          type: "image/png",
+        },
+      ],
+      type: "website",
+      siteName: "시카디 | cicadi",
+      locale: "ko_KR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${productVariant.product.title} | 시카디`,
+      description:
+        productVariant.product.description ||
+        "시카디에서 이쁜 옷들을 구매해보세요.",
+      images: [
+        productVariant.variantImages[0].url ||
+          "https://www.cicardi.store/cicardi-meta.png",
+      ],
+    },
+  };
 }
 
 const ShopDetail = async ({ params }: PageProps) => {
