@@ -1,6 +1,6 @@
 export function createInit<Body extends object | FormData>(
   body?: Body,
-  cache: RequestCache = "default",
+  cache: RequestCache = "no-cache",
 ): RequestInit {
   const headers: Record<string, string> = {};
 
@@ -29,6 +29,8 @@ async function fetchWrapperWithTokenHandler<T>(
   const apiUrl =
     process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api";
   const response = await fetch(`${apiUrl}${uri}`, init);
+
+  console.log("apiUrl", apiUrl);
 
   try {
     if (!response.ok)
