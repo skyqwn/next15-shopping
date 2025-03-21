@@ -86,7 +86,7 @@ export default function CheckoutPage() {
         checkoutProgress: "confirmation-page",
       });
     } catch (error: any) {
-      toast.error(error);
+      toast.error("결제를 취소하였습니다.");
       // console.error("결제 요청 실패:", error);
     }
   };
