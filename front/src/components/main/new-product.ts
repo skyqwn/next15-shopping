@@ -10,7 +10,7 @@ export const NewProduct = [
     alt: "트레이닝 팬츠",
     title: "트레이닝 팬츠",
     description: "트레이닝 팬츠",
-    url: "/shop/88",
+    url: "/shop/88?type=%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%8B%9D%20%ED%8C%AC%EC%B8%A0",
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const NewProduct = [
     alt: "크롭 니트 가디건",
     title: "크롭 니트 가디건",
     description: "2025 크롭 니트 가디건",
-    url: "/shop/90",
+    url: "/shop/90?type=%ED%81%AC%EB%A1%AD%20%EB%8B%88%ED%8A%B8%20%EA%B0%80%EB%94%94%EA%B1%B4%20%EA%B7%B8%EB%A0%88%EC%9D%B4",
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ export const NewProduct = [
     alt: "크롭 니트 가디건",
     title: "크롭 니트 가디건",
     description: "2025 크롭 니트 가디건",
-    url: "/shop/91",
+    url: "/shop/91?type=%ED%81%AC%EB%A1%AD%20%EB%8B%88%ED%8A%B8%20%EA%B0%80%EB%94%94%EA%B1%B4%20%EB%B8%94%EB%9E%99",
   },
   {
     id: 4,
@@ -34,6 +34,6 @@ export const NewProduct = [
     alt: "트레이닝 팬츠",
     title: "트레이닝 팬츠",
     description: "2025 트레이닝 팬츠",
-    url: "/shop/69",
+    url: "/shop/68?type=%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%8B%9D%20%ED%8C%AC%EC%B8%A0%20%EA%B7%B8%EB%A0%88%EC%9D%B4",
   },
 ];

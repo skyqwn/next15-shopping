@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   loadPaymentWidget,
   PaymentWidgetInstance,
@@ -87,7 +87,6 @@ export default function CheckoutPage() {
       });
     } catch (error: any) {
       toast.error("결제를 취소하였습니다.");
-      // console.error("결제 요청 실패:", error);
     }
   };
 
