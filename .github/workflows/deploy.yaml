@@ -74,9 +74,9 @@ jobs:
       - name: Build and push Front
         working-directory: ./front
         run: |
-          echo "Using temporary server for build: http://127.0.0.1:4000/api"
+          echo "Using temporary server for build: https://www.cicardi.store/api"
           docker build \
-             --build-arg NEXT_PUBLIC_API_URL=http://127.0.0.1:4000/api \
+             --build-arg NEXT_PUBLIC_API_URL=https://www.cicardi.store/api \
              --network host \
              -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
