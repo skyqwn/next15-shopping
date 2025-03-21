@@ -104,6 +104,7 @@ jobs:
 
             # docker-compose.yml 생성
             cat << 'EOF' > docker-compose.yml
+
             services:
               server:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
@@ -142,9 +143,10 @@ jobs:
                   - "3000:3000"
                 environment:
                   - NEXT_PUBLIC_API_URL=https://www.cicardi.store/api
+                  - API_URL=http://server:4000/api
                 depends_on:
                   server:
-                    condition: service_healthy
+                    condition: service_started
                 healthcheck:
                   test: ["CMD", "curl", "-f", "http://localhost:3000"]
                   interval: 30s
@@ -159,10 +161,8 @@ jobs:
                   - "80:80"
                   - "443:443"
                 depends_on:
-                  front:
-                    condition: service_healthy
-                  server:
-                    condition: service_healthy
+                  - front
+                  - server
                 networks:
                   - app-network
 
