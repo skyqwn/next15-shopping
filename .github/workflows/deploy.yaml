@@ -32,9 +32,9 @@ jobs:
       - name: Build and push Front
         working-directory: ./front
         run: |
-          echo "Using API URL for build: ${{ secrets.API_URL }}"
+          echo "Using API URL for build: https://www.cicardi.store/api"
           docker build \
-             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.API_URL }} \
+             --build-arg NEXT_PUBLIC_API_URL=https://www.cicardi.store/api \
              -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
 
@@ -93,7 +93,7 @@ jobs:
                 ports:
                   - "3000:3000"
                 environment:
-                  - NEXT_PUBLIC_API_URL=${{ secrets.API_URL }}
+                  - NEXT_PUBLIC_API_URL=https://www.cicardi.store/api
                 depends_on:
                   server:
                     condition: service_healthy
