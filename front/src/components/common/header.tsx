@@ -11,7 +11,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border border-b bg-white dark:bg-black">
+    <header className="sticky top-0 z-50 border border-b backdrop-blur dark:bg-neutral-950/70">
       <nav className="container mx-auto px-4 py-4">
         <ul className="flex h-6 w-full items-center justify-between py-2 md:h-10">
           <LogoButton />

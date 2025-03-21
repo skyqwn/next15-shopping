@@ -45,7 +45,7 @@ const CartDrawer = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 initial={{ opacity: 0, scale: 0 }}
                 exit={{ opacity: 0, scale: 0 }}
-                className="absolute -top-0.5 right-0 flex size-4 items-center justify-center rounded-full bg-green-300/80 text-xs font-bold text-black dark:bg-primary"
+                className="absolute -top-0.5 right-0 flex size-4 items-center justify-center rounded-full bg-lime-400 text-xs font-bold text-black dark:bg-primary"
               >
                 {cart.length}
               </motion.span>

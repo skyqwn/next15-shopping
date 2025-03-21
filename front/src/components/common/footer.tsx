@@ -10,9 +10,6 @@ const Footer = () => {
             <div className="space-y-2 text-sm">
               <p>운영시간 평일 09:00 - 18:00 (토∙일, 공휴일 휴무)</p>
               <p>점심시간 평일 12:00 - 13:00</p>
-              <button className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm">
-                자주 묻는 질문
-              </button>
             </div>
           </div>
           <div className="flex gap-4">
