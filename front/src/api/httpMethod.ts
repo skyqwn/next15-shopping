@@ -29,8 +29,6 @@ async function fetchWrapperWithTokenHandler<T>(
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const response = await fetch(`${apiUrl}${uri}`, init);
 
-  console.log("apiUrl", apiUrl);
-
   try {
     if (!response.ok)
       throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
