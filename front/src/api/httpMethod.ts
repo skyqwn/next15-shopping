@@ -26,8 +26,7 @@ async function fetchWrapperWithTokenHandler<T>(
   uri: string,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://www.cicardi.store/api";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const response = await fetch(`${apiUrl}${uri}`, init);
 
   console.log("apiUrl", apiUrl);

@@ -29,62 +29,14 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
 
-      - name: Start Server for Frontend Build
-        run: |
-          # 백엔드 서버를 호스트 네트워크로 실행
-          docker run -d --name temp-server \
-            --network host \
-            -e NODE_ENV=production \
-            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e JWT_ACCESS_TOKEN_EXPIRATION=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION }} \
-            -e JWT_REFRESH_TOKEN_EXPIRATION=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION }} \
-            -e REFRESH_TOKEN_TTL=${{ secrets.REFRESH_TOKEN_TTL }} \
-            -e CLIENT_URL=${{ secrets.CLIENT_URL }} \
-            -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
-            -e KAKAO_CALLBACK_URL=${{ secrets.KAKAO_CALLBACK_URL }} \
-            -e AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }} \
-            -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
-            -e S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }} \
-            -e S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }} \
-            -e REDIS_REFRESH_TOKEN_EXPIRATION=${{ secrets.REDIS_REFRESH_TOKEN_EXPIRATION }} \
-            -e UPSTASH_REDIS=${{ secrets.UPSTASH_REDIS }} \
-            -e UPSTASH_REDIS_PASSWORD=${{ secrets.UPSTASH_REDIS_PASSWORD }} \
-            -e UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }} \
-            -e UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }} \
-            ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
-
-          # 서버가 준비될 때까지 대기 (최대 120초)
-          for i in {1..60}; do
-            if curl -f http://127.0.0.1:4000/api/health; then
-              echo "Server is ready!"
-              break
-            fi
-            echo "Waiting for server... ($i/60)"
-            sleep 2
-          done
-
-          # 서버가 준비되지 않으면 에러 발생
-          if ! curl -f http://127.0.0.1:4000/api/health; then
-            echo "Server failed to start within 120 seconds"
-            docker logs temp-server
-            exit 1
-          fi
-
       - name: Build and push Front
         working-directory: ./front
         run: |
-          echo "Using temporary server for build: https://www.cicardi.store/api"
+          echo "Using API URL for build: https://www.cicardi.store/api"
           docker build \
              --build-arg NEXT_PUBLIC_API_URL=https://www.cicardi.store/api \
-             --network host \
              -t ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/next-front:latest
-
-      - name: Stop temporary server
-        run: |
-          docker stop temp-server
-          docker rm temp-server
 
       - name: Build and push Nginx
         working-directory: ./nginx
@@ -104,7 +56,6 @@ jobs:
 
             # docker-compose.yml 생성
             cat << 'EOF' > docker-compose.yml
-
             services:
               server:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/nest-server:latest
@@ -143,10 +94,9 @@ jobs:
                   - "3000:3000"
                 environment:
                   - NEXT_PUBLIC_API_URL=https://www.cicardi.store/api
-                  - API_URL=http://server:4000/api
                 depends_on:
                   server:
-                    condition: service_started
+                    condition: service_healthy
                 healthcheck:
                   test: ["CMD", "curl", "-f", "http://localhost:3000"]
                   interval: 30s
@@ -161,8 +111,10 @@ jobs:
                   - "80:80"
                   - "443:443"
                 depends_on:
-                  - front
-                  - server
+                  front:
+                    condition: service_healthy
+                  server:
+                    condition: service_healthy
                 networks:
                   - app-network
 
