@@ -86,9 +86,12 @@ const faqs = [
   7. 해외 배송 상품의 가격 변동 사유로 인한 경우`,
   },
 ];
-
 const Faqs = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
+
+  const handleToggle = (index: number) => {
+    setSelectedIndex(selectedIndex === index ? null : index);
+  };
 
   return (
     <section className="py-24">
@@ -107,7 +110,7 @@ const Faqs = () => {
             >
               <div
                 className="flex cursor-pointer items-center justify-between"
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => handleToggle(index)}
               >
                 <h3 className="font-medium">{faq.question}</h3>
                 <Plus
@@ -120,24 +123,13 @@ const Faqs = () => {
               <AnimatePresence>
                 {selectedIndex === index && (
                   <motion.div
-                    initial={{
-                      height: 0,
-                      marginTop: 0,
-                    }}
-                    animate={{
-                      height: "auto",
-                      marginTop: 24,
-                    }}
+                    initial={{ height: 0, marginTop: 0 }}
+                    animate={{ height: "auto", marginTop: 24 }}
                     exit={{ height: 0, marginTop: 0 }}
                     className={cn("overflow-hidden")}
                   >
-                    <p className="text-primary/50">
-                      {faq.answer.split("\n").map((line, i) => (
-                        <span key={i}>
-                          {line}
-                          <br />
-                        </span>
-                      ))}
+                    <p className="whitespace-pre-wrap text-primary/50">
+                      {faq.answer}
                     </p>
                   </motion.div>
                 )}

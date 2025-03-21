@@ -12,7 +12,7 @@ const CallToAction = () => {
     animation.current = animate(
       scope.current,
       { x: "-50%" },
-      { duration: 30, ease: "linear", repeat: Infinity },
+      { duration: 40, ease: "linear", repeat: Infinity },
     );
 
     animation.current.speed = 0.5;
