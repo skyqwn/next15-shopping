@@ -73,6 +73,7 @@ export const getVariantsFilterInfiniteQueryOptions = (
   getNextPageParam: (lastPage) =>
     lastPage.result.hasMore ? (lastPage.result.page || 1) + 1 : undefined,
 });
+//
 
 export const useInfinityVariantFilterQuery = (params: VariantParams) => {
   return useInfiniteQuery(getVariantsFilterInfiniteQueryOptions(params));
