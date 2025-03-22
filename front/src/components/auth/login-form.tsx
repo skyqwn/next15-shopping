@@ -82,7 +82,7 @@ const LoginForm = () => {
                       <div className="relative">
                         <Input
                           {...field}
-                          placeholder="8자 이상의 비밀번호"
+                          placeholder="영어,숫자,특수문자 포함 최소 8자 이상의 비밀번호"
                           type={clickedEyes ? "text" : "password"}
                           autoComplete="current-password"
                         />
@@ -118,10 +118,10 @@ const LoginForm = () => {
               size={"lg"}
               className={cn(
                 "my-6 w-full",
-                // status === "executing" ? "animate-pulse" : "",
+                loginMutation.isPending ? "animate-pulse" : "",
               )}
             >
-              로그인
+              {loginMutation.isPending ? "로그인중..." : "로그인"}
             </Button>
           </form>
         </Form>

@@ -24,7 +24,7 @@ const LogoButton = () => {
           <Image src={"/cicardi-logo.webp"} alt="cicardi" fill priority />
         )
       ) : (
-        <div className="h-full w-full bg-gray-200 dark:bg-gray-800" />
+        <Image src={"/cicardi-logo.webp"} alt="cicardi" fill priority />
       )}
       <h1 className="hidden">시카디 | cicardi</h1>
     </Link>

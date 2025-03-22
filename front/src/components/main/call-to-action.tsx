@@ -38,7 +38,9 @@ const CallToAction = () => {
         >
           {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="flex items-center gap-16">
-              <span className="text-lime-400">&#10038;</span>
+              <span className="text-lime-400 group-hover:text-black">
+                &#10038;
+              </span>
               <span className="group-hover:text-lime-400">
                 시카디에서는 모든 상품 배송비가 무료!
               </span>

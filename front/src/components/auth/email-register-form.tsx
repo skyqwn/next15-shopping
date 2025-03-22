@@ -20,8 +20,11 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { SignupSchema, SignupType } from "@/schemas";
+import { useRouter } from "next/navigation";
 
 const EmailRegisterForm = () => {
+  const router = useRouter();
+
   const form = useForm<SignupType>({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
@@ -36,13 +39,15 @@ const EmailRegisterForm = () => {
   const { clickedEyes, handleClickedEyes } = usePasswordEyes();
 
   const onSubmit = async (values: SignupType) => {
-    signupMutation.mutate(values);
+    signupMutation.mutate(values, {
+      onSuccess: () => router.push("auth/email-login"),
+    });
   };
 
   return (
     <div className="mx-auto h-full max-w-[400px] px-4 py-10">
       <div className="mb-12 flex w-full flex-col text-3xl font-bold">
-        <h2>Next Shopping에</h2>
+        <h2>Cicardi에</h2>
         <span>오신걸 환영합니다!</span>
       </div>
       <Form {...form}>
@@ -92,7 +97,7 @@ const EmailRegisterForm = () => {
                       <Input
                         {...field}
                         type={clickedEyes ? "text" : "password"}
-                        placeholder="8자 이상의 비밀번호"
+                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상의 비밀번호"
                         autoComplete="current-password"
                       />
                       <div onClick={handleClickedEyes}>
@@ -132,7 +137,7 @@ const EmailRegisterForm = () => {
                       <Input
                         {...field}
                         type={clickedEyes ? "text" : "password"}
-                        placeholder="8자 이상의 비밀번호"
+                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상의 비밀번호"
                         autoComplete="current-password"
                       />
                       <div onClick={handleClickedEyes}>

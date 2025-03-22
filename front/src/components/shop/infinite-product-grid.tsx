@@ -42,7 +42,7 @@ const InfiniteProductGrid = () => {
     <div className="mx-auto flex h-full min-h-[calc(100vh-4rem)] max-w-screen-xl flex-col justify-between px-4 py-4">
       {isLoading ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {Array(10)
+          {Array(8)
             .fill(0)
             .map((_, index) => (
               <ProductSkeleton key={index} />

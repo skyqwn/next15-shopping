@@ -8,6 +8,7 @@ import TabBar from "@/components/common/tab-bar";
 import Footer from "@/components/common/footer";
 import "./globals.css";
 import ViewedProductsSidebar from "@/components/shop/viewed-products-sidebar";
+import Hero from "@/components/main/hero";
 
 const font = localFont({
   src: [
@@ -78,7 +79,7 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-1 flex-col">
             <Header />
             <main className="flex-1">
-              <div className="container mx-auto pb-16 lg:pb-0">{children}</div>
+              <div className="">{children}</div>
               <div className="fixed right-14 top-32 z-50 hidden xl:block">
                 <ViewedProductsSidebar />
               </div>
