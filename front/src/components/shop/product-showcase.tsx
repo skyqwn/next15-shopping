@@ -41,8 +41,8 @@ const ProductShowcase = ({ variant }: ProductShowcaseProps) => {
               <CarouselItem key={index}>
                 <Image
                   src={image.url}
-                  width={1080}
-                  height={220}
+                  width={1000}
+                  height={20}
                   alt={image.fileName}
                 />
               </CarouselItem>

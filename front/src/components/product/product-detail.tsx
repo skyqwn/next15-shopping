@@ -17,7 +17,7 @@ interface ProductDetailProps {
 
 const ProductDetail = ({ productVariant }: ProductDetailProps) => {
   return (
-    <main className="min-h-screen p-4">
+    <main className="container mx-auto min-h-screen p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
         <section className="flex-1">
           <ProductShowcase variant={productVariant} />
