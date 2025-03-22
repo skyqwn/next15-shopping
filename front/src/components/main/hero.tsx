@@ -88,7 +88,12 @@ const Hero = () => {
         </div>
         <div className="relative md:col-span-5">
           <motion.div
-            className="mt-20 max-md:!w-full md:absolute md:right-0 md:mt-0 md:size-full"
+            className="mt-20 cursor-pointer max-md:!w-full md:absolute md:right-0 md:mt-0 md:size-full"
+            onClick={() =>
+              router.push(
+                "/shop/75?type=%ED%9B%84%EB%93%9C%20%EB%B8%8C%EB%A6%AD%20%EC%9C%88%ED%84%B0%EC%9E%90%EC%BC%93%20%EA%B7%B8%EB%A0%88%EC%9D%B4",
+              )
+            }
             style={{ width: portraitWidth }}
           >
             <Image
