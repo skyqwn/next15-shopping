@@ -10,7 +10,6 @@ export default function Home() {
   return (
     <>
       {/* <MainBannerSwiper /> */}
-
       <Hero />
       <div className="container mx-auto flex flex-col gap-4 p-4 pb-16 lg:pb-0">
         <Intro />

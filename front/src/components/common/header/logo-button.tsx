@@ -19,12 +19,36 @@ const LogoButton = () => {
     <Link href={"/"} className="relative size-10 text-white md:size-14">
       {mounted ? (
         isDarkMode ? (
-          <Image src={"/cicardi-logo-dark.webp"} alt="cicardi" fill priority />
+          <Image
+            src={"/cicardi-logo-dark.webp"}
+            alt="cicardi"
+            width={112}
+            height={112}
+            className="object-contain"
+            sizes="(max-width: 768px) 40px, 56px"
+            priority
+          />
         ) : (
-          <Image src={"/cicardi-logo.webp"} alt="cicardi" fill priority />
+          <Image
+            src={"/cicardi-logo.webp"}
+            alt="cicardi"
+            width={112}
+            height={112}
+            className="object-contain"
+            sizes="(max-width: 768px) 40px, 56px"
+            priority
+          />
         )
       ) : (
-        <Image src={"/cicardi-logo.webp"} alt="cicardi" fill priority />
+        <Image
+          src={"/cicardi-logo.webp"}
+          alt="cicardi"
+          width={112}
+          height={112}
+          className="object-contain"
+          sizes="(max-width: 768px) 40px, 56px"
+          priority
+        />
       )}
       <h1 className="hidden">시카디 | cicardi</h1>
     </Link>

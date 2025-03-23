@@ -35,6 +35,7 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
             src={variant.variantImages?.[0]?.url ?? "/placeholder.jpg"}
             alt={variant.variantImages?.[0]?.fileName ?? "상품 이미지"}
             fill
+            placeholder="blur"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className="rounded-md object-cover transition-transform group-hover:scale-105"
           />

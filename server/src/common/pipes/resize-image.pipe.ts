@@ -15,6 +15,8 @@ export class ResizeImagePipe implements PipeTransform {
 
   private async resizeImage(file: Express.Multer.File) {
     const metadata = await sharp(file.buffer).metadata();
+    let resizeBuffer = file.buffer;
+
     if (
       metadata.width &&
       metadata.height &&
@@ -27,11 +29,18 @@ export class ResizeImagePipe implements PipeTransform {
 
       const resizeBuffer = await sharp(file.buffer)
         .resize(resizeOptions)
+        .webp({ quality: 80 })
         .toBuffer();
 
       file.buffer = resizeBuffer;
       file.size = resizeBuffer.length;
     }
-    return file;
+    const { getPlaiceholder } = await import('plaiceholder');
+    const { base64 } = await getPlaiceholder(resizeBuffer);
+
+    return {
+      ...file,
+      blurThumb: base64,
+    };
   }
 }

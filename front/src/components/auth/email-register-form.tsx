@@ -97,7 +97,7 @@ const EmailRegisterForm = () => {
                       <Input
                         {...field}
                         type={clickedEyes ? "text" : "password"}
-                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상의 비밀번호"
+                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상"
                         autoComplete="current-password"
                       />
                       <div onClick={handleClickedEyes}>
@@ -137,7 +137,7 @@ const EmailRegisterForm = () => {
                       <Input
                         {...field}
                         type={clickedEyes ? "text" : "password"}
-                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상의 비밀번호"
+                        placeholder="영어,숫자,특수문자 포함 최소 8자 이상"
                         autoComplete="current-password"
                       />
                       <div onClick={handleClickedEyes}>

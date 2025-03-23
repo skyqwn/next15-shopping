@@ -8,22 +8,21 @@ import TabBar from "@/components/common/tab-bar";
 import Footer from "@/components/common/footer";
 import "./globals.css";
 import ViewedProductsSidebar from "@/components/shop/viewed-products-sidebar";
-import Hero from "@/components/main/hero";
 
 const font = localFont({
   src: [
     {
-      path: "./fonts/42dotSans/42dotSans-Light.ttf",
+      path: "./fonts/42dotSans/42dotSans-Light.woff",
       weight: "300",
       style: "normal",
     },
     {
-      path: "./fonts/42dotSans/42dotSans-Medium.ttf",
+      path: "./fonts/42dotSans/42dotSans-Medium.woff",
       weight: "500",
       style: "normal",
     },
     {
-      path: "./fonts/42dotSans/42dotSans-Bold.ttf",
+      path: "./fonts/42dotSans/42dotSans-Bold.woff",
       weight: "700",
       style: "normal",
     },

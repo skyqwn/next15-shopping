@@ -27,6 +27,8 @@ const VariantImages = () => {
     name: "variantImages",
   });
 
+  console.log(fields);
+
   const { handleImageChange, handleFileRemove } = useImagePicker({
     fieldName: "variantImages",
     setValue,
@@ -54,8 +56,6 @@ const VariantImages = () => {
                 <Camera className="w-full rounded-md border p-2" size={100} />
               </label>
             </div>
-
-            {/* <FormError message={errors.picture?.message} /> */}
           </FormItem>
         )}
       />
