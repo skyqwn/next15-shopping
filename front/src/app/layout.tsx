@@ -79,7 +79,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-1">
               <div className="">{children}</div>
-              <div className="fixed right-14 top-32 z-50 hidden xl:block">
+              <div className="fixed bottom-32 right-14 z-50 hidden xl:block">
                 <ViewedProductsSidebar />
               </div>
             </main>

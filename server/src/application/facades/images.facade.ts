@@ -5,7 +5,7 @@ import { ImagesService } from 'src/domain/service/images.service';
 export class ImagesFacade {
   constructor(private readonly imagesService: ImagesService) {}
 
-  async uploadImages(files: Express.Multer.File[]) {
+  async uploadImages(files: Express.Multer.File[] & { blurThumb?: string }) {
     return this.imagesService.uploadImages(files);
   }
 }

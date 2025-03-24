@@ -15,6 +15,7 @@ export const VariantSchema = z.object({
       url: z.string(),
       size: z.number(),
       fileName: z.string(),
+      blurThumb: z.string().optional(),
     }),
   ),
 });

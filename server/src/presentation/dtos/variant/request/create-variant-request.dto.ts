@@ -5,6 +5,7 @@ const VariantImageSchema = z.object({
   url: z.string().url(),
   size: z.number(),
   fileName: z.string(),
+  blurThumb: z.string().optional(),
 });
 
 export const CreateVariantSchema = z.object({

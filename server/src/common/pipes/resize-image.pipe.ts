@@ -7,15 +7,14 @@ const MAX_LENGTH = 800;
 export class ResizeImagePipe implements PipeTransform {
   async transform(files: Express.Multer.File[] | Express.Multer.File) {
     if (Array.isArray(files)) {
-      return await Promise.all(files.map((file) => this.resizeImage(file)));
+      return Promise.all(files.map((file) => this.resizeImage(file)));
     } else {
-      return await this.resizeImage(files);
+      return this.resizeImage(files);
     }
   }
 
   private async resizeImage(file: Express.Multer.File) {
     const metadata = await sharp(file.buffer).metadata();
-    let resizeBuffer = file.buffer;
 
     if (
       metadata.width &&
@@ -27,16 +26,15 @@ export class ResizeImagePipe implements PipeTransform {
           ? { width: MAX_LENGTH }
           : { height: MAX_LENGTH };
 
-      const resizeBuffer = await sharp(file.buffer)
+      file.buffer = await sharp(file.buffer)
         .resize(resizeOptions)
-        .webp({ quality: 80 })
+        .webp({ quality: 60 })
         .toBuffer();
-
-      file.buffer = resizeBuffer;
-      file.size = resizeBuffer.length;
+      file.size = file.buffer.length;
     }
-    const { getPlaiceholder } = await import('plaiceholder');
-    const { base64 } = await getPlaiceholder(resizeBuffer);
+
+    const plaiceholder = await import('plaiceholder');
+    const { base64 } = await plaiceholder.getPlaiceholder(file.buffer);
 
     return {
       ...file,

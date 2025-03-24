@@ -42,13 +42,20 @@ function useImagePicker({
           console.error("잘못된 응답 형식:", data);
           return;
         }
+        console.log("데이터", data);
 
         if (isProfile) {
           const profileImage = data.length > 0 ? data[0].url : null;
           setValue(fieldName, profileImage);
         } else {
           const existingImages = getValues(fieldName) || [];
-          setValue(fieldName, [...existingImages, ...data]);
+          const newImages = data.map((img) => ({
+            url: img.url,
+            fileName: img.fileName,
+            size: img.size,
+            blurThumb: img.blurThumb,
+          }));
+          setValue(fieldName, [...existingImages, ...newImages]);
         }
       },
       onError: (error) => {

@@ -25,6 +25,7 @@ type VariantImageInput = {
   url: string;
   size: number;
   fileName: string;
+  blurThumb?: string;
 };
 
 type CreateVariantRelationsInput = {
@@ -428,6 +429,7 @@ export class ProductVariantRepository
               url: image.url,
               size: image.size,
               fileName: image.fileName,
+              blurThumb: image.blurThumb,
               order: index,
               variantId: variant.id,
             }));

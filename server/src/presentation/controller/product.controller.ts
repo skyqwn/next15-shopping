@@ -130,7 +130,6 @@ export class ProductController {
     );
   }
 
-  @IsPublic()
   @Get('viewed')
   getViewedProducts(@GetUser() user: UserSelectType) {
     return pipe(

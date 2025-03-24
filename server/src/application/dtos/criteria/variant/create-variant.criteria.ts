@@ -2,6 +2,7 @@ export type VariantImageCriteria = {
   url: string;
   size: number;
   fileName: string;
+  blurThumb?: string;
 };
 
 export type CreateVariantCriteria = {

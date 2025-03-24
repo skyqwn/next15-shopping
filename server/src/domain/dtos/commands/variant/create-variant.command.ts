@@ -7,6 +7,7 @@ export type CreateVariantCommandProps = {
     url: string;
     size: number;
     fileName: string;
+    blurThumb?: string;
   }>;
 };
 
@@ -19,6 +20,7 @@ export class CreateVariantCommand {
     url: string;
     size: number;
     fileName: string;
+    blurThumb?: string;
   }>;
 
   constructor(props: CreateVariantCommandProps) {

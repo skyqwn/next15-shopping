@@ -22,8 +22,10 @@ export class ImagesController {
   )
   @Post('/')
   async uploadImages(
-    @UploadedFiles(ResizeImagePipe) files: Express.Multer.File[],
+    @UploadedFiles(ResizeImagePipe)
+    files: Array<Express.Multer.File & { blurThumb?: string }>,
   ) {
+    console.log('files', files);
     const result = await this.imagesFacade.uploadImages(files);
     return {
       success: true,

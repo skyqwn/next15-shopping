@@ -27,7 +27,7 @@ const VariantImages = () => {
     name: "variantImages",
   });
 
-  console.log(fields);
+  console.log("fields", fields);
 
   const { handleImageChange, handleFileRemove } = useImagePicker({
     fieldName: "variantImages",

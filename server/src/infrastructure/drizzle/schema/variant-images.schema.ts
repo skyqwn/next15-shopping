@@ -8,6 +8,7 @@ export const variantImages = pgTable('variantImages', {
   size: real('size').notNull(),
   fileName: text('name').notNull(),
   order: real('order').notNull(),
+  blurThumb: text('blurThumb'),
   variantId: serial('variantId')
     .notNull()
     .references(() => productVariants.id, { onDelete: 'cascade' }),

@@ -22,6 +22,13 @@
       "when": 1741308696600,
       "tag": "0002_good_jimmy_woo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742784561630,
+      "tag": "0003_complex_solo",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ export interface UploadImageResponse {
   url: string;
   fileName: string;
   size: number;
+  blurThumb?: string;
 }
 
 export async function uploadImagesRequest(

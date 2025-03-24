@@ -12,17 +12,19 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
   const [mounted, setMounted] = useState(false);
   const { mutate: recordViewedProduct } = useViewedProductMutation();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const blurThumb = variant.variantImages?.[0]?.blurThumb;
+
+  // useEffect(() => {
+  //   setMounted(true);
+  // }, []);
 
   const handleProductClick = (e: React.MouseEvent) => {
     recordViewedProduct(variant.id);
   };
 
-  if (!mounted) {
-    return <div className="group h-[300px] animate-pulse bg-gray-200" />;
-  }
+  // if (!mounted) {
+  //   return <div className="group h-[300px] animate-pulse bg-gray-200" />;
+  // }
 
   return (
     <figure className="group">
@@ -35,7 +37,12 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
             src={variant.variantImages?.[0]?.url ?? "/placeholder.jpg"}
             alt={variant.variantImages?.[0]?.fileName ?? "상품 이미지"}
             fill
-            placeholder="blur"
+            loading="eager"
+            placeholder={"blur"}
+            blurDataURL={
+              blurThumb ??
+              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAMElEQVR4nGOQlpbW1dVVUlJiOHr0aGNjY3x8PENMTMzvf/9yc3MZODg41NXVJaUkAP0iDFjkxeP6AAAAAElFTkSuQmCC"
+            }
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className="rounded-md object-cover transition-transform group-hover:scale-105"
           />
