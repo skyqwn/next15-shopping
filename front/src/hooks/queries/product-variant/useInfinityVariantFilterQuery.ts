@@ -25,7 +25,6 @@ interface VariantParams {
   search?: string;
   sort?: string;
   productId?: number;
-  status?: string;
 }
 
 export const variantQueryKey = (params: VariantParams) =>
@@ -39,7 +38,6 @@ const getVariantsFilter = async (
   if (params.sort) searchParams.set("sort", params.sort);
   if (params.productId)
     searchParams.set("productId", params.productId.toString());
-  if (params.status) searchParams.set("status", params.status);
   searchParams.set("page", (params.page || 1).toString());
   searchParams.set("limit", "8");
 
