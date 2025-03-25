@@ -5,7 +5,7 @@ export interface ProductVariantImageType {
   url: string;
   size: number;
   fileName: string;
-  blurThumb: string | null;
+  blurThumb: string | undefined;
   order: number;
 }
 

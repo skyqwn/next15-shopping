@@ -76,6 +76,7 @@ const ProductVariant = ({
           fileName: img.fileName,
           size: img.size,
           url: img.url,
+          blurThumb: img.blurThumb,
         })),
       );
     }

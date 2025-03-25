@@ -14,6 +14,7 @@ export class UpdateVariantCommand {
     url: string;
     size: number;
     fileName: string;
+    blurThumb?: string;
   }>;
 
   constructor(props: UpdateVariantCommandProps) {

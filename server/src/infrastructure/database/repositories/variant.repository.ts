@@ -317,6 +317,7 @@ export class ProductVariantRepository
               url: image.url,
               size: image.size,
               fileName: image.fileName,
+              blurThumb: image.blurThumb,
               order: index,
               variantId: id,
             }));
@@ -345,6 +346,7 @@ export class ProductVariantRepository
                   set: {
                     size: sql`excluded.size`,
                     fileName: sql`excluded.name`,
+                    blurThumb: sql`excluded."blurThumb"`,
                     order: sql`excluded.order`,
                   },
                 })

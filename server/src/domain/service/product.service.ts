@@ -135,8 +135,6 @@ export class ProductService {
   }
 
   updateVariant(id: number, updateVariantCommand: UpdateVariantCommand) {
-    console.log('updateVariantCommand', updateVariantCommand);
-
     return pipe(
       this.productVariantRepository.update(id, {
         productType: updateVariantCommand.productType,

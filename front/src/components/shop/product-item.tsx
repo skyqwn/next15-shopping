@@ -29,10 +29,7 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
             alt={variant.variantImages?.[0]?.fileName ?? "상품 이미지"}
             fill
             placeholder={"blur"}
-            blurDataURL={
-              blurThumb ??
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAMElEQVR4nGOQlpbW1dVVUlJiOHr0aGNjY3x8PENMTMzvf/9yc3MZODg41NXVJaUkAP0iDFjkxeP6AAAAAElFTkSuQmCC"
-            }
+            blurDataURL={blurThumb}
             className="rounded-mdtransition-transform group-hover:scale-105"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />

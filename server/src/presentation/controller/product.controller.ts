@@ -93,7 +93,6 @@ export class ProductController {
     @Param('id') id: string,
     @Body() updateVariantDto: UpdateVariantRequestDto,
   ) {
-    console.log('editmode', updateVariantDto);
     return pipe(
       this.productFacade.updateVariant(parseInt(id), updateVariantDto),
       Effect.map((variant) => ({
