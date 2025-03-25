@@ -30,7 +30,7 @@ const ProductItem = ({ variant }: { variant: ProductVariantType }) => {
             fill
             placeholder={"blur"}
             blurDataURL={blurThumb}
-            className="rounded-mdtransition-transform group-hover:scale-105"
+            className="rounded-md transition-transform group-hover:scale-105"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
         </div>

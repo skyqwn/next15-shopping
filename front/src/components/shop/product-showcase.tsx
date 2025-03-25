@@ -41,6 +41,8 @@ const ProductShowcase = ({ variant }: ProductShowcaseProps) => {
               <CarouselItem key={index}>
                 <Image
                   src={image.url}
+                  placeholder="blur"
+                  blurDataURL={image.blurThumb}
                   width={1000}
                   height={20}
                   alt={image.fileName}
