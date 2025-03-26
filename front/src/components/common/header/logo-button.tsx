@@ -8,48 +8,28 @@ const LogoButton = () => {
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isDarkMode =
     mounted &&
     (theme === "dark" || (theme === "system" && systemTheme === "dark"));
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const logoSrc = isDarkMode ? "/cicardi-logo-dark.webp" : "/cicardi-logo.webp";
+
   return (
     <Link href={"/"} className="relative size-10 text-white md:size-14">
-      {mounted ? (
-        isDarkMode ? (
-          <Image
-            src={"/cicardi-logo-dark.webp"}
-            alt="cicardi"
-            width={112}
-            height={112}
-            className="object-contain"
-            sizes="(max-width: 768px) 40px, 56px"
-            priority
-          />
-        ) : (
-          <Image
-            src={"/cicardi-logo.webp"}
-            alt="cicardi"
-            width={112}
-            height={112}
-            className="object-contain"
-            sizes="(max-width: 768px) 40px, 56px"
-            priority
-          />
-        )
-      ) : (
-        <Image
-          src={"/cicardi-logo.webp"}
-          alt="cicardi"
-          width={112}
-          height={112}
-          className="object-contain"
-          sizes="(max-width: 768px) 40px, 56px"
-          priority
-        />
-      )}
+      <Image
+        src={logoSrc}
+        alt="cicardi"
+        width={112}
+        height={112}
+        className="object-contain"
+        sizes="(max-width: 768px) 40px, 56px"
+        priority
+        loading="eager"
+      />
       <h1 className="hidden">시카디 | cicardi</h1>
     </Link>
   );
