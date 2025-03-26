@@ -44,12 +44,7 @@ const getVariantsFilter = async (
   const queryString = searchParams.toString();
   const url = `${END_POINTS.FILTER_VARIANTS}?${queryString}`;
 
-  console.log("API 요청 URL:", url);
-  console.log("검색어:", params.search);
-
   const response = await GET<VariantResponse>(url, createInit());
-
-  console.log("API 응답:", response);
 
   return response;
 };
