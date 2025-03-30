@@ -42,7 +42,7 @@ const postSignup = async ({
   );
 };
 const postLogout = async () => {
-  return await POST<{ success: boolean }>(`/auth/signout`, createInit());
+  return await POST<{ success: boolean }>("/auth/signout", createInit());
 };
 
 export { postLogin, postSignup, postLogout };
