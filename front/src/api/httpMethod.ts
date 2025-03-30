@@ -31,7 +31,6 @@ async function fetchWrapperWithTokenHandler<T>(
 
   try {
     const data = await response.json();
-    // console.log("리절트", data);
     return data as ApiResponse<T>;
   } catch (error) {
     console.log("에러에러에러", error);
