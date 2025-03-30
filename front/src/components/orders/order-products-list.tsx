@@ -23,7 +23,7 @@ const OrderProductsList = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>No Orders</CardTitle>
+          <CardTitle>새로운 주문이 없습니다.</CardTitle>
         </CardHeader>
       </Card>
     );
@@ -33,9 +33,7 @@ const OrderProductsList = () => {
     <Card>
       <CardHeader>
         <CardTitle>Analytics</CardTitle>
-        <CardDescription>
-          Check your sales, new customers, and more.
-        </CardDescription>
+        <CardDescription>새로운 주문들을 확인해주세요.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-8 lg:flex-row">
         <Sales totalOrders={totalOrders} />

@@ -52,8 +52,8 @@ export default function Earnings({
   return (
     <Card className="h-full flex-1 shrink-0">
       <CardHeader>
-        <CardTitle>Your: Revenue: ₩{formatPrice(activeTotal)}</CardTitle>
-        <CardDescription>Here are yout recent earnings</CardDescription>
+        <CardTitle>총합: ₩{formatPrice(activeTotal)}</CardTitle>
+        <CardDescription>최근 수익입니다.</CardDescription>
         <div className="flex items-center gap-2">
           <Badge
             className={cn(

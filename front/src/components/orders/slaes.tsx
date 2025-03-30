@@ -27,8 +27,8 @@ const Sales = ({ totalOrders }: { totalOrders: OrderProduct[] }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>New sales</CardTitle>
-        <CardDescription>Check your sales and orders</CardDescription>
+        <CardTitle>주문 목록</CardTitle>
+        <CardDescription>주문목록을 확인해주세요.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function refreshToken(request: NextRequest, userId: string) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   try {
-    const response = await fetch(
-      "http://localhost:4000/api/auth/refreshToken",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `userId=${userId}`,
-        },
-        body: JSON.stringify({ userId }),
+    const response = await fetch(`${apiUrl}/auth/refreshToken`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `userId=${userId}`,
       },
-    );
+      body: JSON.stringify({ userId }),
+    });
 
     const data = await response.json();
     console.log("[Auth] 토큰 갱신 응답:", {
@@ -28,7 +26,7 @@ export async function refreshToken(request: NextRequest, userId: string) {
     }
 
     const res = NextResponse.next();
-    res.cookies.set("accessToken", data.result.accessToken, {
+    res.cookies.set("accessToken", data.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

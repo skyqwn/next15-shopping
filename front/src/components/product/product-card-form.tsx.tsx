@@ -47,7 +47,7 @@ const ProductCardForm = ({ form, onSubmit, isPending }: CardFormProps) => {
                 <FormItem className="py-1">
                   <FormLabel>상품명</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="크롭탑" {...field} />
                   </FormControl>
 
                   <FormMessage />
