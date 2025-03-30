@@ -1,6 +1,6 @@
 export function createInit<Body extends object | FormData>(
   body?: Body,
-  cache: RequestCache = "no-store",
+  cache: RequestCache = "no-cache",
 ): RequestInit {
   const headers: Record<string, string> = {};
 
