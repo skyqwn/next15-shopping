@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex gap-10 p-6">
+    <div className="container mx-auto flex gap-10 p-6">
       <ProfileAsideMenu />
       <div className="flex-1">{children}</div>
     </div>
