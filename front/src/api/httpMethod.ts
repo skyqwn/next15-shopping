@@ -34,7 +34,7 @@ async function fetchWrapperWithTokenHandler<T>(
     return data as ApiResponse<T>;
   } catch (error) {
     console.log("에러에러에러", error);
-    return { success: false, result: null as T, message: "Fetch failed" };
+    return { success: false, result: null as T, message: `Fetch failed` };
   }
 }
 
