@@ -82,7 +82,7 @@ const LoginForm = () => {
                       <div className="relative">
                         <Input
                           {...field}
-                          placeholder="영어,숫자,특수문자 포함 최소 8자 이상."
+                          placeholder="영어,숫자,특수문자 포함 최소 8자 이상"
                           type={clickedEyes ? "text" : "password"}
                           autoComplete="current-password"
                         />
