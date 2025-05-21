@@ -121,7 +121,7 @@ const LoginForm = () => {
                 loginMutation.isPending ? "animate-pulse" : "",
               )}
             >
-              {loginMutation.isPending ? "로그인중.." : "로그인"}
+              {loginMutation.isPending ? "로그인중..." : "로그인"}
             </Button>
           </form>
         </Form>
